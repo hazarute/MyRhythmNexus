@@ -10,3 +10,4 @@ Stüdyo yönetiminde karmaşık üyelik yapıları, ders takibi ve fiziksel giri
 *   **Personel/Admin:** CustomTkinter ile geliştirilmiş, hızlı ve güçlü bir masaüstü uygulaması. Üye kaydı, satış, finansal takip ve ders yönetimi tek merkezden.
 *   **Üyeler:** Karmaşık olmayan, sadece QR kodlarına ve abonelik durumlarına erişebildikleri "Lite" bir web arayüzü. Giriş yaptıktan sonra sahip oldukları aktif "Kartları" (ServicePackage) listeleyip, ilgili kartın QR kodunu görüntüleyebilirler.
 *   **Giriş Kontrolü:** USB QR okuyucu entegrasyonu ile hızlı ve hatasız "Check-In" süreci.
+*   **Uluslararası Erişim:** Türkçe ve İngilizce dil desteği ile global kullanıcı deneyimi.

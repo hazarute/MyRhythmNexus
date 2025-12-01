@@ -24,6 +24,13 @@
     *   **Web Container:** Nginx reverse proxy + static files
     *   **Orchestration:** Docker Compose (Multi-service management)
 
+5.  **Uluslararasılaştırma (i18n) Sistemi:**
+    *   **Framework:** Python gettext modülü
+    *   **Dil Dosyaları:** `locale/{lang}/LC_MESSAGES/messages.po` ve `messages.mo`
+    *   **Çeviri Fonksiyonu:** `_()` wrapper fonksiyonu tüm UI metinlerinde kullanılır
+    *   **Dil Yönetimi:** Uygulama başlangıcında locale ayarı + kullanıcı tercih konfigürasyonu
+    *   **Desteklenen Diller:** Türkçe (tr) ve İngilizce (en) - genişletilebilir yapı
+
 4.  **Modüler Klasör Yapısı:**
 MyRhythmNexus/
 ├── .memory-bank/          # Proje hafızası (Mevcut)

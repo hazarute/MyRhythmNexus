@@ -1,103 +1,69 @@
 # Aktif Bağlam
 
 ## 🎯 Şu Anki Odak
-**DOCKER CONTAINERIZED DEPLOYMENT + OTOMATİK GÜNCELLEME SİSTEMLERİ TAMAMLANDI - PRODUCTION READY DURUMUNA GELİNDİ**
+**ULUSLARARASILAŞTIRMA (i18n) - MASAÜSTÜ UYGULAMASINA ÇOKLU DİL DESTEĞİ EKLEME**
 
-## ✅ Production-Ready Sistem Tamamlandı
+## ✅ Önceki Tamamlanan Özellikler
+**SATIŞ FORMUNDA MANUEL FİYAT OVERRIDE ÖZELLİĞİ TAMAMLANDI - ADMİNLER İNDİRİM UYGULAYABİLİR**
 
-### Tamamlanan Özellikler
-1. **Otomatik Güncelleme Sistemi** - GitHub Releases entegrasyonu ile masaüstü uygulama güncellemeleri
-2. **Docker Containerized Deployment** - Production-ready containerized altyapı
-3. **Comprehensive Documentation** - DEPLOYMENT.md ve DESKTOP_UPDATES.md ile tam dokümantasyon
-
-## ✅ Otomatik Güncelleme Sistemi Tamamlandı
-
-### Problem (Çözüldü ✅)
-- Masaüstü uygulamasının güncellemeleri manuel yapılıyordu
-- Kullanıcıların yeni sürümleri takip etmesi ve indirmesi gerekiyordu
-- Dağıtım süreci karmaşık ve hataya açıktı
-
-### Çözüm: GitHub Releases Tabanlı Otomatik Güncelleme Sistemi
-- **Pattern:** Uygulama başlatılırken otomatik versiyon kontrolü + GitHub API entegrasyonu
-- **Teknik:** Custom updater modülü + PyInstaller executable + GitHub CLI
-- **Dağıtım:** `./deploy.sh release` komutu ile otomatik release oluşturma
-
-### Teknik Bileşenler
+### Teknik Bileşenler (Faz 19)
 | Bileşen | Dosya | Durum |
 |---------|-------|-------|
-| Updater Modülü | desktop/core/updater.py | ✅ GitHub API entegrasyonu, otomatik indirme, kullanıcı dialog'u |
-| Ana Uygulama | desktop/main.py | ✅ Başlatma sırasında güncelleme kontrolü |
-| Build Yapılandırma | desktop.spec | ✅ Hidden imports eklendi |
-| Deploy Scripti | deploy.sh | ✅ Release komutu eklendi |
-| Dokümantasyon | DESKTOP_UPDATES.md | ✅ Kurulum ve kullanım kılavuzu |
-| Bağımlılıklar | requirements.txt | ✅ requests ve pyinstaller eklendi |
+| Backend Schema | backend/schemas/sales.py | ✅ purchase_price_override alanı eklendi |
+| API Endpoint | backend/api/v1/sales.py | ✅ Validation logic (pozitif fiyat, max 2x limit) |
+| Desktop UI | desktop/ui/views/tabs/sales_pos_tab.py | ✅ Checkbox + input field + toggle logic |
+| Submission Handler | desktop/ui/components/salespostab/submission_handler.py | ✅ Payload'a override ekleme |
+| Test Suite | tests/test_subscription_lifecycle.py | ✅ 5 test senaryosu - tümü başarılı |
 
-### Yapılan Düzeltmeler
-- Masaüstü uygulamasının otomatik güncelleme sistemi oluşturuldu
-- GitHub Releases API entegrasyonu eklendi
-- PyInstaller ile executable build süreci optimize edildi
-- Deploy scripti release komutu ile genişletildi
-- Kullanıcı dostu güncelleme dialog'u eklendi
-- Güvenli güncelleme mekanizması (yedekleme + geri dönüş)
-- Detaylı dokümantasyon ve CI/CD entegrasyonu hazırlandı
+## 🔄 Yeni Odak: Uluslararasılaştırma (i18n)
 
-## ✅ Hard Delete Sistemi Tamamlandı
+### Problem (Çözülecek ✅)
+- Masaüstü uygulama şu anda sadece Türkçe destekliyor
+- Global erişim için İngilizce desteği gerekli
+- Kullanıcı deneyimi iyileştirmesi olarak çoklu dil desteği
 
-### Problem (Çözüldü ✅)
-- DELETE members endpoint'i sadece soft delete yapıyordu (is_active = False).
-- Kullanıcı isteği: Hard delete (tam silme) isteniyordu.
-- Foreign key constraint hatası: İlişkili veriler nedeniyle silme başarısız oluyordu.
+### Çözüm: Gettext Tabanlı i18n Sistemi
+- **Pattern:** Python gettext modülü + _() wrapper fonksiyonu
+- **Teknik:** locale/{lang}/LC_MESSAGES/ yapısı + .po/.mo dosyaları
+- **UI/UX:** Uygulama başlangıcında dil seçimi + ayarlar menüsünde dil değiştirme
 
-### Çözüm: Manuel Cascade Delete ile Hard Delete
-- **Pattern:** DELETE endpoint'inde ilişkili kayıtları manuel olarak silme sırası.
-- **Teknik:** Foreign key constraint'leri aşmak için manuel delete sequence.
-- **Cascade Delete:** User model'inde cascade="all, delete-orphan" ilişkileri korundu.
-
-### Teknik Bileşenler
-| Bileşen | Dosya | Durum |
+### Teknik Bileşenler (Faz 20)
+| Bileşen | Görev | Durum |
 |---------|-------|-------|
-| User Model | backend/models/user.py | ✅ Cascade delete ilişkileri eklendi |
-| Members API | backend/api/v1/members.py | ✅ Hard delete endpoint + manuel cascade + doğru delete sırası |
-| Desktop UI (List) | desktop/ui/views/members.py | ✅ delete_member() API çağırıyor |
-| Desktop UI (Detail) | desktop/ui/views/member_detail.py | ✅ delete_member() API çağırıyor |
-| Test Doğrulama | API test scripts | ✅ Hard delete başarılı, ilişkili veriler temizlendi |
+| Gettext Altyapısı | locale klasörü ve temel yapılar | ⏳ Planlandı |
+| Çeviri Wrapper | _() fonksiyonu oluşturma | ⏳ Planlandı |
+| UI Metinleri | Tüm desktop metinlerini _() ile sarmak | ⏳ Planlandı |
+| .po Dosyaları | tr.po ve en.po oluşturma | ⏳ Planlandı |
+| Türkçe Çeviriler | Mevcut metinlerin .po'ya aktarılması | ⏳ Planlandı |
+| İngilizce Çeviriler | Tüm metinlerin İngilizce çevirisi | ⏳ Planlandı |
+| .mo Derleme | Çeviri dosyalarının derlenmesi | ⏳ Planlandı |
+| Locale Yönetimi | Config ve uygulama başlatma | ⏳ Planlandı |
+| Dil Seçimi UI | Ayarlar menüsüne dil seçici | ⏳ Planlandı |
+| Testler | Dil değiştirme ve doğrulama | ⏳ Planlandı |
+| Dokümantasyon | i18n kullanım kılavuzu | ⏳ Planlandı |
 
-### Yapılan Düzeltmeler
-- DELETE /api/v1/members/{id} endpoint'i hard delete'e dönüştürüldü.
-- İlişkili tablolar manuel delete sırası ile temizleniyor: user_roles, instructors, measurement_sessions, session_check_ins, bookings, payments, subscriptions.
-- Desktop UI'deki her iki delete handler aynı API'yi kullanıyor.
-- "Üye silindi" mesajı hard delete için uygun.
-- Test kullanıcısı ile hard delete doğrulandı - kullanıcı ve tüm ilişkili veriler silindi.
+### Yapılacak Düzeltmeler
+- Desktop uygulamasının tüm metinlerini uluslararasılaştırma fonksiyonları ile sarmak
+- Türkçe ve İngilizce çeviri dosyaları oluşturmak
+- Kullanıcı dil tercihini konfigüre etme ve uygulama başlatmada yükleme
+- Dil değiştirme seçeneği ekleme
+- Test senaryoları ile doğrulama
 
 ## 📊 Proje Durum
 - **Backend:** FastAPI, Auth, CRM, Satış, QR sistemi, Otomatik Aktivite Yönetimi, Üye Filtreleme, Async Relationship Loading, Hard Delete tamamlandı.
 - **Desktop UI:** Login, Dashboard, Üye Yönetimi, Satış POS, Scheduler, Check-in, Otomatik Güncelleme Sistemi tamamlandı.
 - **Deployment:** Docker containerized deployment, production-ready yapılandırma, CI/CD pipeline tamamlandı.
 - **Sistem Özellikleri:** Kart Sistemi, Access Type, ClassEvent, Booking, CheckIn, Otomatik Pasif Üye Yönetimi, Aktif Üye Filtreleme, Async API Stability, Hard Delete, Otomatik Masaüstü Güncellemeleri, Containerized Production Deployment entegre.
+- **Yeni Özellik:** Çoklu dil desteği (Türkçe/İngilizce) - geliştirme aşamasında.
 
 ## 🚀 Sıradaki Adım
-**PRODUCTION DEPLOYMENT** - Sistem artık production deployment için tamamen hazır. Kiralık sunucuda canlıya alma süreci başlayabilir.
+**FAZ 20: ULUSLARARASILAŞTIRMA (i18n)** - Masaüstü uygulamasına gettext tabanlı çoklu dil desteği ekleme süreci başlayacak.
 
 ## 📝 Teknik Referans
-- **Özellik:** Masaüstü uygulama otomatik güncelleme sistemi + Docker containerized deployment
-- **Çözüm:** GitHub Releases API + Custom updater modülü + PyInstaller + Docker Compose
-- **Pattern:** Uygulama başlatma sırasında versiyon kontrolü + kullanıcı dialog'u + containerized production deployment
-- **Test Sonucu:** Updater modülü başarıyla import edilebiliyor, Docker deployment dokümantasyonu hazır
-- **Değiştirilen Dosyalar:** `desktop/core/updater.py`, `desktop/main.py`, `desktop.spec`, `deploy.sh`, `requirements.txt`, `DESKTOP_UPDATES.md`, `DEPLOYMENT.md`
-
-## 16. Otomatik Güncelleme Sistemi
-- **Motivasyon:** Masaüstü uygulamasının dağıtım ve güncelleme sürecini otomatikleştirme.
-- **Yeni Yapı:** GitHub Releases entegrasyonu + Custom updater modülü.
-- **Özellikler:** Otomatik versiyon kontrolü, güvenli indirme, kullanıcı onayı, yedekleme.
-- **Güvenlik:** GitHub üzerinden dağıtım, executable doğrulama, geri dönüş mekanizması.
-- **Monitoring:** Güncelleme logları, hata raporlama, kullanım istatistikleri.
-
-## 17. Docker Containerized Deployment
-- **Motivasyon:** Production-ready deployment altyapısı oluşturma.
-- **Yeni Yapı:** Docker Compose ile multi-service containerized deployment.
-- **Özellikler:** PostgreSQL container, Nginx reverse proxy, environment management, health checks.
-- **Güvenlik:** Production hardening, security checklist, environment isolation.
-- **Monitoring:** Container logs, health endpoints, resource monitoring.
+- **Özellik:** Masaüstü uygulama uluslararasılaştırma sistemi
+- **Çözüm:** Python gettext + locale yapısı + _() wrapper fonksiyonu
+- **Pattern:** Uygulama başlatma sırasında locale ayarı + kullanıcı dil seçimi
+- **Değiştirilecek Dosyalar:** Tüm desktop/ui/ dosyaları + yeni locale/ klasörü + config güncellemeleri
 
 
 

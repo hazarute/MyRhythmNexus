@@ -13,6 +13,7 @@ Stüdyonun arka ofis işlemlerini, üye yönetimini, satışları, ders programl
 4.  **Otomatik Sistemler:** Background scheduler ile pasif üye yönetimi.
 5.  **Otomatik Güncelleme:** Masaüstü uygulamasının GitHub Releases ile otomatik güncellenmesi.
 6.  **Containerized Deployment:** Docker ile production-ready deployment altyapısı.
+7.  **Uluslararasılaştırma (i18n):** Çoklu dil desteği (Türkçe/İngilizce) ile global erişim.
 
 ## Otomatik Özellikler
 *   **Pasif Üye Yönetimi:** 60+ gün paket satın almamış üyeler otomatik olarak `is_active = false` yapılır.
@@ -20,3 +21,4 @@ Stüdyonun arka ofis işlemlerini, üye yönetimini, satışları, ders programl
 *   **Background Jobs:** APScheduler ile günlük otomatik görevler çalışır.
 *   **Otomatik Güncellemeler:** Masaüstü uygulaması GitHub Releases üzerinden otomatik güncellenir.
 *   **Containerized Scaling:** Docker Compose ile production deployment ve scaling.
+*   **Dil Yönetimi:** Kullanıcı tercihine göre otomatik dil yükleme ve çeviri desteği.

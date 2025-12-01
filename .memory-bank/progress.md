@@ -68,15 +68,26 @@
 - [X] PyInstaller yapılandırması ve bağımlılıklar güncellendi
 - [X] Detaylı dokümantasyon ve CI/CD entegrasyonu hazırlandı
 
-### Faz 17: Docker Containerized Deployment
-- [X] Production-ready Docker Compose yapılandırması
-- [X] PostgreSQL 15 container ile persistent database
-- [X] Nginx reverse proxy ile web serving
-- [X] Development vs Production deployment stratejileri
-- [X] Environment-based configuration management
-- [X] Comprehensive deployment documentation (DEPLOYMENT.md)
-- [X] Health checks ve monitoring setup
-- [X] Security checklist ve production hardening
+### Faz 19: Satış Formunda Manuel Fiyat Override
+- [X] Backend şemalarına purchase_price_override alanı eklendi
+- [X] API endpoint'lerinde fiyat validasyonu (pozitif, max 2x paket fiyatı)
+- [X] Desktop UI'da checkbox ve input field eklendi
+- [X] Submission handler güncellendi
+- [X] Kapsamlı test senaryoları oluşturuldu (normal, override, validation errors)
+- [X] Testler başarılı geçti (5/5 assertion PASS)
+
+### Faz 20: Uluslararasılaştırma (i18n) - Çoklu Dil Desteği
+- [ ] Gettext altyapısını kurmak (locale klasörü ve temel yapılar)
+- [ ] Çeviri wrapper fonksiyonu oluşturmak (_() fonksiyonu)
+- [ ] Tüm desktop UI metinlerini _() ile sarmak (login, main window, views, components)
+- [ ] .po dosyaları oluşturmak (tr.po ve en.po)
+- [ ] Türkçe çevirileri yapmak (mevcut metinler)
+- [ ] İngilizce çevirileri yapmak
+- [ ] .mo dosyalarına derlemek
+- [ ] Uygulamada locale yönetimi (config ve başlatma)
+- [ ] Dil seçimi UI'si eklemek (ayarlar menüsü)
+- [ ] Testler ve doğrulama (dil değiştirme testi)
+- [ ] Dokümantasyon güncellemek
 
 ## Bilinen Hatalar / Notlar
 - `desktop/ui` altında modüler bir klasörleme (views/members, views/sales vb.) yapılarak ilerlenecek.

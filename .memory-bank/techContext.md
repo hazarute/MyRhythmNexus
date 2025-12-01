@@ -18,6 +18,7 @@
 *   **Containerization:** Docker & Docker Compose (Production deployment)
 *   **Web Server:** Nginx (Reverse proxy + static files)
 *   **Database Container:** PostgreSQL 15 (Production database)
+*   **Uluslararasılaştırma:** Python gettext (Çoklu dil desteği)
 
 ## Geliştirme Standartları
 *   **Tip Güvenliği:** Python Type Hinting zorunlu.

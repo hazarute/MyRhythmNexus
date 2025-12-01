@@ -1,0 +1,307 @@
+// =============================================
+// VERİTABANI TİPİ: PostgreSQL
+// MİMARİ VERSİYONU: v10 (Enum'lar Eklendi)
+// =============================================
+Project MyRhythmNexus_Core {
+  database_type: 'PostgreSQL'
+  Note: 'Proje 1: Çekirdek Yönetim Sistemi - SQLAlchemy modelleriyle tam uyumlu.'
+}
+
+// =============================================
+// YENİ BÖLÜM: ENUM TANIMLARI
+// =============================================
+
+Enum SubscriptionStatus {
+  active // Aktif, devam eden
+  expired // Süresi dolmuş
+  cancelled // İptal edilmiş
+  pending // Ödeme bekleyen (henüz aktif değil)
+  suspended // Askıya alınmış (örn: dondurulmuş)
+}
+
+Enum PaymentMethod {
+  NAKIT
+  KREDI_KARTI
+  HAVALE_EFT
+  DIGER
+}
+
+Enum BookingStatus {
+  confirmed // Müşteri (veya admin) tarafından onaylanmış ön kayıt
+  cancelled_by_member // Müşteri tarafından iptal edildi
+  cancelled_by_admin // Admin tarafından iptal edildi
+  no_show // Müşteri rezervasyon yaptı ama gelmedi
+  completed // (Gelecekte, ders bitince otomatik güncellenebilir)
+}
+
+// =============================================
+// BÖLÜM 1: KULLANICILAR VE ROLLER ("KİM?")
+// =============================================
+
+// User: Sisteme giriş yapabilen herkes (üye, eğitmen, admin).
+Table users {
+  id string [pk, default: `uuid()`] // Benzersiz ID
+  first_name string [not null]
+  last_name string [not null]
+  email string [unique, not null]
+  phone_number string
+  password_hash string [not null] // Şifre her zaman hash'lenerek saklanmalı
+  is_active boolean [default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  Note: 'Sistemdeki tüm kullanıcıların (üye, eğitmen, admin) temel bilgilerini tutar.'
+}
+
+// Role: Kullanıcıların yetkilerini belirleyen roller.
+Table roles {
+  id int [pk, increment]
+  role_name string [unique, not null] // Örn: 'Admin', 'Egitmen', 'Uye'
+  Note: 'Yetkilendirme için "Admin", "Egitmen", "Uye" gibi rolleri tanımlar.'
+}
+
+// UserRole: Kullanıcılar ve Roller arasındaki çoktan-çoka ilişki tablosu.
+Table user_roles {
+  user_id string [ref: > users.id, not null]
+  role_id int [ref: > roles.id, not null]
+  
+  indexes {
+    (user_id, role_id) [pk]
+  }
+  Note: 'Bir kullanıcının hangi rollere sahip olduğunu belirler (örn: Bir user hem "Egitmen" hem "Admin" olabilir).'
+}
+
+// Instructor: Eğitmenlere özel ek bilgileri tutan tablo.
+Table instructors {
+  user_id string [pk, ref: > users.id] // User tablosuyla bire-bir ilişki
+  bio string // Eğitmenin biyografisi
+  profile_picture_url string
+  Note: 'User tablosundaki "Egitmen" rolüne sahip kullanıcılara ait ekstra bilgileri (bio gibi) tutar.'
+}
+
+// =============================================
+// BÖLÜM 2: HİZMET VE PLANLAR ("NE SATIYORUZ?")
+// Bu bölümü senin için ciddi oranda basitleştirdim.
+// =============================================
+
+// ServiceCategory: Hizmetlerin ana kategorisi.
+Table service_categories {
+  id int [pk, increment]
+  name string [unique, not null] // Örn: "Grup Dersi", "Özel Ders", "Dans Dersi"
+  description string
+  Note: 'Hizmetlerin ana çatısı. Örn: "Grup Dersleri", "Özel Dersler".'
+}
+
+// ServiceOffering: Stüdyoda sunulan spesifik dersler.
+Table service_offerings {
+  id string [pk, default: `uuid()`]
+  name string [unique, not null] // Örn: "Reformer Pilates", "Mat Pilates", "Yoga Akışı"
+  description string
+  default_duration_minutes int [not null] // Örn: 50 (dakika)
+  Note: 'Stüdyoda verilen spesifik dersleri tanımlar. Örn: "Reformer Pilates" dersi "Grup Dersi" kategorisindeki derslere aittir.'
+}
+
+// PlanDefinition: Müşterilerin satın alabileceği paketler.
+Table plan_definitions {
+  id string [pk, default: `uuid()`]
+  name string [unique, not null] // Örn: "Aylık 8'li Grup Dersi Paketi"
+  description string
+  access_type string [not null, default: "SESSION_BASED"] // "SESSION_BASED" veya "UNLIMITED"
+  sessions_granted int [null] // Paketin verdiği seans hakkı sayısı (örn: 8) - SESSION_BASED için gerekli
+  cycle_period string [not null] // Geçerlilik süresi (örn: "4 weeks", "12 weeks")
+  repeat_weeks int [not null, default: 1] // Kaç hafta boyunca geçerli (dönem sayısı)
+  is_active boolean [default: true] // Bu plan şu an satışta mı?
+  Note: "Satışa sunulan üyelik paketleri. Örn: Aylık 8'li Paket, (Grup Dersi) kategorisindeki dersler için geçerlidir."
+}
+
+
+// =============================================
+// BÖLÜM 3: SATIŞ VE OPERASYON ("KART" SİSTEMİ)
+// =============================================
+
+// Product: Satılabilir nihai Hizmet Paketi.
+// BU, SENİN "KART" DEDİĞİN SÜPER TABLODUR.
+Table service_packages {
+  id string [pk, default: `uuid()`]
+  name string [not null, unique] // Adminin verdiği isim: "Aylık 8'li Grup Reformer"
+  
+  category_id int [ref: > service_categories.id, not null] // A - Kategori
+  offering_id string [ref: > service_offerings.id, not null] // B - Hizmet
+  plan_id string [ref: > plan_definitions.id, not null] // C - Plan
+  
+  price decimal [not null] // Fiyat (örn: 4000)
+  is_bookable boolean [default: true] // Müşteri kendi rezervasyon yapabilir mi?
+  is_active boolean [default: true] // Bu kart şu an satışta mı?
+  
+  Note: 'Adminin (A+B+C) formülüyle oluşturduğu nihai satış "Kartı" (Hizmet Paketi).'
+}
+
+// Subscription: Bir üyenin satın aldığı spesifik bir abonelik.
+Table subscriptions {
+  id string [pk, default: `uuid()`]
+  member_user_id string [ref: > users.id, not null]
+  package_id string [ref: > service_packages.id, not null] // Hangi "ServicePackage" (Kartı) satın aldı?
+
+  purchase_price decimal [not null] // Satın alındığı andaki fiyat (indirimli olabilir)
+  start_date timestamp [not null] // Abonelik başlangıç tarihi
+  end_date timestamp [not null] // Abonelik bitiş tarihi
+  status SubscriptionStatus [not null] // Örn: "active", "expired", "cancelled"
+
+  // ERIŞIM TİPİ: "SESSION_BASED" (sınırlı seans) veya "TIME_BASED" (zaman bazlı, sınırsız katılım)
+  access_type string [not null, default: "SESSION_BASED"]
+  
+  // SEANS SAYACI (SESSION_BASED paketler için): Sadece SessionCheckIn (QR okutma) ile artar.
+  used_sessions int [default: 0, not null]
+  
+  // KATILIM SAYACI (TIME_BASED paketler için): Üyenin kaç kez katıldığını takip eder (sınırsız)
+  attendance_count int [default: 0, not null]
+  
+  // SESSION_BASED planlar için otomatik oluşturulan ClassEvent'ler
+  auto_created_class_events boolean [default: false] // Bu abonelik için ClassEvent'ler otomatik oluşturuldu mu?
+  
+  Note: 'Bir üyenin bir "Kart"ı satın aldığını gösteren "sözleşme" kaydıdır. access_type ile SESSION_BASED (seans hakkı) ve TIME_BASED (sınırsız katılım) ayırımı yapılır. used_sessions (SESSION_BASED) ve attendance_count (TIME_BASED) ile iki tür hak takibi yapılır.'
+}
+
+// Payment: Abonelikler için yapılan ödemeler.
+Table payments {
+  id string [pk, default: `uuid()`]
+  subscription_id string [ref: > subscriptions.id, not null]
+  recorded_by_user_id string [ref: > users.id, not null] // Ödemeyi kaydeden personel
+  
+  amount_paid decimal [not null] // Ödenen miktar
+  payment_date timestamp [default: `now()`]
+  payment_method PaymentMethod [not null] // Örn: "Nakit", "Kredi Kartı"
+
+  refund_amount decimal
+  refund_date timestamp
+  refund_reason string
+  Note: 'Bir abonelik için yapılan ödemelerin (veya iadelerin) kaydıdır.'
+}
+
+// =============================================
+// BÖLÜM 4: HAFTALIK PROGRAM VE REZERVASYONLAR (v9)
+// (Ders Şablonu ve Ders Etkinliği olarak ikiye ayrıldı)
+// =============================================
+
+// ClassTemplate: Dersin "Şablonu" veya "Kodu".
+Table class_templates {
+  id string [pk, default: `uuid()`]
+  name string [not null] // Örn: "Grup Reformer A", "Özel Ders - Ayşe Hoca"
+  
+  // Bu şablon hangi "Kart"lara (ServicePackage) izin veriyor?
+  // Bu, BookingPermission tablosu ile M-N olarak bağlanır.
+  
+  Note: 'Senin "ClassSchedule" dediğin, "Grup Reformer A" gibi bir dersin ana şablonu.'
+}
+
+// BookingPermission: Hangi "Kart"ın hangi "Ders Şablonu"na girebileceği.
+Table booking_permissions {
+  package_id string [ref: > service_packages.id, not null] // Bu "Kart"a sahip olan...
+  template_id string [ref: > class_templates.id, not null] // ...bu "Şablon"a ait derslere girebilir.
+  
+  indexes { (package_id, template_id) [pk] }
+  Note: 'Adminin "Bu derse sadece şu karttakiler girebilir" dediği kural tablosu.'
+}
+
+// ClassEvent: Takvimdeki "Gerçek Etkinlik".
+Table class_events {
+  id string [pk, default: `uuid()`]
+  template_id string [ref: > class_templates.id, not null] // Bu etkinlik hangi şablona ait?
+  subscription_id string [ref: > subscriptions.id, null] // SESSION_BASED pakette otomatik oluşturulan etkinlikler için abonelik referansı
+  
+  instructor_user_id string [ref: > instructors.user_id, not null]
+  start_time timestamp [not null]
+  end_time timestamp [not null]
+  capacity int [not null] // Grup dersi için 10, Özel ders için 1
+  is_cancelled boolean [default: false]
+  
+  Note: 'Takvimdeki tek bir "etkinliktir". Örn: "20 Kasım 18:00" dersi, "Grup Reformer A" şablonuna aittir. SESSION_BASED aboneliklerden otomatik oluşturulan etkinlikler subscription_id ile bağlanır.'
+}
+
+// Booking: Müşterinin "niyetini" belirten "ön kayıt".
+Table bookings {
+  id string [pk, default: `uuid()`]
+  member_user_id string [ref: > users.id, not null]
+  event_id string [ref: > class_events.id, not null] // Hangi spesifik "Etkinliğe" kayıt oldu?
+  subscription_id string [ref: > subscriptions.id, not null]
+  
+  status BookingStatus [not null, default: 'confirmed'] // 'confirmed', 'cancelled'
+  created_at timestamp [default: `now()`]
+  
+  indexes { (member_user_id, event_id) [unique] }
+  Note: 'Bir üyenin, bir derse (kapasite dolmadan) "ön kayıt" yapması. Bu, seans HAKKINI DÜŞÜRMEZ.'
+}
+
+// =============================================
+// BÖLÜM 5: QR GİRİŞ SİSTEMİ (v9 - YENİ YAPI)
+// =============================================
+
+// SubscriptionQrCode: Her ABONELİK için 1 adet üretilen QR kod.
+Table subscription_qr_codes {
+  id string [pk, default: `uuid()`]
+  subscription_id string [ref: > subscriptions.id, unique, not null]
+  qr_token string [unique, not null]
+  is_active boolean [default: true]
+  created_at timestamp [default: `now()`]
+  Note: 'Bir "Abonelik" (Subscription) için oluşturulan genel QR kod.'
+}
+
+// SessionCheckIn: QR kod okutulduğunda oluşan "giriş" kaydı.
+Table session_check_ins {
+  id string [pk, default: `uuid()`]
+  
+  // KİM girdi? (QR koddan bulunur)
+  subscription_id string [ref: > subscriptions.id, not null]
+  member_user_id string [ref: > users.id, not null]
+  
+  // NEYE girdi? (Otomatik (Booking varsa), Admin onayıyla, veya EVENT SİZ)
+  // event_id NULL ise: TIME_BASED abonelik veya ders seçmeden SESSION_BASED check-in
+  event_id string [ref: > class_events.id, null] // Hangi spesifik "Etkinliğe" girdi? (NULL ise dersiz giriş)
+  
+  // İşlemi kim yaptı?
+  verified_by_user_id string [ref: > users.id, not null]
+  check_in_time timestamp [default: `now()`]
+  
+  // Bu giriş, bir ön-kayda bağlı mıydı?
+  booking_id string [ref: > bookings.id, null, unique]
+  
+  Note: 'Üyenin QR kodu okutup, Adminin onayladığı nihai giriş kaydı. EVENT_ID NULL ise ders seçmeden katılım (TIME_BASED veya optional SESSION_BASED). Bu kayıt oluştuğunda SEANS HAKKI (SESSION_BASED) veya KATILIM SAYACI (TIME_BASED) güncellenir.'
+}
+
+// =============================================
+// BÖLÜM 6: VÜCUT ÖLÇÜMLERİ (Yönetim)
+// =============================================
+
+// MeasurementSession: Belirli bir tarihte yapılan ölçüm seansı.
+Table measurement_sessions {
+  id string [pk, default: `uuid()`]
+  member_user_id string [ref: > users.id, not null]
+  recorded_by_user_id string [ref: > users.id, not null] // Ölçümü yapan personel
+  session_date timestamp [default: `now()`]
+  notes string
+  
+  Note: 'Bir üye için "17 Kasım 2025" tarihinde yapılan ölçüm seansının ana kaydıdır.'
+}
+
+// MeasurementType: Ölçülebilen şeylerin tipleri (Sözlük tablosu).
+Table measurement_types {
+  id int [pk, increment]
+  type_key string [unique, not null] // Kod için anahtar (örn: "weight", "chest")
+  type_name string [not null] // Arayüz için ad (örn: "Kilo", "Göğüs")
+  unit string [not null] // Örn: "kg", "cm"
+  
+  Note: 'Sistemde ölçülebilecek tüm metriklerin (Kilo, Boy, Göğüs vb.) sözlüğüdür.'
+}
+
+// MeasurementValue: Ölçüm seansındaki spesifik bir değer.
+Table measurement_values {
+  id string [pk, default: `uuid()`]
+  session_id string [ref: > measurement_sessions.id, not null]
+  type_id int [ref: > measurement_types.id, not null]
+  value decimal [not null] // Ölçülen değer (örn: 68.5)
+  
+  indexes {
+    (session_id, type_id) [unique] // Bir seansta bir tip (örn: Kilo) sadece 1 kez girilebilir
+  }
+  Note: 'Bir ölçüm seansındaki tek bir veriyi tutar. Örn: "17 Kasım" seansındaki "Kilo" ölçümünün değeri "68.5" idi.'
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRhythmNexus - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-xl">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-purple-500">MyRhythmNexus</h1>
+            <p class="text-gray-400">Member Access</p>
+        </div>
+
+        {% if error %}
+            <div class="bg-red-900/50 p-3 rounded text-center text-red-200 mb-4 text-sm">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form action="/web/login" method="post" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-400">Phone Number</label>
+                <input type="tel" name="phone_number" placeholder="5551234567" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400">Password</label>
+                <input type="password" name="password" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+            </div>
+            <button type="submit" class="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white font-medium transition-colors">
+                Sign In
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRhythmNexus - My Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+
+    <div class="max-w-md mx-auto p-4">
+        <header class="flex justify-between items-center mb-6 py-4 border-b border-gray-700">
+            <div>
+                <h1 class="text-xl font-bold text-purple-500">My Cards</h1>
+                <p class="text-xs text-gray-400">{{ user.first_name }} {{ user.last_name }}</p>
+            </div>
+            <a href="/web/logout" class="text-sm text-red-400 hover:text-red-300">Logout</a>
+        </header>
+
+        {% if subscriptions %}
+            <div class="space-y-4">
+                {% for sub in subscriptions %}
+                    <a href="/web/cards/{{ sub.id }}" class="block bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-purple-500 transition-colors shadow-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg text-white">{{ sub.package.name }}</h3>
+                                <p class="text-sm text-gray-400">{{ sub.package.offering.name }}</p>
+                            </div>
+                            <span class="px-2 py-1 text-xs rounded bg-green-900 text-green-200 border border-green-700">
+                                {{ sub.status.value }}
+                            </span>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-between text-sm text-gray-400">
+                            <div>
+                                <span class="block text-xs text-gray-500">Remaining</span>
+                                {% if sub.package.plan and sub.package.plan.sessions_granted and sub.package.plan.sessions_granted > 0 %}
+                                    <span class="text-white font-medium">{{ sub.package.plan.sessions_granted - sub.used_sessions }}</span> / {{ sub.package.plan.sessions_granted }}
+                                {% else %}
+                                    <span class="text-white font-medium">Unlimited</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xs text-gray-500">Expires</span>
+                                <span class="text-white">{{ sub.end_date.strftime('%Y-%m-%d') }}</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12 bg-gray-800 rounded-lg">
+                <p class="text-gray-400 mb-2">No active cards found.</p>
+                <p class="text-sm text-gray-500">Please contact the reception to purchase a package.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

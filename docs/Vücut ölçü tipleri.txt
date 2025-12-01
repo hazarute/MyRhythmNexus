@@ -1,0 +1,41 @@
+// Vücut ölçü tipleri
+
+  // Genel Vücut Ölçüleri
+
+  height         // Boy
+
+  weight         // Kilo
+
+  
+
+  // Üst Vücut
+
+  neck           // Boyun
+
+  shoulder       // Omuz
+
+  chest          // Göğüs
+
+  arm_bicep      // Kol (Pazu)
+
+  forearm        // Ön Kol
+
+  
+
+  // Gövde
+
+  waist          // Bel
+
+  love_handle    // Simit
+
+  hip            // Kalça
+
+  hip_seat       // Basen
+
+  
+
+  // Alt Vücut
+
+  thigh          // Bacak (Üst)
+
+  calf           // Kalf (Baldır)

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRhythmNexus - Card QR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-xl relative">
+        <a href="/web" class="absolute top-4 left-4 text-gray-400 hover:text-white">
+            &larr; Back
+        </a>
+
+        <div class="text-center mb-6 mt-4">
+            <h1 class="text-xl font-bold text-purple-500">{{ subscription.package.name }}</h1>
+            <p class="text-sm text-gray-400">{{ user.first_name }} {{ user.last_name }}</p>
+        </div>
+
+        <div class="flex flex-col items-center space-y-6">
+            {% if qr_token %}
+                <div class="bg-white p-4 rounded-lg">
+                    <div id="qrcode"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Scan this code at the entrance</p>
+                <script type="text/javascript">
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: "{{ qr_token }}",
+                        width: 200,
+                        height: 200,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                </script>
+            {% else %}
+                <div class="bg-red-900/50 p-4 rounded text-center text-red-200">
+                    <p>QR Code not available.</p>
+                </div>
+            {% endif %}
+
+            <div class="w-full pt-4 border-t border-gray-700">
+                <div class="flex justify-between text-sm text-gray-400 mb-2">
+                    <span>Status</span>
+                    <span class="text-green-400">{{ subscription.status.value }}</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-400">
+                    <span>Expires</span>
+                    <span>{{ subscription.end_date.strftime('%Y-%m-%d') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

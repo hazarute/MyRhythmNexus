@@ -15,7 +15,7 @@ Get the system running in minutes with Docker:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/MyRhythmNexus.git
+git clone https://github.com/hazarute/MyRhythmNexus.git
 cd MyRhythmNexus
 
 # Start the complete system
@@ -283,7 +283,7 @@ We welcome contributions! This project follows a structured development process.
 
 ```bash
 # Fork and clone
-git clone https://github.com/your-username/MyRhythmNexus.git
+git clone https://github.com/hazarute/MyRhythmNexus.git
 cd MyRhythmNexus
 
 # Setup development environment
@@ -332,9 +332,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues:** [GitHub Issues](https://github.com/your-username/MyRhythmNexus/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/your-username/MyRhythmNexus/discussions)
+- **Issues:** [GitHub Issues](https://github.com/hazarute/MyRhythmNexus/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/hazarute/MyRhythmNexus/discussions)
 - **Documentation:** See `DEPLOYMENT.md` and `DESKTOP_UPDATES.md` for detailed guides
+- **Contact:** Hazar Üte <hazarute@gmail.com>
 
 ---
 

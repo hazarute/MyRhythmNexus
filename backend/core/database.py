@@ -15,7 +15,17 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_async_engine(settings.DATABASE_URL, echo=False, future=True)
+# Database engine with Turkey timezone
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=False,
+    future=True,
+    connect_args={
+        "server_settings": {
+            "timezone": "Europe/Istanbul"
+        }
+    }
+)
 SessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,

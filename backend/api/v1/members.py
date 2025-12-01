@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
+from backend.core.time_utils import get_turkey_time
 
 from backend.api.deps import get_db
 from backend.core.security import hash_password
@@ -116,6 +117,10 @@ async def update_member(
         del update_data["password"]
         user.password_hash = hashed_password
         
+    # Eğer is_active güncelleniyorsa, updated_at'i Türkiye saati ile güncelle
+    if "is_active" in update_data:
+        user.updated_at = get_turkey_time()
+    
     for field, value in update_data.items():
         setattr(user, field, value)
         

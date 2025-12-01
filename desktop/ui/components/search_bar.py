@@ -30,11 +30,10 @@ class SearchBar(ctk.CTkFrame):
         self.entry = ctk.CTkEntry(
             self, 
             placeholder_text=placeholder, 
-            width=width, 
             height=height, 
             font=("Roboto", 14)
         )
-        self.entry.pack(side="left", padx=(0, 10))
+        self.entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
         
         # Bind events
         self.entry.bind("<KeyRelease>", self._on_key_release)
@@ -51,7 +50,7 @@ class SearchBar(ctk.CTkFrame):
             hover_color="#2E7AB8",
             font=("Roboto", 14, "bold")
         )
-        self.btn_search.pack(side="left")
+        self.btn_search.pack(side="right")
     
     def _on_key_release(self, event):
         """Handle key release with debouncing"""

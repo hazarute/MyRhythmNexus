@@ -87,6 +87,31 @@ class SalesPOSTab(ctk.CTkFrame):
         self.checkbox.pack(anchor="w", padx=0, pady=0)
         self.class_event_toggle_frame.pack(fill="x", pady=(0, 15))
         
+        # Price Override Toggle
+        self.enable_price_override = ctk.BooleanVar(value=False)
+        self.price_override_frame = ctk.CTkFrame(self.content_scroll, fg_color="transparent")
+        
+        self.price_override_checkbox = ctk.CTkCheckBox(
+            self.price_override_frame,
+            text="💰 Mevcut Abonelik Ücretini Değiştir",
+            variable=self.enable_price_override,
+            font=("Roboto", 16, "bold"),
+            text_color="white",
+            command=self._toggle_price_override
+        )
+        self.price_override_checkbox.pack(anchor="w", padx=0, pady=(0, 5))
+        
+        # Price override input (initially hidden)
+        self.price_override_input = ctk.CTkEntry(
+            self.price_override_frame,
+            placeholder_text="Yeni fiyat giriniz (TL)",
+            font=("Roboto", 14),
+            height=40
+        )
+        # Don't pack initially - will be shown when checkbox is enabled
+        
+        self.price_override_frame.pack(fill="x", pady=(0, 15))
+        
         # Date Selection Card (using DateSelector component)
         self.date_selector = DateSelector(self.content_scroll, on_date_change=self.on_date_change)
         self.date_selector.pack(fill="x", pady=(0, 15))
@@ -223,6 +248,18 @@ class SalesPOSTab(ctk.CTkFrame):
                 # Reset class events selection
                 self.class_event_scheduler.reset()
     
+    def _toggle_price_override(self):
+        """Toggle the visibility of price override input based on checkbox"""
+        if self.enable_price_override.get():
+            # Show price input
+            if self.price_override_input.winfo_manager() == "":
+                self.price_override_input.pack(fill="x", pady=(5, 0))
+        else:
+            # Hide price input and clear value
+            if self.price_override_input.winfo_manager() != "":
+                self.price_override_input.pack_forget()
+            self.price_override_input.delete(0, "end")
+    
     def on_package_select(self, choice=None):
         """Legacy method - kept for backward compatibility"""
         pass
@@ -249,13 +286,25 @@ class SalesPOSTab(ctk.CTkFrame):
             if access_type == "SESSION_BASED":
                 class_events = self.class_event_scheduler.get_class_events_payload()
         
+        # Get price override if enabled
+        price_override = None
+        if self.enable_price_override.get():
+            try:
+                price_text = self.price_override_input.get().strip()
+                if price_text:
+                    price_override = float(price_text)
+            except ValueError:
+                messagebox.showerror("Hata", "Geçersiz fiyat formatı. Lütfen sayı giriniz.")
+                return
+        
         # Use handler to submit
         success = self.submission_handler.submit_sale(
             member=member,
             package=pkg,
             payment_data=payment_data,
             start_date=start_date_obj,
-            class_events=class_events
+            class_events=class_events,
+            price_override=price_override
         )
         
         if success:
@@ -286,3 +335,9 @@ class SalesPOSTab(ctk.CTkFrame):
         # Class event scheduler
         if self.class_event_scheduler:
             self.class_event_scheduler.reset()
+        
+        # Price override
+        self.enable_price_override.set(False)
+        self.price_override_input.delete(0, "end")
+        if self.price_override_input.winfo_manager() != "":
+            self.price_override_input.pack_forget()

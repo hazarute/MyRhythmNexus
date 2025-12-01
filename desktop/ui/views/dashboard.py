@@ -60,7 +60,7 @@ class DashboardView(ctk.CTkFrame):
         self.activity_frame.grid(row=2, column=1, sticky="nsew", padx=(10, 20), pady=20)
         
         ctk.CTkLabel(self.activity_frame, text="Son Hareketler", font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
-        self.activity_list = ctk.CTkScrollableFrame(self.activity_frame, fg_color="transparent")
+        self.activity_list = ctk.CTkScrollableFrame(self.activity_frame, fg_color=("gray90", "gray20"))
         self.activity_list.pack(fill="both", expand=True, padx=5, pady=5)
 
         self.start_auto_refresh()
@@ -164,24 +164,66 @@ class DashboardView(ctk.CTkFrame):
         ctk.CTkLabel(frame, text=item['occupancy'], text_color=occupancy_color, font=("Roboto", 12, "bold")).pack(side="right", padx=10)
 
     def create_activity_item(self, item):
-        frame = ctk.CTkFrame(self.activity_list, fg_color="transparent")
-        frame.pack(fill="x", pady=5, padx=2)
+        # Modern card design for each activity
+        # Different background color for check-ins
+        bg_color = "#2B2B2B"  # Default dark
+        if item['type'] == 'checkin':
+            bg_color = "#698FAA"  # Light blue for check-ins
         
-        # Icon based on type
+        card = ctk.CTkFrame(self.activity_list, fg_color=bg_color, corner_radius=8, border_width=1, border_color="#404040")
+        card.pack(fill="x", pady=3, padx=5)
+        
+        # Main content frame
+        content = ctk.CTkFrame(card, fg_color="transparent")
+        content.pack(fill="both", expand=True, padx=12, pady=10)
+        
+        # Header with icon and time
+        header_frame = ctk.CTkFrame(content, fg_color="transparent")
+        header_frame.pack(fill="x", pady=(0, 4))
+        
+        # Icon based on type with colored background
         icon = "🔹"
-        if item['type'] == 'checkin': icon = "📲"
-        elif item['type'] == 'sale': icon = "💳"
-        elif item['type'] == 'booking': icon = "📅"
+        accent_color = "#666666"  # Default gray
+        if item['type'] == 'checkin':
+            icon = "📲"
+            accent_color = "#3B8ED0"  # Blue for checkin
+        elif item['type'] == 'sale':
+            icon = "💳"
+            accent_color = "#2CC985"  # Green for sale
+        elif item['type'] == 'booking':
+            icon = "📅"
+            accent_color = "#E5B00D"  # Gold for booking
         
-        ctk.CTkLabel(frame, text=icon, font=("Segoe UI Emoji", 16)).pack(side="left", padx=(5, 10), anchor="n")
+        # Icon with colored background
+        icon_frame = ctk.CTkFrame(header_frame, fg_color=accent_color, width=32, height=32, corner_radius=6)
+        icon_frame.pack(side="left")
+        icon_frame.pack_propagate(False)
+        ctk.CTkLabel(icon_frame, text=icon, font=("Segoe UI Emoji", 14)).pack(expand=True)
         
-        content_frame = ctk.CTkFrame(frame, fg_color="transparent")
-        content_frame.pack(side="left", fill="x", expand=True)
+        # User Name
+        name_text_color = "white" if item['type'] != 'checkin' else "#1976D2"
+        name_label = ctk.CTkLabel(
+            header_frame, 
+            text=item['user_name'], 
+            font=("Roboto", 16, "bold"), 
+            text_color=name_text_color
+        )
+        name_label.pack(side="left", padx=(12, 0))
         
-        ctk.CTkLabel(content_frame, text=item['user_name'], font=("Roboto", 13, "bold")).pack(anchor="w")
-        ctk.CTkLabel(content_frame, text=item['description'], font=("Roboto", 12), text_color="gray70").pack(anchor="w")
-        
-        # Time ago logic could be added here, for now just show time
+        # Time info
         dt = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-        time_str = dt.strftime("%H:%M")
-        ctk.CTkLabel(frame, text=time_str, font=("Roboto", 11), text_color="gray60").pack(side="right", padx=5, anchor="n")
+        date_part = dt.strftime('%Y-%m-%d')
+        time_part = dt.strftime('%H:%M')
+        time_display = f"{time_part} • {date_part}"
+        time_text_color = "gray70" if item['type'] != 'checkin' else "#424242"
+        time_label = ctk.CTkLabel(
+            header_frame, 
+            text=time_display, 
+            font=("Roboto", 14), 
+            text_color=time_text_color
+        )
+        time_label.pack(side="left", padx=(15, 0))
+        
+        # Description
+        desc_text_color = "gray70" if item['type'] != 'checkin' else "#616161"
+        ctk.CTkLabel(content, text=item['description'], font=("Roboto", 12), text_color=desc_text_color, anchor="w").pack(fill="x")

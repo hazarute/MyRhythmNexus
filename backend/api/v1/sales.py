@@ -3,6 +3,7 @@ import zoneinfo
 from typing import List, Optional, cast
 import secrets
 import math
+from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import delete, func
 from sqlalchemy.exc import DBAPIError
@@ -33,6 +34,7 @@ from backend.schemas.sales import (
     PaymentPagination,
 )
 from backend.core.date_utils import calculate_end_date
+from backend.core.time_utils import get_turkey_time
 
 router = APIRouter()
 
@@ -60,10 +62,21 @@ async def create_subscription(
     end_date = calculate_end_date(sub_in.start_date, str(plan.cycle_period), repeat_weeks)
 
     # 3. Create Subscription
+    # Determine purchase price: use override if provided, otherwise package price
+    purchase_price = sub_in.purchase_price_override if sub_in.purchase_price_override is not None else package.price
+    
+    # Validate purchase_price_override if provided
+    if sub_in.purchase_price_override is not None:
+        if sub_in.purchase_price_override <= 0:
+            raise HTTPException(status_code=400, detail="Purchase price must be greater than 0")
+        package_price = float(package.price)
+        if float(sub_in.purchase_price_override) > package_price * 2:
+            raise HTTPException(status_code=400, detail="Purchase price cannot be more than double the package price")
+    
     subscription = Subscription(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
-        purchase_price=package.price,
+        purchase_price=purchase_price,
         start_date=sub_in.start_date,
         end_date=end_date,
         status=sub_in.status,
@@ -97,8 +110,7 @@ async def create_subscription(
     # 6. Update User updated_at timestamp
     member_user = await db.get(User, sub_in.member_user_id)
     if member_user:
-        turkey_tz = zoneinfo.ZoneInfo('Europe/Istanbul')
-        member_user.updated_at = datetime.now(turkey_tz)
+        member_user.updated_at = get_turkey_time()
         db.add(member_user)
 
     try:
@@ -331,10 +343,21 @@ async def create_subscription_with_events(
     end_date = calculate_end_date(sub_in.start_date, str(plan.cycle_period), repeat_weeks)
 
     # 3. Create Subscription
+    # Determine purchase price: use override if provided, otherwise package price
+    purchase_price = sub_in.purchase_price_override if sub_in.purchase_price_override is not None else package.price
+    
+    # Validate purchase_price_override if provided
+    if sub_in.purchase_price_override is not None:
+        if sub_in.purchase_price_override <= 0:
+            raise HTTPException(status_code=400, detail="Purchase price must be greater than 0")
+        package_price = float(package.price)
+        if float(sub_in.purchase_price_override) > package_price * 2:
+            raise HTTPException(status_code=400, detail="Purchase price cannot be more than double the package price")
+    
     subscription = Subscription(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
-        purchase_price=package.price,
+        purchase_price=purchase_price,
         start_date=sub_in.start_date,
         end_date=end_date,
         status=sub_in.status,
@@ -368,8 +391,7 @@ async def create_subscription_with_events(
     # 6. Update User updated_at timestamp
     member_user = await db.get(User, sub_in.member_user_id)
     if member_user:
-        turkey_tz = zoneinfo.ZoneInfo('Europe/Istanbul')
-        member_user.updated_at = datetime.now(turkey_tz)
+        member_user.updated_at = get_turkey_time()
         db.add(member_user)
 
     # 7. Create ClassEvent(s) if requested

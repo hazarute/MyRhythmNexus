@@ -49,12 +49,11 @@ async def web_index(
     if not user:
         return templates.TemplateResponse("login.html", {"request": request})
     
-    # Find active subscriptions
+    # Find all subscriptions for this member and split active/expired in code
     query = (
         select(Subscription)
         .where(
-            Subscription.member_user_id == user.id,
-            Subscription.status == SubscriptionStatus.active
+            Subscription.member_user_id == user.id
         )
         .options(
             selectinload(Subscription.package).selectinload(ServicePackage.offering),
@@ -65,14 +64,18 @@ async def web_index(
     )
     result = await db.execute(query)
     subscriptions = result.scalars().all()
-    
-    if len(subscriptions) == 1:
-        # If only one card, redirect to detail
-        return RedirectResponse(url=f"/web/cards/{subscriptions[0].id}", status_code=status.HTTP_302_FOUND)
-    
+
+    # Split into active and expired lists so template can show past subscriptions separately
+    active_subs = [s for s in subscriptions if getattr(s, "status", None) == SubscriptionStatus.active]
+    expired_subs = [s for s in subscriptions if getattr(s, "status", None) == SubscriptionStatus.expired]
+
+    if len(active_subs) == 1 and not expired_subs:
+        # If only one active card and no expired ones, redirect to detail
+        return RedirectResponse(url=f"/web/cards/{active_subs[0].id}", status_code=status.HTTP_302_FOUND)
+
     return templates.TemplateResponse(
         "my_cards.html", 
-        {"request": request, "user": user, "subscriptions": subscriptions}
+        {"request": request, "user": user, "subscriptions_active": active_subs, "subscriptions_expired": expired_subs}
     )
 
 @router.get("/cards/{subscription_id}", response_class=HTMLResponse)

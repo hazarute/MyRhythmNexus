@@ -6,7 +6,10 @@ from datetime import datetime, timedelta
 import zoneinfo
 
 from backend.core.database import get_db
+from backend.core.time_utils import get_turkey_time
 from backend.models.user import User, Role
+from backend.models.operation import Subscription, SubscriptionStatus
+from backend.models.service import PlanDefinition, ServicePackage
 
 
 class UserActivityScheduler:
@@ -17,8 +20,7 @@ class UserActivityScheduler:
 
     async def deactivate_inactive_members(self):
         """2 aydan fazla paket satın almamış MEMBER rolü kullanıcıları inaktif yap"""
-        turkey_tz = zoneinfo.ZoneInfo('Europe/Istanbul')
-        cutoff_date = datetime.now(turkey_tz) - timedelta(days=60)  # 2 ay = 60 gün
+        cutoff_date = get_turkey_time() - timedelta(days=60)  # 2 ay = 60 gün
 
         async for db in get_db():
             try:
@@ -46,15 +48,82 @@ class UserActivityScheduler:
                     await db.execute(update_query)
                     await db.commit()
 
-                    print(f"[{datetime.now(turkey_tz)}] Deactivated {len(inactive_user_ids)} inactive members")
+                    print(f"[{get_turkey_time()}] Deactivated {len(inactive_user_ids)} inactive members")
                     print(f"Inactive member IDs: {inactive_user_ids}")
 
                 else:
-                    print(f"[{datetime.now(turkey_tz)}] No inactive members found")
+                    print(f"[{get_turkey_time()}] No inactive members found")
 
             except Exception as e:
                 await db.rollback()
-                print(f"[{datetime.now(turkey_tz)}] Error deactivating members: {e}")
+                print(f"[{get_turkey_time()}] Error deactivating members: {e}")
+
+    async def expire_subscriptions(self):
+        """Süresi dolmuş veya hakkı bitmiş abonelikleri expired olarak işaretle"""
+        now = get_turkey_time()
+
+        async for db in get_db():
+            try:
+                expired_count = 0
+
+                # 1. Zaman bazlı kontrol: end_date geçmiş olanlar
+                time_based_expired = (
+                    select(Subscription.id)
+                    .where(
+                        Subscription.status == SubscriptionStatus.active,
+                        Subscription.end_date < now
+                    )
+                )
+
+                time_result = await db.execute(time_based_expired)
+                time_expired_ids = time_result.scalars().all()
+
+                if time_expired_ids:
+                    time_update = (
+                        update(Subscription)
+                        .where(Subscription.id.in_(time_expired_ids))
+                        .values(status=SubscriptionStatus.expired)
+                    )
+                    await db.execute(time_update)
+                    expired_count += len(time_expired_ids)
+                    print(f"[{now}] Expired {len(time_expired_ids)} subscriptions due to end_date")
+
+                # 2. Seans bazlı kontrol: used_sessions >= sessions_granted olanlar
+                # Correctly join ServicePackage -> PlanDefinition to evaluate session-based expiry
+                session_based_expired = (
+                    select(Subscription.id)
+                    .join(Subscription.package)
+                    .join(PlanDefinition, ServicePackage.plan_id == PlanDefinition.id)
+                    .where(
+                        Subscription.status == SubscriptionStatus.active,
+                        PlanDefinition.access_type == "SESSION_BASED",
+                        PlanDefinition.sessions_granted.isnot(None),
+                        Subscription.used_sessions >= PlanDefinition.sessions_granted
+                    )
+                )
+
+                session_result = await db.execute(session_based_expired)
+                session_expired_ids = session_result.scalars().all()
+
+                if session_expired_ids:
+                    session_update = (
+                        update(Subscription)
+                        .where(Subscription.id.in_(session_expired_ids))
+                        .values(status=SubscriptionStatus.expired)
+                    )
+                    await db.execute(session_update)
+                    expired_count += len(session_expired_ids)
+                    print(f"[{now}] Expired {len(session_expired_ids)} subscriptions due to used sessions")
+
+                if expired_count > 0:
+                    await db.commit()
+                    print(f"[{now}] Total expired subscriptions: {expired_count}")
+                else:
+                    print(f"[{now}] No subscriptions to expire")
+
+            except Exception as e:
+                await db.rollback()
+                print(f"[{now}] Error expiring subscriptions: {e}")
 
     def start(self):
         """Scheduler'ı başlat"""
@@ -66,10 +135,20 @@ class UserActivityScheduler:
             name="Deactivate Inactive Members",
             timezone=zoneinfo.ZoneInfo('Europe/Istanbul')
         )
+        
+        # Her gün saat 02:30'da çalıştır (Türkiye saati) - Abonelik expiry kontrolü
+        self.scheduler.add_job(
+            self.expire_subscriptions,
+            CronTrigger(hour=2, minute=30),
+            id="expire_subscriptions",
+            name="Expire Subscriptions",
+            timezone=zoneinfo.ZoneInfo('Europe/Istanbul')
+        )
+        
         self.scheduler.start()
-        print("UserActivityScheduler started - will run daily at 02:00 Turkey time")
+        print("UserActivityScheduler started - will run daily at 02:00 and 02:30 Turkey time")
 
     def stop(self):
         """Scheduler'ı durdur"""
         self.scheduler.shutdown()
-        print("UserActivityScheduler stopped")
+        print("UserActivityScheduler stopped - both member deactivation and subscription expiry jobs stopped")

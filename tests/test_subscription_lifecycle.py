@@ -489,3 +489,181 @@ async def test_subscription_renewal(client: AsyncClient, db_session):
     active_subs = [s for s in subscriptions if s["status"] == "active"]
     assert len(active_subs) == 1
     assert active_subs[0]["id"] == renewal_sub["id"]
+
+@pytest.mark.asyncio
+async def test_create_subscription_with_price_override(client: AsyncClient, db_session):
+    """Test creating subscription with custom purchase price override"""
+
+    # Setup roles and users
+    member_role = Role(role_name="MEMBER")
+    admin_role = Role(role_name="ADMIN")
+    db_session.add(member_role)
+    db_session.add(admin_role)
+    await db_session.commit()
+
+    # Create admin user
+    admin_user = User(
+        email="admin_override@test.com",
+        first_name="Admin",
+        last_name="Override",
+        phone_number="5550000004",
+        password_hash=hash_password("admin123"),
+        is_active=True
+    )
+    admin_user.roles.append(admin_role)
+    db_session.add(admin_user)
+
+    # Create member
+    member_data = {
+        "email": "member_override@test.com",
+        "first_name": "Test",
+        "last_name": "Override",
+        "phone_number": "5551111114",
+        "password": "member123",
+        "is_active": True
+    }
+    response = await client.post("/api/v1/members/", json=member_data)
+    assert response.status_code == 200
+    member = response.json()
+    member_id = member["id"]
+
+    await db_session.commit()
+
+    # Login as admin
+    login_response = await client.post("/api/v1/auth/login/access-token",
+                                     data={"username": "admin_override@test.com", "password": "admin123"})
+    assert login_response.status_code == 200
+    admin_token = login_response.json()["access_token"]
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    # Create service structure
+    # Category
+    cat_resp = await client.post("/api/v1/services/categories",
+                               json={"name": "Override Test", "description": "Price Override Test"},
+                               headers=headers)
+    assert cat_resp.status_code == 200
+    category_id = cat_resp.json()["id"]
+
+    # Offering
+    off_resp = await client.post("/api/v1/services/offerings",
+                               json={
+                                   "name": "Override Offering",
+                                   "description": "Test offering",
+                                   "category_id": category_id,
+                                   "default_duration_minutes": 60
+                               }, headers=headers)
+    assert off_resp.status_code == 200
+    offering_id = off_resp.json()["id"]
+
+    # Plan
+    plan_resp = await client.post("/api/v1/services/plans",
+                                json={
+                                    "name": "Override Plan",
+                                    "sessions_granted": 10,
+                                    "validity_days": 30,
+                                    "cycle_period": "monthly"
+                                }, headers=headers)
+    assert plan_resp.status_code == 200
+    plan_id = plan_resp.json()["id"]
+
+    # Package with price 500
+    pkg_resp = await client.post("/api/v1/services/packages",
+                               json={
+                                   "name": "Override Package",
+                                   "price": 500.0,
+                                   "category_id": category_id,
+                                   "offering_id": offering_id,
+                                   "plan_id": plan_id,
+                                   "is_active": True
+                               }, headers=headers)
+    assert pkg_resp.status_code == 200
+    package_id = pkg_resp.json()["id"]
+
+    # Test 1: Create subscription without price override (should use package price)
+    start_date = date.today()
+    sub_data_normal = {
+        "member_user_id": member_id,
+        "package_id": package_id,
+        "start_date": str(start_date),
+        "status": "active",
+        "initial_payment": {
+            "amount_paid": 500.0,
+            "payment_method": "KREDI_KARTI"
+        }
+    }
+
+    sub_resp_normal = await client.post("/api/v1/sales/subscriptions", json=sub_data_normal, headers=headers)
+    assert sub_resp_normal.status_code == 200
+    subscription_normal = sub_resp_normal.json()
+    assert subscription_normal["purchase_price"] == "500.00"  # Should use package price
+
+    # Test 2: Create subscription with price override (discounted price)
+    sub_data_override = {
+        "member_user_id": member_id,
+        "package_id": package_id,
+        "start_date": str(start_date),
+        "status": "active",
+        "purchase_price_override": 400.0,  # Discounted price
+        "initial_payment": {
+            "amount_paid": 400.0,
+            "payment_method": "NAKIT"
+        }
+    }
+
+    sub_resp_override = await client.post("/api/v1/sales/subscriptions", json=sub_data_override, headers=headers)
+    assert sub_resp_override.status_code == 200
+    subscription_override = sub_resp_override.json()
+    assert subscription_override["purchase_price"] == "400.00"  # Should use override price
+
+    # Test 3: Try invalid price override (negative)
+    sub_data_invalid = {
+        "member_user_id": member_id,
+        "package_id": package_id,
+        "start_date": str(start_date),
+        "status": "active",
+        "purchase_price_override": -100.0,  # Invalid negative price
+        "initial_payment": {
+            "amount_paid": 500.0,
+            "payment_method": "NAKIT"
+        }
+    }
+
+    sub_resp_invalid = await client.post("/api/v1/sales/subscriptions", json=sub_data_invalid, headers=headers)
+    assert sub_resp_invalid.status_code == 400
+    assert "must be greater than 0" in sub_resp_invalid.json()["detail"]
+
+    # Test 4: Try price override too high (more than double)
+    sub_data_too_high = {
+        "member_user_id": member_id,
+        "package_id": package_id,
+        "start_date": str(start_date),
+        "status": "active",
+        "purchase_price_override": 1200.0,  # More than double (500 * 2 = 1000)
+        "initial_payment": {
+            "amount_paid": 1200.0,
+            "payment_method": "NAKIT"
+        }
+    }
+
+    sub_resp_too_high = await client.post("/api/v1/sales/subscriptions", json=sub_data_too_high, headers=headers)
+    assert sub_resp_too_high.status_code == 400
+    assert "cannot be more than double" in sub_resp_too_high.json()["detail"]
+
+    # Test 5: Test with subscriptions-with-events endpoint
+    sub_data_with_events = {
+        "member_user_id": member_id,
+        "package_id": package_id,
+        "start_date": str(start_date),
+        "status": "active",
+        "purchase_price_override": 450.0,  # Another valid override
+        "initial_payment": {
+            "amount_paid": 450.0,
+            "payment_method": "HAVALE_EFT"
+        }
+        # No class_events for this test
+    }
+
+    sub_resp_with_events = await client.post("/api/v1/sales/subscriptions-with-events", json=sub_data_with_events, headers=headers)
+    assert sub_resp_with_events.status_code == 200
+    subscription_with_events = sub_resp_with_events.json()
+    assert subscription_with_events["purchase_price"] == "450.00"  # Should use override price

@@ -52,7 +52,8 @@ class SubmissionHandler:
         return True, ""
     
     def build_payload(self, member: Optional[Dict], package: Optional[Dict], 
-                     payment_data: Optional[Dict], start_date, class_events: Optional[Any] = None) -> Optional[Dict]:
+                     payment_data: Optional[Dict], start_date, class_events: Optional[Any] = None, 
+                     price_override: Optional[float] = None) -> Optional[Dict]:
         """
         API gönderimi için payload oluştur.
         
@@ -105,6 +106,10 @@ class SubmissionHandler:
                 payload["class_events"] = class_events
             # For TIME_BASED: no class_events needed, participants scan QR anytime
             
+            # Add price override if provided
+            if price_override is not None:
+                payload["purchase_price_override"] = price_override
+            
             return payload
             
         except Exception as e:
@@ -135,7 +140,7 @@ class SubmissionHandler:
     
     def submit_sale(self, member: Optional[Dict], package: Optional[Dict],
                    payment_data: Optional[Dict], start_date,
-                   class_events: Optional[Any] = None) -> bool:
+                   class_events: Optional[Any] = None, price_override: Optional[float] = None) -> bool:
         """
         Satışı baştan sona işle.
         
@@ -151,7 +156,7 @@ class SubmissionHandler:
             return False
         
         # 2. Build payload
-        payload = self.build_payload(member, package, payment_data, start_date, class_events)
+        payload = self.build_payload(member, package, payment_data, start_date, class_events, price_override)
         if not payload:
             return False
         

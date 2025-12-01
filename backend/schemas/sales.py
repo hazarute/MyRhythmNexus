@@ -67,11 +67,13 @@ class SubscriptionBase(BaseModel):
 class SubscriptionCreate(SubscriptionBase):
     # Optional: Create a payment along with subscription
     initial_payment: Optional[PaymentBase] = None
+    purchase_price_override: Optional[Decimal] = None  # Optional: Override package price with custom amount
 
 class SubscriptionCreateWithEvents(SubscriptionBase):
     """Create subscription with optional ClassEvent(s) for SESSION_BASED plans"""
     initial_payment: Optional[PaymentBase] = None
     class_events: Optional[ClassEventCreate] = None  # Optional ClassEvent parameters
+    purchase_price_override: Optional[Decimal] = None  # Optional: Override package price with custom amount
 
 class SubscriptionRead(SubscriptionBase):
     id: str

@@ -21,7 +21,8 @@ class PackagesTab:
                 return
 
             active_subs = [s for s in subs if s.get('status') == 'active']
-            inactive_subs = [s for s in subs if s.get('status') != 'active']
+            # Show only explicitly expired subscriptions in the past list
+            inactive_subs = [s for s in subs if s.get('status') == 'expired']
             
             inactive_subs.sort(key=lambda x: x.get('end_date', ''), reverse=True)
             inactive_subs = inactive_subs[:5]

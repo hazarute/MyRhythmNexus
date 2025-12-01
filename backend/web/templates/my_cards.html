@@ -17,9 +17,10 @@
             <a href="/web/logout" class="text-sm text-red-400 hover:text-red-300">Logout</a>
         </header>
 
-        {% if subscriptions %}
-            <div class="space-y-4">
-                {% for sub in subscriptions %}
+        {% if subscriptions_active %}
+            <h2 class="text-lg font-semibold text-purple-400 mb-2">Aktif Abonelikler</h2>
+            <div class="space-y-4 mb-6">
+                {% for sub in subscriptions_active %}
                     <a href="/web/cards/{{ sub.id }}" class="block bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-purple-500 transition-colors shadow-lg">
                         <div class="flex justify-between items-start">
                             <div>
@@ -33,15 +34,15 @@
                         
                         <div class="mt-4 flex justify-between text-sm text-gray-400">
                             <div>
-                                <span class="block text-xs text-gray-500">Remaining</span>
+                                <span class="block text-xs text-gray-500">Kalan Hak</span>
                                 {% if sub.package.plan and sub.package.plan.sessions_granted and sub.package.plan.sessions_granted > 0 %}
                                     <span class="text-white font-medium">{{ sub.package.plan.sessions_granted - sub.used_sessions }}</span> / {{ sub.package.plan.sessions_granted }}
                                 {% else %}
-                                    <span class="text-white font-medium">Unlimited</span>
+                                    <span class="text-white font-medium">Sınırsız</span>
                                 {% endif %}
                             </div>
                             <div class="text-right">
-                                <span class="block text-xs text-gray-500">Expires</span>
+                                <span class="block text-xs text-gray-500">Bitiş Tarihi</span>
                                 <span class="text-white">{{ sub.end_date.strftime('%Y-%m-%d') }}</span>
                             </div>
                         </div>
@@ -49,9 +50,30 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="text-center py-12 bg-gray-800 rounded-lg">
-                <p class="text-gray-400 mb-2">No active cards found.</p>
-                <p class="text-sm text-gray-500">Please contact the reception to purchase a package.</p>
+            <div class="text-center py-12 bg-gray-800 rounded-lg mb-6">
+                <p class="text-gray-400 mb-2">Aktif aboneliğiniz bulunamadı.</p>
+                <p class="text-sm text-gray-500">Lütfen resepsiyon ile iletişime geçin.</p>
+            </div>
+        {% endif %}
+
+        {# Past subscriptions section #}
+        {% if subscriptions_expired %}
+            <h2 class="text-lg font-semibold text-gray-400 mb-2">Geçmiş Aboneliklerim</h2>
+            <div class="space-y-3">
+                {% for sub in subscriptions_expired %}
+                    <div class="block bg-gray-800 rounded-lg p-3 border border-gray-700 text-gray-300 pointer-events-none cursor-default opacity-80" aria-disabled="true">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-medium text-white">{{ sub.package.name }}</h4>
+                                <p class="text-sm text-gray-400">{{ sub.package.offering.name }}</p>
+                            </div>
+                            <div class="text-right text-sm">
+                                <div class="text-xs text-gray-500">Bitiş Tarihi</div>
+                                <div class="text-white">{{ sub.end_date.strftime('%Y-%m-%d') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         {% endif %}
     </div>

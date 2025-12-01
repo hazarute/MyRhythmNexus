@@ -148,11 +148,17 @@ async def get_dashboard_stats(
         ).order_by(SessionCheckIn.check_in_time.desc()).limit(5)
     )
     for ci in checkins_result.scalars():
-        if ci.member and ci.event and ci.event.template:
+        if ci.member:
+            # Determine description based on whether event exists
+            if ci.event and ci.event.template:
+                description = f"{ci.event.template.name} dersine giriş yaptı"
+            else:
+                description = "Ders dışı giriş yaptı"
+            
             activities.append(ActivityItem(
                 id=f"checkin_{ci.id}",
                 type="checkin",
-                description=f"{ci.event.template.name} dersine giriş yaptı",
+                description=description,
                 timestamp=ci.check_in_time,
                 user_name=f"{ci.member.first_name} {ci.member.last_name}"
             ))

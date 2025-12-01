@@ -247,7 +247,8 @@ class PackageDetailDialog(ctk.CTkToplevel):
                     self.show_success("✅ Giriş Başarılı", 
                                     f"Katılım kaydedildi.\n{response.get('member_name', 'Üye')}\nKalan Hak: {response.get('remaining_sessions', 'N/A')}")
                 except Exception as e:
-                    self.show_error(f"Check-in hatası: {str(e)}")
+                    error_msg = self._parse_error_message(e)
+                    self.show_error(f"Check-in hatası: {error_msg}")
             else:
                 self.show_error("QR token bulunamadı")
                 
@@ -299,3 +300,22 @@ class PackageDetailDialog(ctk.CTkToplevel):
             except Exception as e:
                 print(f"Error during refresh: {e}")
         self.destroy()
+
+    def _parse_error_message(self, exception):
+        """Parse error message from API response"""
+        import json
+        import httpx
+        
+        # Check if it's an HTTP error
+        if isinstance(exception, httpx.HTTPStatusError):
+            try:
+                error_data = json.loads(exception.response.text)
+                if "detail" in error_data:
+                    return error_data["detail"]
+            except json.JSONDecodeError:
+                pass
+            # Fallback to status code and reason
+            return f"HTTP {exception.response.status_code}: {exception.response.reason_phrase}"
+        
+        # Fallback to original message
+        return str(exception)

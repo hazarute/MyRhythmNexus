@@ -4,6 +4,13 @@ from desktop.ui.views.tabs.member_detail_tab import MemberDetailTab
 from desktop.ui.views.dialogs import AddMemberDialog
 from desktop.ui.components.search_bar import SearchBar
 from tkinter import messagebox
+from datetime import datetime, timezone, timedelta
+
+def get_turkey_time():
+    """Get current time in Turkey timezone (UTC+3)"""
+    turkey_tz = timezone(timedelta(hours=3))
+    return datetime.now(turkey_tz)
+
 
 class MembersView(ctk.CTkFrame):
     def __init__(self, master, api_client: ApiClient):
@@ -195,6 +202,16 @@ class MemberListView(ctk.CTkFrame):
                                   command=lambda m=member: self.on_detail(m))
         btn_detail.pack(side="left", padx=(0, 5))
         
+        # Activate button if member is inactive
+        if not member.get('is_active', True):
+            btn_activate = ctk.CTkButton(right_frame, text="✅ Aktif Et", 
+                                        width=110, height=40,
+                                        fg_color="#2CC985", 
+                                        hover_color="#229966",
+                                        font=("Roboto", 14, "bold"),
+                                        command=lambda m=member: self.activate_member(m))
+            btn_activate.pack(side="left", padx=(0, 5))
+        
         # Delete button
         btn_delete = ctk.CTkButton(right_frame, text="🗑️ Sil", 
                                   width=80, height=40,
@@ -213,6 +230,19 @@ class MemberListView(ctk.CTkFrame):
                 self.load_data(self.search_bar.get_search_term())
             except Exception as e:
                 messagebox.showerror("Hata", f"Silme işlemi başarısız: {e}")
+
+    def activate_member(self, member):
+        """Activate member and update timestamp"""
+        try:
+            data = {
+                "is_active": True,
+                "updated_at": get_turkey_time().isoformat()
+            }
+            self.api_client.put(f"/api/v1/members/{member['id']}", json=data)
+            messagebox.showinfo("Başarılı", "Üye aktif edildi.")
+            self.load_data(self.search_bar.get_search_term())
+        except Exception as e:
+            messagebox.showerror("Hata", f"Aktif etme işlemi başarısız: {e}")
 
     def show_add_dialog(self):
         AddMemberDialog(self, self.api_client, self.load_data)

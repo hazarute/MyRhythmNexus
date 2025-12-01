@@ -216,7 +216,8 @@ class PackagesManagementTab(ctk.CTkFrame):
             messagebox.showinfo("Başarılı", "Paket silindi.")
             self.load_packages()
         except Exception as e:
-            messagebox.showerror("Hata", f"Silme başarısız:\n{e}")
+            error_msg = self._parse_error_message(e)
+            messagebox.showerror("Hata", f"Silme başarısız:\n{error_msg}")
 
     def edit_package(self):
         if not self.selected_package_id:
@@ -249,4 +250,23 @@ class PackagesManagementTab(ctk.CTkFrame):
             self.on_packages_updated()
         except Exception as exc:
             print(f"Failed to refresh linked package consumers: {exc}")
+
+    def _parse_error_message(self, exception):
+        """Parse error message from API response"""
+        import json
+        import httpx
+        
+        # Check if it's an HTTP error
+        if isinstance(exception, httpx.HTTPStatusError):
+            try:
+                error_data = json.loads(exception.response.text)
+                if "detail" in error_data:
+                    return error_data["detail"]
+            except json.JSONDecodeError:
+                pass
+            # Fallback to status code and reason
+            return f"HTTP {exception.response.status_code}: {exception.response.reason_phrase}"
+        
+        # Fallback to original message
+        return str(exception)
 

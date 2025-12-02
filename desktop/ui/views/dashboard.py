@@ -114,21 +114,21 @@ class DashboardView(ctk.CTkFrame):
     def load_data(self):
         try:
             data = self.api_client.get("/api/v1/stats/dashboard")
-            
+
             # Update Cards
             self.card_members.configure(text=str(data.get("active_members", 0)))
             self.card_classes.configure(text=str(data.get("todays_classes", 0)))
-            
+
             pending = data.get("pending_payments_amount", 0.0)
             self.card_pending.configure(text=f"₺{pending:,.2f}")
-            
+
             revenue = data.get("monthly_revenue", 0.0)
             self.card_revenue.configure(text=f"₺{revenue:,.2f}")
 
             # Update Schedule List
             for widget in self.schedule_list.winfo_children():
                 widget.destroy()
-                
+
             schedule = data.get("todays_schedule", [])
             if not schedule:
                 ctk.CTkLabel(self.schedule_list, text=_("Bugün ders yok."), text_color="gray").pack(pady=10)
@@ -136,15 +136,17 @@ class DashboardView(ctk.CTkFrame):
                 for item in schedule:
                     self.create_schedule_item(item)
 
-            # Update Activity Feed
+            # Update Activity Feed (Only Check-ins)
             for widget in self.activity_list.winfo_children():
                 widget.destroy()
-                
+
             activities = data.get("recent_activities", [])
-            if not activities:
+            checkin_activities = [item for item in activities if item['type'] == 'checkin']
+
+            if not checkin_activities:
                 ctk.CTkLabel(self.activity_list, text=_("Henüz hareket yok."), text_color="gray").pack(pady=10)
             else:
-                for item in activities:
+                for item in checkin_activities:
                     self.create_activity_item(item)
 
         except Exception as e:
@@ -152,80 +154,104 @@ class DashboardView(ctk.CTkFrame):
             self.card_members.configure(text=_("Err"))
 
     def create_schedule_item(self, item):
-        frame = ctk.CTkFrame(self.schedule_list, fg_color=("gray90", "gray20"))
-        frame.pack(fill="x", pady=2, padx=2)
-        
-        start_dt = datetime.fromisoformat(item['start_time'].replace('Z', '+00:00'))
-        time_str = start_dt.strftime("%H:%M")
-        
-        ctk.CTkLabel(frame, text=time_str, font=("Roboto", 14, "bold"), width=60).pack(side="left", padx=5)
-        ctk.CTkLabel(frame, text=item['title'], font=("Roboto", 14)).pack(side="left", padx=5, expand=True, anchor="w")
-        
-        occupancy_color = "red" if item['occupancy'] == "Dolu" else "green"
-        ctk.CTkLabel(frame, text=item['occupancy'], text_color=occupancy_color, font=("Roboto", 12, "bold")).pack(side="right", padx=10)
+        # Modern card design for schedule items — improved layout
+        frame = ctk.CTkFrame(self.schedule_list, fg_color=("#2B2B2B", "#1E1E1E"), corner_radius=8, border_width=1, border_color="#404040")
+        frame.pack(fill="x", pady=6, padx=6)
+
+        # Main content frame using grid for consistent alignment
+        content = ctk.CTkFrame(frame, fg_color="transparent")
+        content.pack(fill="both", expand=True, padx=12, pady=10)
+        content.grid_columnconfigure(1, weight=1)
+
+        # Time info (fixed-width column)
+        start_dt = datetime.fromisoformat(item.get('start_time', '').replace('Z', '+00:00')) if item.get('start_time') else None
+        time_str = start_dt.strftime("%H:%M") if start_dt else "--:--"
+        time_label = ctk.CTkLabel(
+            content,
+            text=time_str,
+            font=("Roboto", 14, "bold"),
+            text_color="#3B8ED0",
+            width=72,
+            anchor="w"
+        )
+        time_label.grid(row=0, column=0, sticky="w")
+
+        # Details column: title and optional subtitle (instructor/location)
+        details_frame = ctk.CTkFrame(content, fg_color="transparent")
+        details_frame.grid(row=0, column=1, sticky="w")
+
+        title_label = ctk.CTkLabel(
+            details_frame,
+            text=item.get('title', _('Ders')), 
+            font=("Roboto", 14, "bold"),
+            text_color="white"
+        )
+        title_label.pack(anchor="w")
+
+        # Subtitle (use instructor/location if available) — muted color
+        subtitle_parts = []
+        if item.get('instructor'):
+            subtitle_parts.append(item['instructor'])
+        if item.get('location'):
+            subtitle_parts.append(item['location'])
+        subtitle = " • ".join(subtitle_parts) if subtitle_parts else item.get('subtitle', '')
+        if subtitle:
+            ctk.CTkLabel(details_frame, text=subtitle, font=("Roboto", 11), text_color="#A8A8A8").pack(anchor="w", pady=(2,0))
+
+        # Occupancy badge (right aligned)
+        occ_text = item.get('occupancy', '')
+        occ_is_full = occ_text.lower() in ("dolu", "full", "tam")
+        occupancy_color = "#E04F5F" if occ_is_full else "#2CC985"
+        badge_frame = ctk.CTkFrame(content, fg_color=occupancy_color, corner_radius=8)
+        badge_frame.grid(row=0, column=2, sticky="e", padx=(8,0))
+        occ_label = ctk.CTkLabel(badge_frame, text=occ_text or "-", font=("Roboto", 11, "bold"), text_color="white")
+        occ_label.pack(padx=8, pady=6)
 
     def create_activity_item(self, item):
-        # Modern card design for each activity
-        # Different background color for check-ins
-        bg_color = "#2B2B2B"  # Default dark
-        if item['type'] == 'checkin':
-            bg_color = "#698FAA"  # Light blue for check-ins
-        
-        card = ctk.CTkFrame(self.activity_list, fg_color=bg_color, corner_radius=8, border_width=1, border_color="#404040")
-        card.pack(fill="x", pady=3, padx=5)
-        
-        # Main content frame
+        # Improved activity card design with consistent colors
+        card_bg = ("#2B2B2B", "#1E1E1E")
+        card = ctk.CTkFrame(self.activity_list, fg_color=card_bg, corner_radius=8, border_width=1, border_color="#404040")
+        card.pack(fill="x", pady=6, padx=6)
+
+        # Main content using grid: icon | details | time
         content = ctk.CTkFrame(card, fg_color="transparent")
-        content.pack(fill="both", expand=True, padx=12, pady=10)
-        
-        # Header with icon and time
-        header_frame = ctk.CTkFrame(content, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(0, 4))
-        
-        # Icon based on type with colored background
-        icon = "🔹"
-        accent_color = "#666666"  # Default gray
-        if item['type'] == 'checkin':
-            icon = "📲"
-            accent_color = "#3B8ED0"  # Blue for checkin
-        elif item['type'] == 'sale':
-            icon = "💳"
-            accent_color = "#2CC985"  # Green for sale
-        elif item['type'] == 'booking':
-            icon = "📅"
-            accent_color = "#E5B00D"  # Gold for booking
-        
-        # Icon with colored background
-        icon_frame = ctk.CTkFrame(header_frame, fg_color=accent_color, width=32, height=32, corner_radius=6)
-        icon_frame.pack(side="left")
+        content.pack(fill="both", expand=True, padx=10, pady=10)
+        content.grid_columnconfigure(1, weight=1)
+
+        # Icon badge
+        icon_bg = "#3B8ED0"
+        icon_frame = ctk.CTkFrame(content, fg_color=icon_bg, width=38, height=38, corner_radius=8)
+        icon_frame.grid(row=0, column=0, sticky="w")
         icon_frame.pack_propagate(False)
-        ctk.CTkLabel(icon_frame, text=icon, font=("Segoe UI Emoji", 14)).pack(expand=True)
-        
-        # User Name
-        name_text_color = "white" if item['type'] != 'checkin' else "#1976D2"
+        ctk.CTkLabel(icon_frame, text="📲", font=("Segoe UI Emoji", 14), text_color="white").pack(expand=True)
+
+        # Details (name + description)
+        details = ctk.CTkFrame(content, fg_color="transparent")
+        details.grid(row=0, column=1, sticky="w", padx=(10,8))
+
         name_label = ctk.CTkLabel(
-            header_frame, 
-            text=item['user_name'], 
-            font=("Roboto", 16, "bold"), 
-            text_color=name_text_color
+            details,
+            text=item.get('user_name', _('Bilinmiyor')),
+            font=("Roboto", 13, "bold"),
+            text_color="#3B8ED0"
         )
-        name_label.pack(side="left", padx=(12, 0))
-        
-        # Time info
-        dt = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-        date_part = dt.strftime('%Y-%m-%d')
-        time_part = dt.strftime('%H:%M')
-        time_display = f"{time_part} • {date_part}"
-        time_text_color = "gray70" if item['type'] != 'checkin' else "#424242"
-        time_label = ctk.CTkLabel(
-            header_frame, 
-            text=time_display, 
-            font=("Roboto", 14), 
-            text_color=time_text_color
-        )
-        time_label.pack(side="left", padx=(15, 0))
-        
-        # Description
-        desc_text_color = "gray70" if item['type'] != 'checkin' else "black"
-        desc_font = ("Roboto", 12) if item['type'] != 'checkin' else ("Roboto", 14, "bold")
-        ctk.CTkLabel(content, text=item['description'], font=desc_font, text_color=desc_text_color, anchor="w").pack(fill="x")
+        name_label.pack(anchor="w")
+
+        desc_text = item.get('description', '')
+        if desc_text:
+            ctk.CTkLabel(details, text=desc_text, font=("Roboto", 12), text_color="#CFCFCF").pack(anchor="w", pady=(2,0))
+
+        # Time info (right aligned, muted)
+        time_frame = ctk.CTkFrame(content, fg_color="transparent")
+        time_frame.grid(row=0, column=2, sticky="e")
+        if item.get('timestamp'):
+            try:
+                dt = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                date_part = dt.strftime('%Y-%m-%d')
+                time_part = dt.strftime('%H:%M')
+                time_display = f"{time_part}\n{date_part}"
+            except Exception:
+                time_display = item['timestamp']
+        else:
+            time_display = ""
+        ctk.CTkLabel(time_frame, text=time_display, font=("Roboto", 11, "bold"), text_color="#8F8F8F", justify="right").pack()

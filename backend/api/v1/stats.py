@@ -81,7 +81,7 @@ async def get_dashboard_stats(
             func.coalesce(paid_subquery.c.total_paid, 0).label("paid")
         )
         .outerjoin(paid_subquery, Subscription.id == paid_subquery.c.subscription_id)
-        .where(Subscription.status.in_([SubscriptionStatus.active, SubscriptionStatus.pending]))
+        .where(Subscription.status.in_([SubscriptionStatus.active, SubscriptionStatus.pending, SubscriptionStatus.expired]))
     )
     
     debt_result = await db.execute(debt_query)
@@ -232,7 +232,7 @@ async def get_debt_members(db: AsyncSession = Depends(deps.get_db)) -> Any:
             ).label("debt")
         )
         .outerjoin(paid_subquery, Subscription.id == paid_subquery.c.subscription_id)
-        .where(Subscription.status.in_([SubscriptionStatus.active, SubscriptionStatus.pending]))
+        .where(Subscription.status.in_([SubscriptionStatus.active, SubscriptionStatus.pending, SubscriptionStatus.expired]))
         .subquery()
     )
 

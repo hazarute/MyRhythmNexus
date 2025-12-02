@@ -173,3 +173,126 @@ echo %RHYTHM_NEXUS_BACKEND_URL%
 4. **Backup alın**
 5. **Kullanıcılara önceden haber verin**
 6. **Rollback planı hazırlayın**
+
+---
+
+## 💰 Finance Components Kullanım Kılavuzu
+
+### Genel Yapı
+Finance modülü `desktop/ui/components/finance/` altında modüler bileşenlere ayrılmıştır:
+
+```
+finance/
+├── __init__.py
+├── formatters.py      # Para ve tarih formatlaması
+├── styles.py          # Renk ve stil sabitleri
+├── stat_card.py       # İstatistik kartı bileşeni
+├── summary_row.py     # Özet kartları grubu
+├── payment_card.py    # Tek ödeme kartı
+├── payment_list.py    # Ödeme listesi (scrollable)
+└── pagination.py      # Sayfa kontrolü
+```
+
+### Bileşen Kullanımı
+
+#### Formatters
+```python
+from desktop.ui.components.finance.formatters import format_currency, format_date
+
+# Para formatlaması
+price = format_currency(1234.56)  # "1 234.56 TL"
+
+# Tarih formatlaması
+date_str = format_date("2023-12-01T10:30:00Z")  # "01 Dec 2023, 10:30"
+```
+
+#### StatCard
+```python
+from desktop.ui.components.finance.stat_card import StatCard
+
+card = StatCard(
+    parent_frame,
+    title="Aktif Üyeler",
+    icon="👥",
+    accent_color="#3B8ED0",
+    on_click=show_details_function
+)
+card.set_value("150")
+```
+
+#### SummaryRow
+```python
+from desktop.ui.components.finance.summary_row import SummaryRow
+
+stats_specs = [
+    ("active_members", "Aktif Üyeler", "👥", "#3B8ED0", None),
+    ("revenue", "Aylık Ciro", "💰", "#9C27B0", None),
+]
+
+summary = SummaryRow(parent_frame, stats_specs)
+summary.set_value("active_members", "150")
+```
+
+#### PaymentList
+```python
+from desktop.ui.components.finance.payment_list import PaymentList
+
+payment_list = PaymentList(
+    parent_frame,
+    on_detail=show_payment_detail,
+    on_delete=confirm_delete_payment
+)
+
+# Ödemeleri yükle
+payments = api_client.get("/api/v1/sales/payments")
+payment_list.load_items(payments["items"])
+```
+
+#### PaginationControls
+```python
+from desktop.ui.components.finance.pagination import PaginationControls
+
+pagination = PaginationControls(
+    parent_frame,
+    on_prev=prev_page_function,
+    on_next=next_page_function
+)
+pagination.update_page_info(current_page=2, total_pages=5)
+```
+
+### Genişletme Rehberi
+
+#### Yeni Stil Ekleme
+```python
+# styles.py'ye ekle
+NEW_ACCENT_COLOR = "#FF5722"
+NEW_BUTTON_STYLE = ("#FF5722", "#D84315")
+```
+
+#### Yeni Formatter Fonksiyonu
+```python
+# formatters.py'ye ekle
+def format_percentage(value):
+    if value is None:
+        return "-%"
+    try:
+        pct = float(value)
+        return f"{pct:.1f}%"
+    except (ValueError, TypeError):
+        return f"{value}%"
+```
+
+#### Özel Bileşen Oluşturma
+1. `desktop/ui/components/finance/` altına yeni dosya oluştur
+2. `__init__.py`'ye import ekle
+3. `FinanceTab`'da kullan
+4. Test ekle `tests/test_finance_components.py`'ye
+
+### Test Çalıştırma
+```bash
+# Tüm finance testleri
+pytest tests/test_finance_components.py -v
+
+# Belirli test
+pytest tests/test_finance_components.py::test_format_currency
+```

@@ -89,6 +89,78 @@
 - [ ] Testler ve doğrulama (dil değiştirme testi)
 - [ ] Dokümantasyon güncellemek
 
+### Faz 20A: Finance Modülerleştirme (UI Refactor)
+✅ **TAMAMLANDI** - `desktop/ui/views/tabs/finance_tab.py` dosyasını parçalayarak okunabilir, test edilebilir ve yeniden kullanılabilir bileşenlere dönüştürme işlemi başarıyla gerçekleştirildi.
+Amaç: `desktop/ui/views/tabs/finance_tab.py` dosyasını parçalayarak okunabilir, test edilebilir ve yeniden kullanılabilir bileşenlere dönüştürmek. Aşağıdaki liste her bir adımı açık kabul kriterleri ile birlikte içerir.
+
+ÖNEMLİ: Kod koruma gereksinimi — Taşıma esnasında kod bloklarının yapısının korunması
+- Taşınacak kod blokları (fonksiyonlar, sınıflar, metodlar, yardımcı fonksiyonlar) "iç yapı" olarak değiştirilmeden yeni dosyalara taşınacaktır.
+- Fonksiyon/sınıf isimleri ve imzaları korunacaktır (parametre isimleri ve dönüş tipleri değiştirilmeyecektir).
+- Mantıksal değişiklikler (validation, algoritma, API çağrıları) bu refactor sırasında yapılmayacak; yalnızca dosya organizasyonu ve import/ wiring güncellemeleri yapılacaktır.
+- Eğer bir fonksiyonun imzasını değiştirmek gerekiyorsa, bunun ayrı ve açık bir refactor adımı olarak planlanması ve testlerle desteklenmesi gerekir.
+
+Kabul kriteri (kod koruma):
+- Taşınan her öğe için birim test veya manuel testi ile davranışın aynı olduğu doğrulanacaktır.
+- Commit mesajlarında "moved without logic changes" benzeri bir açıklama yer alacaktır.
+
+
+1. Proje yapısı oluşturma
+	- [X] `desktop/ui/components/finance/` klasörünü oluştur
+	- [X] `desktop/ui/views/dialogs/finance/` klasörünü oluştur
+	- Kabul kriteri: Klasörler repo içinde görünür ve boş `__init__.py` dosyaları hazırlanmış.
+
+2. Ortak yardımcılar (low-risk başlangıç)
+	- [X] `desktop/ui/components/finance/formatters.py` oluştur: `format_currency`, `format_date` fonksiyonları
+	- [X] `desktop/ui/components/finance/styles.py` oluştur: renk ve stil sabitleri (örn. `DEBT_CARD_LIGHT`, `CARD_BORDER_COLOR`)
+	- Kabul kriteri: Fonksiyonlar import edilebiliyor ve `finance_tab`'dan çağrılabiliyor.
+
+3. Stat card bileşeni (kritik, düşük risk)
+	- [X] `desktop/ui/components/finance/stat_card.py` oluştur: `StatCard(ctk.CTkFrame)` sınıfı
+	- İçerik: başlık, ikon, değer label'ı, hover efektleri, `set_value()` ve `on_click` callback desteği
+	- Kabul kriteri: `FinanceTab` içinde orijinal kart yerine `StatCard` kullanılabiliyor; görsel farklılık minimal.
+
+4. Özet satırı ve kart düzenleyici
+	- [X] `desktop/ui/components/finance/summary_row.py` oluştur: bir dizi `StatCard` oluşturup gridleyen yardımcı
+	- Kabul kriteri: Mevcut özet kartları aynı sırada ve boyutta render eder.
+
+5. Payment card ve liste bileşenleri
+	- [X] `desktop/ui/components/finance/payment_card.py` oluştur: `PaymentCard` sınıfı (tek ödeme görünümü)
+	- [X] `desktop/ui/components/finance/payment_list.py` oluştur: `PaymentList` (scrollable, boş durum, load_items(items))
+	- Kabul kriteri: Ödeme kartları `PaymentCard` ile render ediliyor ve detay / silme callback'leri `FinanceTab`'a iletilebiliyor.
+
+6. Pagination bileşeni
+	- [X] `desktop/ui/components/finance/pagination.py` oluştur: `PaginationControls` (prev/next + sayfa label)
+	- Kabul kriteri: Sayfa değişiklik eventi `FinanceTab` tarafından yakalanıp API çağrısı tetiklenebiliyor.
+
+7. Dialog'ların yeniden düzenlenmesi
+	- [X] `desktop/ui/views/dialogs/finance/debt_members_dialog.py` taşı/yeniden düzenle
+	- [X] `desktop/ui/views/dialogs/finance/debt_payment_dialog.py` (varsa) taşı
+	- [X] `desktop/ui/views/dialogs/finance/payment_detail_dialog.py` taşı (varsa)
+	- Kabul kriteri: Dialog'lar aynı import yollarıyla veya yeni yollarla açılabiliyor; davranış korunuyor.
+
+8. `finance_tab.py`'ı basitleştirme (orchestrator)
+	- [X] `finance_tab.py`'ı sadece API çağrıları yapacak, komponentleri instantiate edip callback'leri bağlayacak şekilde yeniden yaz
+	- Kabul kriteri: Tüm UI davranışları (load_data, load_summary_data, show_debt_members, confirm_delete_payment) korunur.
+
+9. Testler ve manuel doğrulama
+	- [X] Manual smoke-test adımları yaz: özet kartları, borçlu üyeler dialog, ödeme detay, silme, sayfalama
+	- [X] Otomatik test için küçük bir test dosyası: `tests/test_finance_components.py` (opsiyonel başlangıç)
+	- Kabul kriteri: Manual testler başarılı, temel otomasyon testleri çalışır.
+
+10. Dokümantasyon ve stil rehberi
+	- [X] `docs/DESKTOP-WORKFLOW.md` veya `docs/` altına kısa bir bölüm ekle: finance componentleri nasıl kullanılır, nasıl genişletilir
+	- Kabul kriteri: Geliştiriciler yeni componenti hızlıca kullanabilir.
+
+11. Migration/Refactor commit stratejisi
+	- [X] Her adım için ayrı commit (ör: `finance: add formatters and styles`, `finance: extract StatCard`, ...)
+	- [ ] PR açıklamasında değişikliklerin kısa özeti ve manuel test adımları yazılacak
+
+12. Ek iyileştirmeler (opsiyonel)
+	- [ ] i18n ile entegrasyon: bileşenlerde `text` alanları `_()` wrapper ile kullanılmaya hazır hale getir
+	- [ ] Tema desteği: `styles.py` üzerinden light/dark temaya uyum
+
+Tahmini süre: 2–6 saat (adım büyüklüğüne göre). İlk düşük-risk adım önerisi: `formatters.py` ve `stat_card.py` çıkartması — bunu hemen uygulayabilirim.
+
 ## Bilinen Hatalar / Notlar
 - `desktop/ui` altında modüler bir klasörleme (views/members, views/sales vb.) yapılarak ilerlenecek.
 - Otomatik scheduler sistemi production'da test edilecek.

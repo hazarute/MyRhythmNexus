@@ -7,8 +7,8 @@ from .add_member_dialog import AddMemberDialog
 from .update_member_dialog import UpdateMemberDialog
 from .update_password_dialog import UpdatePasswordDialog
 from .add_measurement_dialog import AddMeasurementDialog
-from .debt_payment_dialog import DebtPaymentDialog
-from .debt_members_dialog import DebtMembersDialog
+from .finance.debt_payment_dialog import DebtPaymentDialog
+from .finance.debt_members_dialog import DebtMembersDialog
 from .package_detail_dialog import PackageDetailDialog
 from .add_package_dialog import AddPackageDialog
 from .add_category_dialog import AddCategoryDialog

@@ -3,7 +3,7 @@ from tkinter import messagebox
 from typing import Callable, Optional
 
 from desktop.core.api_client import ApiClient
-from desktop.ui.views.dialogs.debt_payment_dialog import DebtPaymentDialog
+from .debt_payment_dialog import DebtPaymentDialog
 
 
 class DebtMembersDialog(ctk.CTkToplevel):

@@ -6,6 +6,7 @@ Handles member list display, search, and selection state.
 """
 
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Dict, List, Optional, Callable
 from desktop.ui.components.search_bar import SearchBar
 
@@ -56,7 +57,7 @@ class MemberSelector(ctk.CTkFrame):
         header.pack(fill="x", padx=15, pady=15)
         header.pack_propagate(False)
         
-        ctk.CTkLabel(header, text="👥 Üye Seçimi", 
+        ctk.CTkLabel(header, text=_("👥 Üye Seçimi"), 
                     font=("Roboto", 20, "bold"), 
                     text_color="white").pack(expand=True)
         
@@ -66,7 +67,7 @@ class MemberSelector(ctk.CTkFrame):
         
         self.search_bar = SearchBar(
             search_container,
-            placeholder="🔍 İsim, soyisim veya telefon...",
+            placeholder=_("🔍 İsim, soyisim veya telefon..."),
             on_search=self.search_members,
             button_text="Ara",
             height=40
@@ -76,24 +77,6 @@ class MemberSelector(ctk.CTkFrame):
         # Members list
         self.list_members = ctk.CTkScrollableFrame(self, fg_color="transparent")
         self.list_members.pack(fill="both", expand=True, padx=15, pady=(0, 10))
-        
-        # Selected member indicator
-        self.selected_member_card = ctk.CTkFrame(
-            self, 
-            fg_color=("#E8F5E9", "#1B5E20"), 
-            corner_radius=10, 
-            height=60
-        )
-        self.selected_member_card.pack(fill="x", padx=15, pady=(0, 15))
-        self.selected_member_card.pack_propagate(False)
-        
-        self.lbl_selected_member = ctk.CTkLabel(
-            self.selected_member_card, 
-            text="Seçili Üye: Henüz seçilmedi", 
-            font=("Roboto", 14, "bold"),
-            text_color=("gray", "#4CAF50")
-        )
-        self.lbl_selected_member.pack(expand=True)
     
     def search_members(self, term: str = ""):
         """Search for members using the search term"""
@@ -117,9 +100,9 @@ class MemberSelector(ctk.CTkFrame):
         if not members:
             empty_frame = ctk.CTkFrame(self.list_members, fg_color="transparent")
             empty_frame.pack(expand=True)
-            ctk.CTkLabel(empty_frame, text="🔍", 
+            ctk.CTkLabel(empty_frame, text=_("🔍"), 
                        font=("Segoe UI Emoji", 48)).pack(pady=(20, 10))
-            ctk.CTkLabel(empty_frame, text="Sonuç bulunamadı", 
+            ctk.CTkLabel(empty_frame, text=_("Sonuç bulunamadı"), 
                        font=("Roboto", 16),
                        text_color=("gray50", "gray60")).pack()
             return
@@ -155,10 +138,10 @@ class MemberSelector(ctk.CTkFrame):
         name_row.bind("<Button-1>", lambda e, m=member: self.select_member(m))
         
         # Name
-        name = f"{member['first_name']} {member['last_name']}"
+        name = _("{} {}").format(member['first_name'], member['last_name'])
         lbl_name = ctk.CTkLabel(
             name_row, 
-            text=f"👤 {name}", 
+            text=_("👤 {}").format(name), 
             font=("Roboto", 16, "bold"), 
             anchor="w", 
             cursor="hand2"
@@ -169,7 +152,7 @@ class MemberSelector(ctk.CTkFrame):
         # Status badge (if available)
         if 'is_active' in member:
             is_active = member.get('is_active', True)
-            status_text = "✅ Aktif" if is_active else "⛔ Pasif"
+            status_text = _("✅ Aktif") if is_active else _("⛔ Pasif")
             status_color = ("#2CC985", "#229966") if is_active else ("#E74C3C", "#C0392B")
             
             lbl_status = ctk.CTkLabel(
@@ -192,7 +175,7 @@ class MemberSelector(ctk.CTkFrame):
         if email:
             lbl_email = ctk.CTkLabel(
                 info_frame, 
-                text=f"📧 {email}", 
+                text=_("📧 {}").format(email), 
                 font=("Roboto", 12),
                 text_color=("#555555", "#AAAAAA"),
                 anchor="w", 
@@ -206,7 +189,7 @@ class MemberSelector(ctk.CTkFrame):
         if phone:
             lbl_phone = ctk.CTkLabel(
                 info_frame, 
-                text=f"📞 {phone}", 
+                text=_("📞 {}").format(phone), 
                 font=("Roboto", 12),
                 text_color=("#555555", "#AAAAAA"),
                 anchor="w", 
@@ -223,7 +206,7 @@ class MemberSelector(ctk.CTkFrame):
         # Selection button
         btn_select = ctk.CTkButton(
             right_frame, 
-            text="👆 Seç", 
+            text=_("👆 Seç"), 
             width=80, 
             height=40,
             fg_color="#3B8ED0", 
@@ -238,11 +221,6 @@ class MemberSelector(ctk.CTkFrame):
     def select_member(self, member: Dict):
         """Select a member and update UI"""
         self.selected_member = member
-        self.lbl_selected_member.configure(
-            text=f"✅ {member['first_name']} {member['last_name']}", 
-            text_color=("white", "white")
-        )
-        self.selected_member_card.configure(fg_color=("#2CC985", "#1B5E20"))
         
         # Highlight selected card with border
         for uid, member_card in self.member_buttons.items():
@@ -266,11 +244,6 @@ class MemberSelector(ctk.CTkFrame):
     def reset(self):
         """Reset selection state"""
         self.selected_member = None
-        self.lbl_selected_member.configure(
-            text="Seçili Üye: Henüz seçilmedi", 
-            text_color=("gray", "#4CAF50")
-        )
-        self.selected_member_card.configure(fg_color=("#E8F5E9", "#1B5E20"))
         
         # Reset all card borders
         for member_card in self.member_buttons.values():

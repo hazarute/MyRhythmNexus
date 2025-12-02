@@ -6,6 +6,7 @@ Supports configurable min/max values, step size, and callbacks.
 """
 
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Optional, Callable
 
 

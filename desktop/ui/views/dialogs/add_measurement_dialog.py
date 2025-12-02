@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -12,7 +13,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         self.member_data = member_data
         self.on_success = on_success
         
-        self.title("Yeni Vücut Ölçümü")
+        self.title(_("Yeni Vücut Ölçümü"))
         self.geometry("700x750")
         
         self.lift()
@@ -26,7 +27,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         try:
             self.measurement_types = self.api_client.get("/api/v1/measurements/types")
         except Exception as e:
-            messagebox.showerror("Hata", f"Ölçüm tipleri yüklenemedi: {e}")
+            messagebox.showerror(_("Hata"), _("Ölçüm tipleri yüklenemedi: {err}").format(err=str(e)))
             self.destroy()
             return
         
@@ -38,7 +39,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         header_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         header_frame.pack(fill="x", padx=20, pady=(20, 10))
         
-        ctk.CTkLabel(header_frame, text="📏 Yeni Vücut Ölçümü", 
+        ctk.CTkLabel(header_frame, text=_("📏 Yeni Vücut Ölçümü"), 
                     font=("Roboto", 22, "bold")).pack()
         
         member_name = f"{member_data.get('first_name')} {member_data.get('last_name')}"
@@ -51,10 +52,10 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         
         # Group measurements by category
         categories = [
-            ("🏋️ Genel Vücut Ölçüleri", ["height", "weight"]),
-            ("💪 Üst Vücut", ["neck", "shoulder", "chest", "arm_bicep", "forearm"]),
-            ("🫀 Gövde", ["waist", "love_handle", "hip", "hip_seat"]),
-            ("🦵 Alt Vücut", ["thigh", "calf"])
+            (_("🏋️ Genel Vücut Ölçüleri"), ["height", "weight"]),
+            (_("💪 Üst Vücut"), ["neck", "shoulder", "chest", "arm_bicep", "forearm"]),
+            (_("🫀 Gövde"), ["waist", "love_handle", "hip", "hip_seat"]),
+            (_("🦵 Alt Vücut"), ["thigh", "calf"])
         ]
         
         for category_name, type_keys in categories:
@@ -69,7 +70,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
                     self.create_measurement_input(scroll_frame, mt)
         
         # Notes Section
-        ctk.CTkLabel(scroll_frame, text="📝 Notlar", 
+        ctk.CTkLabel(scroll_frame, text=_("📝 Notlar"), 
                     font=("Roboto", 16, "bold"), 
                     text_color="#3B8ED0").pack(anchor="w", pady=(15, 10), padx=10)
         
@@ -80,10 +81,10 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=15, padx=20)
         
-        ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                      hover_color="#333333", width=100, 
                      command=self.destroy).pack(side="left", padx=10, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", fg_color="#2CC985", 
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), fg_color="#2CC985", 
                      hover_color="#229966", width=100, 
                      command=self.save).pack(side="left", padx=10, expand=True)
     
@@ -99,7 +100,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         
         # Entry
         entry = ctk.CTkEntry(row, height=32, font=("Roboto", 13), 
-                            width=120, placeholder_text="0.0")
+                            width=120, placeholder_text=_("0.0"))
         entry.pack(side="left", padx=5)
         
         # Unit Label
@@ -119,17 +120,17 @@ class AddMeasurementDialog(ctk.CTkToplevel):
                 try:
                     value = float(value_str)
                     if value <= 0:
-                        messagebox.showwarning("Geçersiz Değer", 
-                            "Ölçüm değerleri pozitif olmalıdır.")
+                        messagebox.showwarning(_("Geçersiz Değer"), 
+                            _("Ölçüm değerleri pozitif olmalıdır."))
                         return
                     values.append({"type_id": type_id, "value": value})
                 except ValueError:
-                    messagebox.showwarning("Geçersiz Değer", 
-                        f"Lütfen sayısal değer giriniz.")
+                    messagebox.showwarning(_("Geçersiz Değer"), 
+                        _("Lütfen sayısal değer giriniz."))
                     return
         
         if not values:
-            messagebox.showwarning("Uyarı", "En az bir ölçüm değeri giriniz.")
+            messagebox.showwarning(_("Uyarı"), _("En az bir ölçüm değeri giriniz."))
             return
         
         notes = self.text_notes.get("1.0", "end").strip()
@@ -142,8 +143,8 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         
         try:
             self.api_client.post("/api/v1/measurements/sessions", json=data)
-            messagebox.showinfo("Başarılı", "Ölçümler kaydedildi.")
+            messagebox.showinfo(_("Başarılı"), _("Ölçümler kaydedildi."))
             self.on_success()
             self.destroy()
         except Exception as e:
-            messagebox.showerror("Hata", f"Kayıt hatası: {e}")
+            messagebox.showerror(_("Hata"), _("Kayıt hatası: {err}").format(err=str(e)))

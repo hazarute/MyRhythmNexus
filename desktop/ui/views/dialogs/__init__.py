@@ -4,6 +4,7 @@ Each dialog is in its own file for better maintainability
 """
 
 from .add_member_dialog import AddMemberDialog
+from desktop.core.locale import _
 from .update_member_dialog import UpdateMemberDialog
 from .update_password_dialog import UpdatePasswordDialog
 from .add_measurement_dialog import AddMeasurementDialog

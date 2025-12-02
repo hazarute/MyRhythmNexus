@@ -1,5 +1,6 @@
 ﻿import customtkinter as ctk
 import httpx
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -28,7 +29,7 @@ class AddPackageDialog(ctk.CTkToplevel):
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        header_text = "Paket Düzenle" if package_to_edit else "Yeni Paket Oluştur"
+        header_text = _("Paket Düzenle") if package_to_edit else _("Yeni Paket Oluştur")
         ctk.CTkLabel(
             self.main_frame,
             text=header_text,
@@ -50,7 +51,7 @@ class AddPackageDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             btn_frame,
-            text="❌ İptal",
+            text=_("❌ İptal"),
             fg_color="#555555",
             hover_color="#333333",
             width=110,
@@ -58,7 +59,7 @@ class AddPackageDialog(ctk.CTkToplevel):
         ).pack(side="left", padx=10, expand=True)
         ctk.CTkButton(
             btn_frame,
-            text="💾 Kaydet",
+            text=_("💾 Kaydet"),
             fg_color="#2CC985",
             hover_color="#229966",
             width=110,

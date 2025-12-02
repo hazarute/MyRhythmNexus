@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Callable, Optional
 
 from desktop.ui.components.finance.styles import DEFAULT_CARD_BG, CARD_BORDER_COLOR

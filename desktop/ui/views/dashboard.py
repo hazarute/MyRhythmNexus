@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.api_client import ApiClient
+from desktop.core.locale import _
 from datetime import datetime
 
 class DashboardView(ctk.CTkFrame):
@@ -17,23 +18,23 @@ class DashboardView(ctk.CTkFrame):
         self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.header_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=20, pady=(20, 10))
         
-        self.label_title = ctk.CTkLabel(self.header_frame, text="Genel Bakış", font=("Roboto", 24, "bold"))
+        self.label_title = ctk.CTkLabel(self.header_frame, text=_("Genel Bakış"), font=("Roboto", 24, "bold"))
         self.label_title.pack(side="left")
 
         # Quick Actions
         self.actions_frame = ctk.CTkFrame(self.header_frame, fg_color="transparent")
         self.actions_frame.pack(side="right")
 
-        self.btn_add_member = ctk.CTkButton(self.actions_frame, text="+ Üye Ekle", width=100, fg_color="#3B8ED0", hover_color="#36719F", command=self.show_add_member_dialog) # Blue
+        self.btn_add_member = ctk.CTkButton(self.actions_frame, text=_("+ Üye Ekle"), width=100, fg_color="#3B8ED0", hover_color="#36719F", command=self.show_add_member_dialog) # Blue
         self.btn_add_member.pack(side="left", padx=5)
         
-        self.btn_quick_sale = ctk.CTkButton(self.actions_frame, text="+ Satış Yap", width=100, fg_color="#2CC985", hover_color="#25A86F", command=lambda: self.navigate("sales")) # Green
+        self.btn_quick_sale = ctk.CTkButton(self.actions_frame, text=_("+ Satış Yap"), width=100, fg_color="#2CC985", hover_color="#25A86F", command=lambda: self.navigate("sales")) # Green
         self.btn_quick_sale.pack(side="left", padx=5)
 
-        self.btn_qr_checkin = ctk.CTkButton(self.actions_frame, text="📷 QR Giriş", width=100, fg_color="#E5B00D", hover_color="#C4960B", text_color="black", command=self.manual_qr_checkin) # Yellow
+        self.btn_qr_checkin = ctk.CTkButton(self.actions_frame, text=_("📷 QR Giriş"), width=100, fg_color="#E5B00D", hover_color="#C4960B", text_color="black", command=self.manual_qr_checkin) # Yellow
         self.btn_qr_checkin.pack(side="left", padx=5)
         
-        self.btn_refresh = ctk.CTkButton(self.actions_frame, text="🔄", width=40, command=self.load_data)
+        self.btn_refresh = ctk.CTkButton(self.actions_frame, text=_("🔄"), width=40, command=self.load_data)
         self.btn_refresh.pack(side="left", padx=5)
 
         # --- Stats Cards Section ---
@@ -41,17 +42,17 @@ class DashboardView(ctk.CTkFrame):
         self.cards_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         self.cards_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
-        self.card_members = self.create_stat_card(self.cards_frame, "Aktif Üyeler", "👥", "#3B8ED0", 0)
-        self.card_classes = self.create_stat_card(self.cards_frame, "Bugünkü Dersler", "🧘", "#2CC985", 1)
-        self.card_pending = self.create_stat_card(self.cards_frame, "Toplam Borç", "💳", "#E04F5F", 2)
-        self.card_revenue = self.create_stat_card(self.cards_frame, "Aylık Ciro", "💰", "#9C27B0", 3)
+        self.card_members = self.create_stat_card(self.cards_frame, _("Aktif Üyeler"), "👥", "#3B8ED0", 0)
+        self.card_classes = self.create_stat_card(self.cards_frame, _("Bugünkü Dersler"), "🧘", "#2CC985", 1)
+        self.card_pending = self.create_stat_card(self.cards_frame, _("Toplam Borç"), "💳", "#E04F5F", 2)
+        self.card_revenue = self.create_stat_card(self.cards_frame, _("Aylık Ciro"), "💰", "#9C27B0", 3)
 
         # --- Content Section (Split View) ---
         # Left: Today's Schedule
         self.schedule_frame = ctk.CTkFrame(self)
         self.schedule_frame.grid(row=2, column=0, sticky="nsew", padx=(20, 10), pady=20)
         
-        ctk.CTkLabel(self.schedule_frame, text="Bugünün Programı", font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
+        ctk.CTkLabel(self.schedule_frame, text=_("Bugünün Programı"), font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
         self.schedule_list = ctk.CTkScrollableFrame(self.schedule_frame, fg_color="transparent")
         self.schedule_list.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -59,7 +60,7 @@ class DashboardView(ctk.CTkFrame):
         self.activity_frame = ctk.CTkFrame(self)
         self.activity_frame.grid(row=2, column=1, sticky="nsew", padx=(10, 20), pady=20)
         
-        ctk.CTkLabel(self.activity_frame, text="Son Hareketler", font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
+        ctk.CTkLabel(self.activity_frame, text=_("Son Hareketler"), font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
         self.activity_list = ctk.CTkScrollableFrame(self.activity_frame, fg_color=("gray90", "gray20"))
         self.activity_list.pack(fill="both", expand=True, padx=5, pady=5)
 
@@ -83,7 +84,7 @@ class DashboardView(ctk.CTkFrame):
         AddMemberDialog(self.winfo_toplevel(), self.api_client, on_success=self.load_data)
     
     def manual_qr_checkin(self):
-        dialog = ctk.CTkInputDialog(text="QR Kodu Giriniz:", title="Manuel Giriş")
+        dialog = ctk.CTkInputDialog(text=_("QR Kodu Giriniz:"), title=_("Manuel Giriş"))
         qr_token = dialog.get_input()
         if qr_token:
             from desktop.ui.views.checkin_dialog import CheckInDialog
@@ -105,7 +106,7 @@ class DashboardView(ctk.CTkFrame):
         lbl_title = ctk.CTkLabel(text_frame, text=title, font=("Roboto", 12), text_color="white")
         lbl_title.pack(anchor="w")
         
-        lbl_value = ctk.CTkLabel(text_frame, text="...", font=("Roboto", 20, "bold"), text_color="white")
+        lbl_value = ctk.CTkLabel(text_frame, text=_("..."), font=("Roboto", 20, "bold"), text_color="white")
         lbl_value.pack(anchor="w")
         
         return lbl_value # Return label to update later
@@ -130,7 +131,7 @@ class DashboardView(ctk.CTkFrame):
                 
             schedule = data.get("todays_schedule", [])
             if not schedule:
-                ctk.CTkLabel(self.schedule_list, text="Bugün ders yok.", text_color="gray").pack(pady=10)
+                ctk.CTkLabel(self.schedule_list, text=_("Bugün ders yok."), text_color="gray").pack(pady=10)
             else:
                 for item in schedule:
                     self.create_schedule_item(item)
@@ -141,14 +142,14 @@ class DashboardView(ctk.CTkFrame):
                 
             activities = data.get("recent_activities", [])
             if not activities:
-                ctk.CTkLabel(self.activity_list, text="Henüz hareket yok.", text_color="gray").pack(pady=10)
+                ctk.CTkLabel(self.activity_list, text=_("Henüz hareket yok."), text_color="gray").pack(pady=10)
             else:
                 for item in activities:
                     self.create_activity_item(item)
 
         except Exception as e:
             print(f"Error loading dashboard data: {e}")
-            self.card_members.configure(text="Err")
+            self.card_members.configure(text=_("Err"))
 
     def create_schedule_item(self, item):
         frame = ctk.CTkFrame(self.schedule_list, fg_color=("gray90", "gray20"))
@@ -225,5 +226,6 @@ class DashboardView(ctk.CTkFrame):
         time_label.pack(side="left", padx=(15, 0))
         
         # Description
-        desc_text_color = "gray70" if item['type'] != 'checkin' else "#616161"
-        ctk.CTkLabel(content, text=item['description'], font=("Roboto", 12), text_color=desc_text_color, anchor="w").pack(fill="x")
+        desc_text_color = "gray70" if item['type'] != 'checkin' else "black"
+        desc_font = ("Roboto", 12) if item['type'] != 'checkin' else ("Roboto", 14, "bold")
+        ctk.CTkLabel(content, text=item['description'], font=desc_font, text_color=desc_text_color, anchor="w").pack(fill="x")

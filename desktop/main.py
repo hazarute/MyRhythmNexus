@@ -7,13 +7,18 @@ import customtkinter as ctk
 from desktop.core.api_client import ApiClient
 from desktop.core.config import DesktopConfig
 from desktop.core.updater import check_and_update_on_startup
+from desktop.core.locale import _, initialize_locale
 from desktop.ui.windows import LoginWindow, MainWindow
 
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        
+        # Initialize locale from config
+        language = DesktopConfig.get_language()
+        initialize_locale(language)
 
-        self.title("MyRhythmNexus - Admin Panel")
+        self.title(_("MyRhythmNexus - Admin Panel"))
         self.geometry("1000x700")
         self.minsize(1280, 720)  # Minimum window size
         self.after(0, lambda: self.state('zoomed'))

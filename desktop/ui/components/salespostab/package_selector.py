@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Callable, Optional, List, Dict
 
 
@@ -27,12 +28,12 @@ class PackageSelector(ctk.CTkFrame):
         header = ctk.CTkFrame(self, fg_color="transparent")
         header.pack(fill="x", padx=15, pady=(15, 5))
         
-        ctk.CTkLabel(header, text="📦 Paket Seçimi", 
+        ctk.CTkLabel(header, text=_("📦 Paket Seçimi"), 
                     font=("Roboto", 18, "bold"),
                     text_color="#3B8ED0").pack(anchor="w")
         
         # Package ComboBox
-        ctk.CTkLabel(self, text="Paket:", 
+        ctk.CTkLabel(self, text=_("Paket:"), 
                     font=("Roboto", 14)).pack(anchor="w", padx=15, pady=(10, 5))
         
         self.combo_package = ctk.CTkComboBox(self, values=[], 

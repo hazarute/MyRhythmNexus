@@ -15,6 +15,7 @@ from backend.models.operation import (
     SessionCheckIn, 
     Booking
 )
+from backend.models.service import ServicePackage
 from backend.models.user import User, Role, UserRole
 from backend.schemas.stats import DashboardStats, ScheduleItem, ActivityItem, DebtMember
 
@@ -144,16 +145,29 @@ async def get_dashboard_stats(
     checkins_result = await db.execute(
         select(SessionCheckIn).options(
             selectinload(SessionCheckIn.member), 
-            selectinload(SessionCheckIn.event).selectinload(ClassEvent.template)
+            selectinload(SessionCheckIn.event).selectinload(ClassEvent.template),
+            selectinload(SessionCheckIn.subscription).selectinload(Subscription.package)
         ).order_by(SessionCheckIn.check_in_time.desc()).limit(5)
     )
     for ci in checkins_result.scalars():
         if ci.member:
-            # Determine description based on whether event exists
-            if ci.event and ci.event.template:
-                description = f"{ci.event.template.name} dersine giriş yaptı"
+            # Add subscription info if available
+            subscription_info = ""
+            if ci.subscription and ci.subscription.package:
+                if ci.subscription.access_type == "TIME_BASED":
+                    subscription_info = f"{ci.subscription.package.name} (sınırsız)"
+                else:
+                    remaining_sessions = ci.subscription.used_sessions - ci.subscription.attendance_count
+                    subscription_info = f"{ci.subscription.package.name} - {remaining_sessions} oturum kaldı"
             else:
-                description = "Ders dışı giriş yaptı"
+                subscription_info = "Abonelik bilgisi bulunamadı"
+            
+            # Add event info if available
+            event_info = ""
+            if ci.event and ci.event.template:
+                event_info = f" ({ci.event.template.name} dersi)"
+            
+            description = subscription_info + event_info
             
             activities.append(ActivityItem(
                 id=f"checkin_{ci.id}",

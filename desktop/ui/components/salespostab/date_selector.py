@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from datetime import date, timedelta, datetime
 from typing import Callable, Optional
 from desktop.ui.components.date_picker import DatePickerDialog
@@ -40,12 +41,12 @@ class DateSelector(ctk.CTkFrame):
         header = ctk.CTkFrame(self, fg_color="transparent")
         header.pack(fill="x", padx=15, pady=(15, 5))
         
-        ctk.CTkLabel(header, text="📅 Tarih Seçimi", 
+        ctk.CTkLabel(header, text=_("📅 Tarih Seçimi"), 
                     font=("Roboto", 18, "bold"),
                     text_color="#3B8ED0").pack(anchor="w")
         
         # Start Date Section
-        ctk.CTkLabel(self, text="Başlangıç Tarihi:", 
+        ctk.CTkLabel(self, text=_("Başlangıç Tarihi:"), 
                     font=("Roboto", 14)).pack(anchor="w", padx=15, pady=(10, 5))
         
         date_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -53,7 +54,7 @@ class DateSelector(ctk.CTkFrame):
         
         # Start Date Button
         self.btn_start_date = ctk.CTkButton(date_frame, 
-                                           text="Değiştirmek İçin Tıklayın - " + self.start_date.strftime("%d/%m/%Y"),
+                                           text=_("Değiştirmek İçin Tıklayın - {}").format(self.start_date.strftime("%d/%m/%Y")),
                                            font=("Roboto", 16, "bold"),
                                            fg_color="#21415A", 
                                            hover_color="#0A1B2C",
@@ -63,7 +64,7 @@ class DateSelector(ctk.CTkFrame):
         self.btn_start_date.pack(fill="x")
         
         # End Date Display
-        ctk.CTkLabel(self, text="Bitiş Tarihi:", 
+        ctk.CTkLabel(self, text=_("Bitiş Tarihi:"), 
                     font=("Roboto", 14)).pack(anchor="w", padx=15, pady=(10, 5))
         
         end_date_frame = ctk.CTkFrame(self, fg_color=("#E3F2FD", "#0A1B2C"), corner_radius=8)
@@ -111,10 +112,10 @@ class DateSelector(ctk.CTkFrame):
             weeks = (end_date - self.start_date).days // 7
             
             self.lbl_end_date.configure(
-                text=f"{end_date.strftime('%d/%m/%Y')} ({weeks} hafta)"
+                text=_("{} ({}) hafta").format(end_date.strftime('%d/%m/%Y'), weeks)
             )
         except Exception as e:
-            self.lbl_end_date.configure(text=f"Bitiş Tarihi: Hata")
+            self.lbl_end_date.configure(text=_("Bitiş Tarihi: Hata"))
     
     
     def get_start_date(self) -> date:

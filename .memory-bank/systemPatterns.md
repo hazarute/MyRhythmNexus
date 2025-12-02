@@ -30,6 +30,7 @@
     *   **Çeviri Fonksiyonu:** `_()` wrapper fonksiyonu tüm UI metinlerinde kullanılır
     *   **Dil Yönetimi:** Uygulama başlangıcında locale ayarı + kullanıcı tercih konfigürasyonu
     *   **Desteklenen Diller:** Türkçe (tr) ve İngilizce (en) - genişletilebilir yapı
+    *   **i18n Yardımcı Araçlar:** `i18n_manager.py` (extract/update/compile), `fill_translations.py`, `scan_ui_strings.py`, `wrap_ui_strings.py` — geliştirme sürecini kolaylaştırmak için eklendi
 
 4.  **Modüler Klasör Yapısı:**
 MyRhythmNexus/

@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 from datetime import datetime
@@ -16,7 +17,7 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         self.on_success = on_success
         self.packages_with_debt = []
         
-        self.title("Borç Ödeme")
+        self.title(_("Borç Ödeme"))
         self.geometry("700x700")
         self.lift()
         self.focus_force()
@@ -31,7 +32,7 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         header_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         header_frame.pack(fill="x", pady=(20, 10), padx=20)
         
-        ctk.CTkLabel(header_frame, text="💰 Borç Ödeme", 
+        ctk.CTkLabel(header_frame, text=_("💰 Borç Ödeme"), 
                     font=("Roboto", 24, "bold")).pack(side="left")
         
         member_name = f"{member.get('first_name')} {member.get('last_name')}"
@@ -42,10 +43,10 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         self.load_debts()
         
         if not self.packages_with_debt:
-            ctk.CTkLabel(main_frame, text="✅ Bu üyenin borcu bulunmamaktadır", 
+            ctk.CTkLabel(main_frame, text=_("✅ Bu üyenin borcu bulunmamaktadır"), 
                         font=("Roboto", 18), text_color="green").pack(pady=50)
             
-            ctk.CTkButton(main_frame, text="Kapat", command=self.destroy, 
+            ctk.CTkButton(main_frame, text=_("Kapat"), command=self.destroy, 
                          width=150).pack(pady=20)
             return
         
@@ -54,13 +55,13 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         debt_frame = ctk.CTkFrame(main_frame, fg_color="#FF6B6B", corner_radius=10)
         debt_frame.pack(fill="x", padx=20, pady=(10, 20))
         
-        ctk.CTkLabel(debt_frame, text="Toplam Borç", 
+        ctk.CTkLabel(debt_frame, text=_("Toplam Borç"), 
                     font=("Roboto", 14, "bold"), text_color="white").pack(pady=(10, 0))
         ctk.CTkLabel(debt_frame, text=f"{total_debt:.2f} TL", 
                     font=("Roboto", 28, "bold"), text_color="white").pack(pady=(0, 10))
         
         # Debt list
-        list_label = ctk.CTkLabel(main_frame, text="📋 Borçlu Paketler (Eskiden Yeniye)", 
+        list_label = ctk.CTkLabel(main_frame, text=_("📋 Borçlu Paketler (Eskiden Yeniye)"), 
                                  font=("Roboto", 16, "bold"))
         list_label.pack(anchor="w", padx=20, pady=(0, 10))
         
@@ -78,37 +79,37 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         amount_row = ctk.CTkFrame(payment_frame, fg_color="transparent")
         amount_row.pack(fill="x", pady=(0, 10))
         
-        ctk.CTkLabel(amount_row, text="💵 Ödeme Tutarı:", 
+        ctk.CTkLabel(amount_row, text=_("💵 Ödeme Tutarı:"), 
                     font=("Roboto", 16, "bold")).pack(side="left", padx=(0, 10))
         
         self.entry_payment = ctk.CTkEntry(amount_row, font=("Roboto", 18), 
-                                         height=40, width=200, placeholder_text="0.00")
+                                         height=40, width=200, placeholder_text=_("0.00"))
         self.entry_payment.pack(side="left", padx=(0, 10))
         
-        ctk.CTkLabel(amount_row, text="TL", 
+        ctk.CTkLabel(amount_row, text=_("TL"), 
                     font=("Roboto", 16)).pack(side="left")
         
         # Payment method selection
         method_row = ctk.CTkFrame(payment_frame, fg_color="transparent")
         method_row.pack(fill="x")
         
-        ctk.CTkLabel(method_row, text="💳 Ödeme Şekli:", 
+        ctk.CTkLabel(method_row, text=_("💳 Ödeme Şekli:"), 
                     font=("Roboto", 16, "bold")).pack(side="left", padx=(0, 10))
         
         self.payment_method = ctk.CTkSegmentedButton(
             method_row,
-            values=["Nakit", "Kredi Kartı", "Havale/EFT", "Diğer"],
+            values=[_("Nakit"), _("Kredi Kartı"), _("Havale/EFT"), _("Diğer")],
             font=("Roboto", 14),
             height=35
         )
-        self.payment_method.set("Nakit")
+        self.payment_method.set(_("Nakit"))
         self.payment_method.pack(side="left")
         
         # Quick payment buttons
         quick_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         quick_frame.pack(fill="x", padx=20, pady=(0, 10))
         
-        ctk.CTkLabel(quick_frame, text="Hızlı Tutar:", 
+        ctk.CTkLabel(quick_frame, text=_("Hızlı Tutar:"), 
                     font=("Roboto", 12), text_color="gray").pack(side="left", padx=(0, 10))
         
         # Fixed quick amounts + "Tümü" button
@@ -118,7 +119,7 @@ class DebtPaymentDialog(ctk.CTkToplevel):
                          command=lambda a=amount: self.set_amount(a)).pack(side="left", padx=2)
         
         # "Tümü" button (always shows total debt)
-        ctk.CTkButton(quick_frame, text="Tümü", width=70, height=30,
+        ctk.CTkButton(quick_frame, text=_("Tümü"), width=70, height=30,
                      fg_color="#E5B00D", hover_color="#D4A00B",
                      command=lambda: self.set_amount(total_debt)).pack(side="left", padx=2)
         
@@ -126,13 +127,13 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=20, padx=20)
         
-        btn_cancel = ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        btn_cancel = ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                                    hover_color="#333333", width=150, height=40,
                                    font=("Roboto", 14, "bold"),
                                    command=self.destroy)
         btn_cancel.pack(side="left", padx=10, expand=True)
         
-        btn_save = ctk.CTkButton(btn_frame, text="✅ Ödemeyi Kaydet", fg_color="#2CC985", 
+        btn_save = ctk.CTkButton(btn_frame, text=_("✅ Ödemeyi Kaydet"), fg_color="#2CC985", 
                                 hover_color="#229966", width=150, height=40,
                                 font=("Roboto", 14, "bold"),
                                 command=self.process_payment)
@@ -153,7 +154,7 @@ class DebtPaymentDialog(ctk.CTkToplevel):
                 debt = total_price - paid_amount
                 
                 if debt > 0:
-                    package_name = sub.get('package', {}).get('name', 'Unknown')
+                    package_name = sub.get('package', {}).get('name', _('Unknown'))
                     self.packages_with_debt.append({
                         'id': sub['id'],
                         'service_name': package_name,
@@ -190,7 +191,8 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         except:
             date_str = pkg['created_at'][:10]
         
-        info_text = f"Tarih: {date_str} | Toplam: {pkg['total_price']:.2f} TL | Ödenen: {pkg['paid_amount']:.2f} TL"
+        info_text = _("Tarih: {date} | Toplam: {total:.2f} TL | Ödenen: {paid:.2f} TL").format(
+            date=date_str, total=pkg['total_price'], paid=pkg['paid_amount'])
         ctk.CTkLabel(left, text=info_text, font=("Roboto", 12), 
                     text_color="gray").pack(anchor="w")
         
@@ -209,21 +211,22 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         try:
             payment_str = self.entry_payment.get().strip().replace(',', '.')
             if not payment_str:
-                messagebox.showwarning("Uyarı", "Lütfen ödeme tutarı giriniz")
+                messagebox.showwarning(_("Uyarı"), _("Lütfen ödeme tutarı giriniz"))
                 return
             
             payment_amount = float(payment_str)
             
             if payment_amount <= 0:
-                messagebox.showwarning("Uyarı", "Ödeme tutarı 0'dan büyük olmalıdır")
+                messagebox.showwarning(_("Uyarı"), _("Ödeme tutarı 0'dan büyük olmalıdır"))
                 return
             
             total_debt = sum(pkg['debt'] for pkg in self.packages_with_debt)
             
             if payment_amount > total_debt:
-                response = messagebox.askyesno("Uyarı", 
-                    f"Ödeme tutarı ({payment_amount:.2f} TL) toplam borcu ({total_debt:.2f} TL) aşıyor.\n\n"
-                    f"Yine de devam etmek istiyor musunuz?\n(Fazla tutar ilk pakete eklenecektir)")
+                response = messagebox.askyesno(_("Uyarı"), 
+                    _("Ödeme tutarı ({amount:.2f} TL) toplam borcu ({total:.2f} TL) aşıyor.\n\n"
+                    "Yine de devam etmek istiyor musunuz?\n(Fazla tutar ilk pakete eklenecektir)").format(
+                        amount=payment_amount, total=total_debt))
                 if not response:
                     return
             
@@ -240,10 +243,10 @@ class DebtPaymentDialog(ctk.CTkToplevel):
                 
                 # Get selected payment method
                 method_map = {
-                    "Nakit": "NAKIT",
-                    "Kredi Kartı": "KREDI_KARTI",
-                    "Havale/EFT": "HAVALE_EFT",
-                    "Diğer": "DIGER"
+                    _("Nakit"): "NAKIT",
+                    _("Kredi Kartı"): "KREDI_KARTI",
+                    _("Havale/EFT"): "HAVALE_EFT",
+                    _("Diğer"): "DIGER"
                 }
                 selected_method = method_map.get(self.payment_method.get(), "NAKIT")
                 
@@ -264,26 +267,26 @@ class DebtPaymentDialog(ctk.CTkToplevel):
                 remaining -= payment_for_pkg
             
             # Show success message with distribution details
-            message = f"✅ Toplam {payment_amount:.2f} TL ödeme başarıyla kaydedildi!\n\n"
-            message += "📊 Dağılım:\n"
+            message = _("✅ Toplam {amount:.2f} TL ödeme başarıyla kaydedildi!\n\n").format(amount=payment_amount)
+            message += _("📊 Dağılım:\n")
             for record in payment_records:
-                message += f"• {record['service']}: {record['amount']:.2f} TL"
+                message += _("• {service}: {amount:.2f} TL").format(service=record['service'], amount=record['amount'])
                 if record['remaining_debt'] > 0:
-                    message += f" (Kalan: {record['remaining_debt']:.2f} TL)"
+                    message += _(" (Kalan: {remaining:.2f} TL)").format(remaining=record['remaining_debt'])
                 else:
-                    message += " (Tamamlandı ✓)"
+                    message += _(" (Tamamlandı ✓)")
                 message += "\n"
             
             if remaining > 0:
-                message += f"\n⚠️ Fazla ödeme: {remaining:.2f} TL (İlk pakete eklendi)"
+                message += _("\n⚠️ Fazla ödeme: {remaining:.2f} TL (İlk pakete eklendi)").format(remaining=remaining)
             
-            messagebox.showinfo("Başarılı", message)
+            messagebox.showinfo(_("Başarılı"), message)
             
             # Refresh parent view and close
             self.on_success()
             self.destroy()
             
         except ValueError:
-            messagebox.showerror("Hata", "Geçersiz ödeme tutarı")
+            messagebox.showerror(_("Hata"), _("Geçersiz ödeme tutarı"))
         except Exception as e:
-            messagebox.showerror("Hata", f"Ödeme işlemi başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Ödeme işlemi başarısız: {error}").format(error=e))

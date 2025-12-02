@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -14,7 +15,7 @@ class PaymentsTab:
         header = ctk.CTkFrame(self.parent, fg_color="transparent")
         header.pack(fill="x", padx=20, pady=(10, 5))
         
-        ctk.CTkLabel(header, text="💳 Ödeme Geçmişi", 
+        ctk.CTkLabel(header, text=_("💳 Ödeme Geçmişi"), 
                     font=("Roboto", 20, "bold")).pack(side="left")
 
         # Scrollable content
@@ -36,7 +37,7 @@ class PaymentsTab:
             if not payments:
                 empty_frame = ctk.CTkFrame(scroll_frame, fg_color=("#E0E0E0", "#2B2B2B"), corner_radius=10)
                 empty_frame.pack(fill="x", pady=20)
-                ctk.CTkLabel(empty_frame, text="📭 Henüz ödeme kaydı bulunmuyor", 
+                ctk.CTkLabel(empty_frame, text=_("📭 Henüz ödeme kaydı bulunmuyor"), 
                             font=("Roboto", 16), text_color="gray").pack(pady=40)
                 return
 
@@ -47,7 +48,7 @@ class PaymentsTab:
         except Exception as e:
             error_frame = ctk.CTkFrame(scroll_frame, fg_color="#E04F5F", corner_radius=10)
             error_frame.pack(fill="x", pady=20)
-            ctk.CTkLabel(error_frame, text=f"❌ Hata: {e}", 
+            ctk.CTkLabel(error_frame, text=_("❌ Hata: {}").format(e), 
                         font=("Roboto", 14), text_color="white").pack(pady=20)
 
     def create_payment_card(self, parent, payment: dict):
@@ -73,13 +74,13 @@ class PaymentsTab:
         
         date_frame = ctk.CTkFrame(left, fg_color="transparent")
         date_frame.pack(anchor="w")
-        ctk.CTkLabel(date_frame, text="📅", font=("Segoe UI Emoji", 14)).pack(side="left", padx=(0, 5))
+        ctk.CTkLabel(date_frame, text=_("📅"), font=("Segoe UI Emoji", 14)).pack(side="left", padx=(0, 5))
         ctk.CTkLabel(date_frame, text=date_str, 
                     font=("Roboto", 16, "bold")).pack(side="left")
         
         # Package name
         pkg_name = payment.get('package_name', '-')
-        ctk.CTkLabel(left, text=f"📦 {pkg_name}", 
+        ctk.CTkLabel(left, text=_("📦 {}").format(pkg_name), 
                     font=("Roboto", 14), text_color="gray").pack(anchor="w", pady=(2, 0))
         
         # Center section: Amount and method
@@ -110,20 +111,20 @@ class PaymentsTab:
                     font=("Roboto", 12), text_color="gray").pack(anchor="e")
         
         # Right section: Delete button
-        btn_delete = ctk.CTkButton(content, text="🗑️ Sil", width=80, height=32,
+        btn_delete = ctk.CTkButton(content, text=_("🗑️ Sil"), width=80, height=32,
                                    fg_color="#E04F5F", hover_color="#C03E4F",
                                    font=("Roboto", 12, "bold"),
                                    command=lambda: self.delete_payment(payment['id']))
         btn_delete.pack(side="right", padx=(10, 0))
     
     def delete_payment(self, payment_id):
-        if messagebox.askyesno("Onay", "Bu ödemeyi silmek istediğinize emin misiniz?\n\n⚠️ Bu işlem geri alınamaz!"):
+        if messagebox.askyesno(_("Onay"), _("Bu ödemeyi silmek istediğinize emin misiniz?\n\n⚠️ Bu işlem geri alınamaz!")):
             try:
                 self.api_client.delete(f"/api/v1/sales/payments/{payment_id}")
-                messagebox.showinfo("Başarılı", "Ödeme başarıyla silindi.")
+                messagebox.showinfo(_("Başarılı"), _("Ödeme başarıyla silindi."))
                 self.refresh()
             except Exception as e:
-                messagebox.showerror("Hata", f"Silme işlemi başarısız:\n{e}")
+                messagebox.showerror(_("Hata"), _("Silme işlemi başarısız:\n{}").format(e))
     
     def refresh(self):
         """Refresh the tab"""

@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Callable, Dict, Any
 
 from desktop.ui.components.finance.formatters import format_currency, format_date
@@ -38,8 +39,8 @@ class PaymentCard(ctk.CTkFrame):
         )
         date_label.pack(anchor="w")
 
-        member_name = self.item.get("member_name", "Bilinmiyor")
-        package_name = self.item.get("package_name", "Paket belirtilmedi")
+        member_name = self.item.get("member_name", _("Bilinmiyor"))
+        package_name = self.item.get("package_name", _("Paket belirtilmedi"))
 
         ctk.CTkLabel(
             left,
@@ -59,7 +60,7 @@ class PaymentCard(ctk.CTkFrame):
         method = self.item.get("payment_method", "-")
         badge = ctk.CTkLabel(
             left,
-            text=f"💳 {method}",
+            text=_("💳 {method}").format(method=method),
             font=("Roboto", 12, "bold"),
             fg_color=BADGE_BG,
             corner_radius=8,
@@ -83,7 +84,7 @@ class PaymentCard(ctk.CTkFrame):
 
         ctk.CTkButton(
             btn_frame,
-            text="🛈 Detay",
+            text=_("🛈 Detay"),
             width=110,
             height=32,
             font=("Roboto", 12, "bold"),
@@ -94,7 +95,7 @@ class PaymentCard(ctk.CTkFrame):
 
         ctk.CTkButton(
             btn_frame,
-            text="🗑️ Sil",
+            text=_("🗑️ Sil"),
             width=110,
             height=32,
             font=("Roboto", 12, "bold"),

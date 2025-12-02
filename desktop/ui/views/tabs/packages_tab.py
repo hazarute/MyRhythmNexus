@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -17,7 +18,7 @@ class PackagesTab:
         try:
             subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
             if not subs:
-                ctk.CTkLabel(main_scroll, text="Kayıtlı paket bulunamadı.", text_color="gray").pack(pady=20)
+                ctk.CTkLabel(main_scroll, text=_("Kayıtlı paket bulunamadı."), text_color="gray").pack(pady=20)
                 return
 
             active_subs = [s for s in subs if s.get('status') == 'active']
@@ -28,28 +29,28 @@ class PackagesTab:
             inactive_subs = inactive_subs[:5]
 
             # Active Packages
-            ctk.CTkLabel(main_scroll, text=f"📦 Aktif Paketler ({len(active_subs)})", 
+            ctk.CTkLabel(main_scroll, text=_("📦 Aktif Paketler ({})").format(len(active_subs)), 
                         font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
             
             if not active_subs:
-                ctk.CTkLabel(main_scroll, text="Aktif paket yok.", text_color="gray").pack(anchor="w", padx=10)
+                ctk.CTkLabel(main_scroll, text=_("Aktif paket yok."), text_color="gray").pack(anchor="w", padx=10)
             else:
                 for sub in active_subs:
                     self.create_package_card(main_scroll, sub, is_active=True)
 
             # Past Packages
-            ctk.CTkLabel(main_scroll, text="🗄️ Geçmiş Paketler (Son 5)", 
+            ctk.CTkLabel(main_scroll, text=_("🗄️ Geçmiş Paketler (Son 5)"), 
                         font=("Roboto", 16, "bold"), 
                         text_color="gray").pack(anchor="w", pady=(30, 10))
             
             if not inactive_subs:
-                ctk.CTkLabel(main_scroll, text="Geçmiş paket yok.", text_color="gray").pack(anchor="w", padx=10)
+                ctk.CTkLabel(main_scroll, text=_("Geçmiş paket yok."), text_color="gray").pack(anchor="w", padx=10)
             else:
                 for sub in inactive_subs:
                     self.create_package_card(main_scroll, sub, is_active=False)
 
         except Exception as e:
-            ctk.CTkLabel(main_scroll, text=f"Hata: {e}").pack()
+            ctk.CTkLabel(main_scroll, text=_("Hata: {}").format(e)).pack()
     
     def create_package_card(self, parent, sub, is_active):
         if is_active:
@@ -83,7 +84,7 @@ class PackagesTab:
             content.configure(cursor="hand2")
         
         pkg_name = sub.get('package', {}).get('name', 'Bilinmeyen Paket')
-        pkg_label = ctk.CTkLabel(content, text=f"{icon}  {pkg_name}", 
+        pkg_label = ctk.CTkLabel(content, text=_("{}  {}").format(icon, pkg_name), 
                                 font=("Roboto", 16, "bold"), 
                                 text_color=text_color)
         pkg_label.pack(anchor="w")
@@ -105,7 +106,7 @@ class PackagesTab:
         limit = plan.get('sessions_granted', 0)
         
         if access_type == 'TIME_BASED':
-            ctk.CTkLabel(bottom_row, text=f"♾️ Zaman Bazlı ({used} giriş)", 
+            ctk.CTkLabel(bottom_row, text=_("♾️ Zaman Bazlı ({} giriş)").format(used), 
                         font=("Roboto", 12, "bold"), 
                         text_color=accent_color).pack(side="left")
         elif limit and limit > 0:
@@ -116,15 +117,15 @@ class PackagesTab:
             progress.set(ratio)
             progress.pack(side="left", fill="x", expand=True, padx=(0, 15))
             
-            ctk.CTkLabel(bottom_row, text=f"{used}/{limit} Ders", 
+            ctk.CTkLabel(bottom_row, text=_("{}/{} Ders").format(used, limit), 
                         font=("Roboto", 11, "bold"), 
                         text_color="gray").pack(side="left")
         else:
-            ctk.CTkLabel(bottom_row, text="♾️ Sınırsız Erişim", 
+            ctk.CTkLabel(bottom_row, text=_("♾️ Sınırsız Erişim"), 
                         font=("Roboto", 12, "bold"), 
                         text_color=accent_color).pack(side="left")
 
-        btn_del = ctk.CTkButton(card, text="🗑️", width=40, height=40, 
+        btn_del = ctk.CTkButton(card, text=_("🗑️"), width=40, height=40, 
                               fg_color="#E74C3C", hover_color="#C0392B",
                               font=("Segoe UI Emoji", 16),
                               command=lambda s=sub: self.delete_subscription(s['id']))
@@ -136,14 +137,14 @@ class PackagesTab:
         PackageDetailDialog(self.parent, self.api_client, subscription, on_refresh=self.refresh)
     
     def delete_subscription(self, sub_id):
-        if messagebox.askyesno("Onay", "Bu aboneliği silmek istediğinize emin misiniz?\n(Bağlı ödemeler de silinecektir)"):
+        if messagebox.askyesno(_("Onay"), _("Bu aboneliği silmek istediğinize emin misiniz?\n(Bağlı ödemeler de silinecektir)")):
             try:
                 self.api_client.delete(f"/api/v1/sales/subscriptions/{sub_id}")
-                messagebox.showinfo("Başarılı", "Abonelik silindi.")
+                messagebox.showinfo(_("Başarılı"), _("Abonelik silindi."))
                 self.refresh()
                 self.on_refresh_payments()
             except Exception as e:
-                messagebox.showerror("Hata", f"Silme işlemi başarısız: {e}")
+                messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(e))
     
     def refresh(self):
         """Refresh the tab"""

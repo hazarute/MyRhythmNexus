@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -15,9 +16,9 @@ class MeasurementsTab:
         top_bar = ctk.CTkFrame(self.parent, fg_color="transparent")
         top_bar.pack(fill="x", padx=10, pady=(10, 5))
         
-        ctk.CTkLabel(top_bar, text="📏 Vücut Ölçümleri", font=("Roboto", 16, "bold")).pack(side="left")
+        ctk.CTkLabel(top_bar, text=_("📏 Vücut Ölçümleri"), font=("Roboto", 16, "bold")).pack(side="left")
         
-        ctk.CTkButton(top_bar, text="➕ Yeni Ölçüm Ekle", 
+        ctk.CTkButton(top_bar, text=_("➕ Yeni Ölçüm Ekle"), 
                      fg_color="#2CC985", hover_color="#229966",
                      command=self.on_add_measurement).pack(side="right", padx=5)
         
@@ -28,7 +29,7 @@ class MeasurementsTab:
         try:
             sessions = self.api_client.get(f"/api/v1/measurements/sessions?member_id={self.member['id']}")
             if not sessions:
-                ctk.CTkLabel(frame, text="Ölçüm kaydı bulunamadı.", text_color="gray").pack(pady=20)
+                ctk.CTkLabel(frame, text=_("Ölçüm kaydı bulunamadı."), text_color="gray").pack(pady=20)
                 return
 
             # Comparison card if 2+ sessions
@@ -37,7 +38,7 @@ class MeasurementsTab:
                 ctk.CTkLabel(frame, text="━" * 100, text_color="gray30", font=("Roboto", 8)).pack(pady=15)
             
             # All measurements list
-            ctk.CTkLabel(frame, text="📋 Tüm Ölçüm Kayıtları", 
+            ctk.CTkLabel(frame, text=_("📋 Tüm Ölçüm Kayıtları"), 
                         font=("Roboto", 14, "bold"), 
                         text_color="gray60").pack(anchor="w", padx=10, pady=(0, 10))
             
@@ -45,7 +46,7 @@ class MeasurementsTab:
                 self.create_measurement_card(frame, sess)
                 
         except Exception as e:
-            ctk.CTkLabel(frame, text=f"Hata: {e}").pack()
+            ctk.CTkLabel(frame, text=_("Hata: {}").format(e)).pack()
     
     def create_comparison_card(self, parent, latest_session, previous_session):
         """Comparison card for last two measurements"""
@@ -65,13 +66,13 @@ class MeasurementsTab:
         header_frame = ctk.CTkFrame(content, fg_color="transparent")
         header_frame.pack(fill="x", pady=(0, 15))
         
-        ctk.CTkLabel(header_frame, text="📊 Son Ölçüm Karşılaştırması", 
+        ctk.CTkLabel(header_frame, text=_("📊 Son Ölçüm Karşılaştırması"), 
                     font=("Roboto", 18, "bold"), 
                     text_color=accent_color).pack(side="left")
         
         latest_date = latest_session.get('session_date', '')[:10]
         previous_date = previous_session.get('session_date', '')[:10]
-        ctk.CTkLabel(header_frame, text=f"  •  {previous_date} ➔ {latest_date}", 
+        ctk.CTkLabel(header_frame, text=_("  •  {} ➔ {}").format(previous_date, latest_date), 
                     font=("Roboto", 14), 
                     text_color="gray70").pack(side="left", padx=10)
         
@@ -83,10 +84,10 @@ class MeasurementsTab:
         previous_measurements = {m['measurement_type']['type_name']: m for m in previous_session.get('measurement_values', [])}
         
         categories = {
-            "🏋️ Genel": ["Boy", "Kilo"],
-            "💪 Üst Vücut": ["Boyun", "Omuz", "Göğüs", "Kol (Pazu)", "Ön Kol"],
-            "🫀 Gövde": ["Bel", "Simit", "Kalça", "Basen"],
-            "🦵 Alt Vücut": ["Bacak (Üst)", "Kalf (Baldır)"]
+            _("🏋️ Genel"): ["Boy", "Kilo"],
+            _("💪 Üst Vücut"): ["Boyun", "Omuz", "Göğüs", "Kol (Pazu)", "Ön Kol"],
+            _("🫀 Gövde"): ["Bel", "Simit", "Kalça", "Basen"],
+            _("🦵 Alt Vücut"): ["Bacak (Üst)", "Kalf (Baldır)"]
         }
         
         for category, type_names in categories.items():
@@ -142,15 +143,15 @@ class MeasurementsTab:
                     values_frame = ctk.CTkFrame(inner, fg_color="transparent")
                     values_frame.pack(fill="x", pady=(3, 0))
                     
-                    ctk.CTkLabel(values_frame, text=f"{previous_val} {unit}", 
+                    ctk.CTkLabel(values_frame, text=_("{} {}").format(previous_val, unit), 
                                 font=("Roboto", 11), 
                                 text_color="gray60").pack(side="left")
                     
-                    ctk.CTkLabel(values_frame, text=f"  {arrow}  ", 
+                    ctk.CTkLabel(values_frame, text=_("  {}  ").format(arrow), 
                                 font=("Roboto", 14, "bold"), 
                                 text_color=change_color).pack(side="left")
                     
-                    ctk.CTkLabel(values_frame, text=f"{latest_val} {unit}", 
+                    ctk.CTkLabel(values_frame, text=_("{} {}").format(latest_val, unit), 
                                 font=("Roboto", 14, "bold"), 
                                 text_color="white").pack(side="left")
                     
@@ -180,14 +181,14 @@ class MeasurementsTab:
         content.bind("<Button-1>", lambda e, s=session: self.show_detail_dialog(s))
         
         date = session.get('session_date', '')[:10]
-        date_label = ctk.CTkLabel(content, text=f"📅 {date}", 
+        date_label = ctk.CTkLabel(content, text=_("📅 {}").format(date), 
                     font=("Roboto", 14, "bold"), 
                     text_color="white", cursor="hand2")
         date_label.pack(side="left")
         date_label.bind("<Button-1>", lambda e, s=session: self.show_detail_dialog(s))
         
         measurement_count = len(session.get('measurement_values', []))
-        count_label = ctk.CTkLabel(content, text=f"  •  {measurement_count} ölçüm", 
+        count_label = ctk.CTkLabel(content, text=_("  •  {} ölçüm").format(measurement_count), 
                     font=("Roboto", 12), 
                     text_color="gray70", cursor="hand2")
         count_label.pack(side="left", padx=8)
@@ -196,7 +197,7 @@ class MeasurementsTab:
         notes = session.get('notes')
         if notes:
             notes_preview = notes[:40] + "..." if len(notes) > 40 else notes
-            notes_label = ctk.CTkLabel(content, text=f"  •  {notes_preview}", 
+            notes_label = ctk.CTkLabel(content, text=_("  •  {}").format(notes_preview), 
                         font=("Roboto", 11), 
                         text_color="gray60", cursor="hand2")
             notes_label.pack(side="left")
@@ -208,7 +209,7 @@ class MeasurementsTab:
         view_label.pack(side="right", padx=5)
         view_label.bind("<Button-1>", lambda e, s=session: self.show_detail_dialog(s))
         
-        btn_del = ctk.CTkButton(card, text="🗑️", width=35, height=35, 
+        btn_del = ctk.CTkButton(card, text=_("🗑️"), width=35, height=35, 
                               fg_color="#E74C3C", hover_color="#C0392B",
                               font=("Segoe UI Emoji", 14),
                               command=lambda s=session: self.delete_measurement(s['id']))
@@ -217,7 +218,7 @@ class MeasurementsTab:
     def show_detail_dialog(self, session):
         """Show detailed measurement dialog"""
         dialog = ctk.CTkToplevel(self.parent)
-        dialog.title("Vücut Ölçümü Detayları")
+        dialog.title(_("Vücut Ölçümü Detayları"))
         dialog.geometry("800x700")
         
         dialog.lift()
@@ -232,7 +233,7 @@ class MeasurementsTab:
         header_frame.pack(fill="x", padx=15, pady=15)
         
         date = session.get('session_date', '')[:10]
-        ctk.CTkLabel(header_frame, text=f"📅  {date}", 
+        ctk.CTkLabel(header_frame, text=_("📅  {}").format(date), 
                     font=("Roboto", 22, "bold"), 
                     text_color="white").pack(pady=15)
         
@@ -242,7 +243,7 @@ class MeasurementsTab:
             notes_frame = ctk.CTkFrame(main_frame, fg_color="#333333", corner_radius=8)
             notes_frame.pack(fill="x", padx=15, pady=(0, 15))
             
-            ctk.CTkLabel(notes_frame, text="📝 Notlar:", 
+            ctk.CTkLabel(notes_frame, text=_("📝 Notlar:"), 
                         font=("Roboto", 12, "bold"), 
                         text_color="gray70").pack(anchor="w", padx=12, pady=(8, 2))
             
@@ -259,10 +260,10 @@ class MeasurementsTab:
         measurements = session.get('measurement_values', [])
         
         categories = {
-            "🏋️ Genel": ["Boy", "Kilo"],
-            "💪 Üst Vücut": ["Boyun", "Omuz", "Göğüs", "Kol (Pazu)", "Ön Kol"],
-            "🫀 Gövde": ["Bel", "Simit", "Kalça", "Basen"],
-            "🦵 Alt Vücut": ["Bacak (Üst)", "Kalf (Baldır)"]
+            _("🏋️ Genel"): ["Boy", "Kilo"],
+            _("💪 Üst Vücut"): ["Boyun", "Omuz", "Göğüs", "Kol (Pazu)", "Ön Kol"],
+            _("🫀 Gövde"): ["Bel", "Simit", "Kalça", "Basen"],
+            _("🦵 Alt Vücut"): ["Bacak (Üst)", "Kalf (Baldır)"]
         }
         
         for category, type_names in categories.items():
@@ -307,7 +308,7 @@ class MeasurementsTab:
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", padx=15, pady=(0, 15))
         
-        ctk.CTkButton(btn_frame, text="✓ Kapat", 
+        ctk.CTkButton(btn_frame, text=_("✓ Kapat"), 
                      font=("Roboto", 14, "bold"),
                      fg_color="#3B8ED0", 
                      hover_color="#2E7AB8",
@@ -315,13 +316,13 @@ class MeasurementsTab:
                      command=dialog.destroy).pack(fill="x")
     
     def delete_measurement(self, session_id):
-        if messagebox.askyesno("Onay", "Bu ölçüm kaydını silmek istediğinize emin misiniz?"):
+        if messagebox.askyesno(_("Onay"), _("Bu ölçüm kaydını silmek istediğinize emin misiniz?")):
             try:
                 self.api_client.delete(f"/api/v1/measurements/sessions/{session_id}")
-                messagebox.showinfo("Başarılı", "Ölçüm kaydı silindi.")
+                messagebox.showinfo(_("Başarılı"), _("Ölçüm kaydı silindi."))
                 self.refresh()
             except Exception as e:
-                messagebox.showerror("Hata", f"Silme işlemi başarısız: {e}")
+                messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(e))
     
     def refresh(self):
         """Refresh the tab"""

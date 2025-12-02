@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 import tkinter.messagebox as messagebox
 from desktop.core.api_client import ApiClient
 from datetime import datetime
@@ -18,14 +19,14 @@ class AttendanceTab:
         # Title
         ctk.CTkLabel(
             main_frame,
-            text="📊 Katılım Geçmişi",
+            text=_("📊 Katılım Geçmişi"),
             font=("Roboto", 20, "bold")
         ).pack(pady=(0, 20))
 
         try:
             checkins = self.api_client.get(f"/api/v1/checkin/history?member_id={self.member['id']}")
             if not checkins:
-                ctk.CTkLabel(main_frame, text="Katılım kaydı bulunamadı.", text_color="gray").pack(pady=20)
+                ctk.CTkLabel(main_frame, text=_("Katılım kaydı bulunamadı."), text_color="gray").pack(pady=20)
                 return
 
             # Create modern activity cards
@@ -33,7 +34,7 @@ class AttendanceTab:
                 self.create_activity_item(main_frame, chk)
 
         except Exception as e:
-            ctk.CTkLabel(main_frame, text=f"Hata: {e}", text_color="red").pack(pady=20)
+            ctk.CTkLabel(main_frame, text=_("Hata: {}").format(e), text_color="red").pack(pady=20)
 
     def create_activity_item(self, parent, chk):
         """Create modern activity card with reordered layout"""
@@ -111,7 +112,7 @@ class AttendanceTab:
         # Delete button on the right (unchanged)
         delete_btn = ctk.CTkButton(
             top_frame,
-            text="🗑️",
+            text=_("🗑️"),
             width=40,
             height=40,
             fg_color="#E74C3C",
@@ -124,10 +125,10 @@ class AttendanceTab:
         # Bottom row: Verified by (Kaydı yapan)
         verified_by = chk.get('verified_by_name', 'Sistem')
         if verified_by != 'Sistem':
-            verifier_text = f"✓ {verified_by}"
+            verifier_text = _("✓ {}").format(verified_by)
             verifier_color = "gray60"
         else:
-            verifier_text = "🤖 Otomatik"
+            verifier_text = _("🤖 Otomatik")
             verifier_color = "gray60"
         
         ctk.CTkLabel(
@@ -141,7 +142,7 @@ class AttendanceTab:
     def delete_checkin(self, checkin_id):
         """Delete a check-in record after user confirmation"""
         # Show confirmation dialog
-        if not messagebox.askyesno("Silme Onayı", "Bu katılım kaydını silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz."):
+        if not messagebox.askyesno(_("Silme Onayı"), _("Bu katılım kaydını silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz.")):
             return
         
         try:
@@ -149,13 +150,13 @@ class AttendanceTab:
             response = self.api_client.delete(f"/api/v1/checkin/history/{checkin_id}")
             
             # Show success message
-            messagebox.showinfo("Başarılı", "Katılım kaydı başarıyla silindi.")
+            messagebox.showinfo(_("Başarılı"), _("Katılım kaydı başarıyla silindi."))
             
             # Refresh the tab
             self.refresh()
             
         except Exception as e:
-            messagebox.showerror("Hata", f"Silme işlemi başarısız: {str(e)}")
+            messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(str(e)))
 
     def refresh(self):
         """Refresh the tab content"""

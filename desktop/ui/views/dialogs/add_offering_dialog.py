@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
 
@@ -11,7 +12,7 @@ class AddOfferingDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.on_success_callback = on_success_callback
         
-        self.title("Yeni Hizmet Ekle")
+        self.title(_("Yeni Hizmet Ekle"))
         self.geometry("450x400")
         
         self.lift()
@@ -23,22 +24,22 @@ class AddOfferingDialog(ctk.CTkToplevel):
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Header
-        ctk.CTkLabel(self.main_frame, text="🏋️ Yeni Hizmet Ekle", 
+        ctk.CTkLabel(self.main_frame, text=_("🏋️ Yeni Hizmet Ekle"), 
                     font=("Roboto", 22, "bold")).pack(pady=(20, 30))
         
         # Form Fields
-        self.entry_name = self.create_input(self.main_frame, "📝 Hizmet Adı", placeholder="Örn: Reformer")
-        self.entry_dur = self.create_input(self.main_frame, "⏱️ Varsayılan Süre (dk)", value="60")
-        self.entry_desc = self.create_input(self.main_frame, "💬 Açıklama")
+        self.entry_name = self.create_input(self.main_frame, _("📝 Hizmet Adı"), placeholder=_("Örn: Reformer"))
+        self.entry_dur = self.create_input(self.main_frame, _("⏱️ Varsayılan Süre (dk)"), value="60")
+        self.entry_desc = self.create_input(self.main_frame, _("💬 Açıklama"))
         
         # Buttons
         btn_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=30, padx=20)
         
-        ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                      hover_color="#333333", width=100, 
                      command=self.destroy).pack(side="left", padx=10, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", fg_color="#2CC985", 
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), fg_color="#2CC985", 
                      hover_color="#229966", width=100, 
                      command=self.save).pack(side="left", padx=10, expand=True)
 
@@ -63,20 +64,20 @@ class AddOfferingDialog(ctk.CTkToplevel):
         desc = self.entry_desc.get()
 
         if not name or not dur_str:
-            messagebox.showwarning("Uyarı", "Ad ve süre zorunludur.")
+            messagebox.showwarning(_("Uyarı"), _("Ad ve süre zorunludur."))
             return
         
         try:
             duration = int(dur_str)
         except ValueError:
-            messagebox.showwarning("Uyarı", "Süre sayı olmalıdır.")
+            messagebox.showwarning(_("Uyarı"), _("Süre sayı olmalıdır."))
             return
 
         data = {"name": name, "default_duration_minutes": duration, "description": desc}
         try:
             self.api_client.post("/api/v1/services/offerings", json=data)
-            messagebox.showinfo("Başarılı", "Hizmet eklendi.")
+            messagebox.showinfo(_("Başarılı"), _("Hizmet eklendi."))
             self.destroy()
             self.on_success_callback()
         except Exception as e:
-            messagebox.showerror("Hata", f"Ekleme başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Ekleme başarısız: {err}").format(err=str(e)))

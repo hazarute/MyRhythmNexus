@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.components.salespostab import (
     ClassEventScheduler,
@@ -55,7 +56,7 @@ class SalesPOSTab(ctk.CTkFrame):
         header_right.pack(fill="x", padx=15, pady=15)
         header_right.pack_propagate(False)
         
-        ctk.CTkLabel(header_right, text="💳 Paket ve Ödeme", 
+        ctk.CTkLabel(header_right, text=_("💳 Paket ve Ödeme"), 
                     font=("Roboto", 20, "bold"), 
                     text_color="white").pack(expand=True)
         
@@ -78,7 +79,7 @@ class SalesPOSTab(ctk.CTkFrame):
         
         self.checkbox = ctk.CTkCheckBox(
             self.class_event_toggle_frame,
-            text="📚 Özel Ders Zamanlaması Ekle",
+            text=_("📚 Özel Ders Zamanlaması Ekle"),
             variable=self.enable_class_events,
             font=("Roboto", 16, "bold"),
             text_color="white",
@@ -93,7 +94,7 @@ class SalesPOSTab(ctk.CTkFrame):
         
         self.price_override_checkbox = ctk.CTkCheckBox(
             self.price_override_frame,
-            text="💰 Mevcut Abonelik Ücretini Değiştir",
+            text=_("💰 Mevcut Abonelik Ücretini Değiştir"),
             variable=self.enable_price_override,
             font=("Roboto", 16, "bold"),
             text_color="white",
@@ -104,7 +105,7 @@ class SalesPOSTab(ctk.CTkFrame):
         # Price override input (initially hidden)
         self.price_override_input = ctk.CTkEntry(
             self.price_override_frame,
-            placeholder_text="Yeni fiyat giriniz (TL)",
+            placeholder_text=_("Yeni fiyat giriniz (TL)"),
             font=("Roboto", 14),
             height=40
         )
@@ -128,7 +129,7 @@ class SalesPOSTab(ctk.CTkFrame):
         submit_frame = ctk.CTkFrame(self.frame_right, fg_color="transparent")
         submit_frame.pack(fill="x", padx=15, pady=(0, 15))
         
-        ctk.CTkButton(submit_frame, text="✅ Satışı Tamamla", 
+        ctk.CTkButton(submit_frame, text=_("✅ Satışı Tamamla"), 
                      fg_color="#6D28D9", hover_color="#6D28D9", 
                      height=50, corner_radius=10,
                      font=("Roboto", 16, "bold"),
@@ -161,7 +162,7 @@ class SalesPOSTab(ctk.CTkFrame):
                 params["search"] = term
             return self.api_client.get("/api/v1/members/", params=params) or []
         except Exception as e:
-            messagebox.showerror("Hata", f"Arama hatası: {e}")
+            messagebox.showerror(_("Hata"), _("Arama hatası: {}").format(e))
             return []
     
     def load_packages(self):
@@ -294,7 +295,7 @@ class SalesPOSTab(ctk.CTkFrame):
                 if price_text:
                     price_override = float(price_text)
             except ValueError:
-                messagebox.showerror("Hata", "Geçersiz fiyat formatı. Lütfen sayı giriniz.")
+                messagebox.showerror(_("Hata"), _("Geçersiz fiyat formatı. Lütfen sayı giriniz."))
                 return
         
         # Use handler to submit

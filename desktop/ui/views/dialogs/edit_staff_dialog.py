@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 import re
@@ -13,7 +14,7 @@ class EditStaffDialog(ctk.CTkToplevel):
         self.staff_id = staff_id
         self.on_success = on_success
         
-        self.title("Personel Düzenle")
+        self.title(_("Personel Düzenle"))
         self.geometry("450x620")
         
         self.lift()
@@ -25,31 +26,31 @@ class EditStaffDialog(ctk.CTkToplevel):
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Header
-        ctk.CTkLabel(self.main_frame, text="✏️ Personel Düzenle", 
+        ctk.CTkLabel(self.main_frame, text=_("✏️ Personel Düzenle"), 
                     font=("Roboto", 22, "bold")).pack(pady=(20, 30))
         
         # Form Fields with existing data
-        self.entry_first_name = self.create_input(self.main_frame, "👤 Ad", 
+        self.entry_first_name = self.create_input(self.main_frame, _("👤 Ad"), 
                                                   staff_data.get('first_name', ''))
-        self.entry_last_name = self.create_input(self.main_frame, "👤 Soyad", 
+        self.entry_last_name = self.create_input(self.main_frame, _("👤 Soyad"), 
                                                 staff_data.get('last_name', ''))
-        self.entry_email = self.create_input(self.main_frame, "📧 Email", 
+        self.entry_email = self.create_input(self.main_frame, _("📧 Email"), 
                                             staff_data.get('email', ''))
-        self.entry_phone = self.create_input(self.main_frame, "📞 Telefon", 
+        self.entry_phone = self.create_input(self.main_frame, _("📞 Telefon"), 
                                             staff_data.get('phone_number', ''))
         
         # Password field (optional for edit - leave empty to keep current password)
         password_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         password_frame.pack(fill="x", padx=20, pady=8)
         
-        ctk.CTkLabel(password_frame, text="🔑 Şifre", font=("Roboto", 14), 
+        ctk.CTkLabel(password_frame, text=_("🔑 Şifre"), font=("Roboto", 14), 
                     width=80, anchor="w").pack(side="left")
         
         self.entry_password = ctk.CTkEntry(password_frame, height=35, font=("Roboto", 14), 
                                           show="*")
         self.entry_password.pack(side="left", fill="x", expand=True, padx=(10, 0))
         
-        password_help = ctk.CTkLabel(password_frame, text="(boş bırakılırsa değişmez)", 
+        password_help = ctk.CTkLabel(password_frame, text=_("(boş bırakılırsa değişmez)"), 
                                     font=("Roboto", 10), 
                                     text_color=("gray50", "gray60"))
         
@@ -57,7 +58,7 @@ class EditStaffDialog(ctk.CTkToplevel):
         role_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         role_frame.pack(fill="x", padx=20, pady=8)
         
-        ctk.CTkLabel(role_frame, text="💼 Rol", font=("Roboto", 14), 
+        ctk.CTkLabel(role_frame, text=_("💼 Rol"), font=("Roboto", 14), 
                     width=80, anchor="w").pack(side="left")
         
         self.combo_role = ctk.CTkComboBox(role_frame, 
@@ -81,7 +82,7 @@ class EditStaffDialog(ctk.CTkToplevel):
         status_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         status_frame.pack(fill="x", padx=20, pady=15)
         
-        self.check_active = ctk.CTkCheckBox(status_frame, text="Aktif", 
+        self.check_active = ctk.CTkCheckBox(status_frame, text=_("Aktif"), 
                                            font=("Roboto", 14))
         self.check_active.pack(anchor="w")
         self.check_active.select() if staff_data.get('is_active') else self.check_active.deselect()
@@ -90,10 +91,10 @@ class EditStaffDialog(ctk.CTkToplevel):
         btn_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=30, padx=20)
         
-        ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                      hover_color="#333333", width=100, 
                      command=self.destroy).pack(side="left", padx=10, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", fg_color="#2CC985", 
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), fg_color="#2CC985", 
                      hover_color="#229966", width=100, 
                      command=self.save).pack(side="left", padx=10, expand=True)
 
@@ -124,15 +125,15 @@ class EditStaffDialog(ctk.CTkToplevel):
 
         # Required fields check
         if not all([first_name, last_name, email, role]):
-            messagebox.showwarning("Eksik Bilgi", 
-                "Lütfen Ad, Soyad, Email ve Rol alanlarını doldurunuz.")
+            messagebox.showwarning(_("Eksik Bilgi"), 
+                _("Lütfen Ad, Soyad, Email ve Rol alanlarını doldurunuz."))
             return
 
         # Email validation (RFC 5322 simplified)
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_pattern, email):
-            messagebox.showwarning("Geçersiz Email", 
-                "Lütfen geçerli bir email adresi giriniz.\nÖrnek: ornek@domain.com")
+            messagebox.showwarning(_("Geçersiz Email"), 
+                _("Lütfen geçerli bir email adresi giriniz.\nÖrnek: ornek@domain.com"))
             return
 
         # Phone validation (Turkey format) - optional for staff
@@ -147,25 +148,25 @@ class EditStaffDialog(ctk.CTkToplevel):
                 phone_clean = phone_clean[1:]
             
             if not phone_clean.isdigit() or len(phone_clean) != 10:
-                messagebox.showwarning("Geçersiz Telefon", 
-                    "Telefon numarası 10 haneli olmalıdır.\n"
+                messagebox.showwarning(_("Geçersiz Telefon"), 
+                    _("Telefon numarası 10 haneli olmalıdır.\n"
                     "Kabul edilen formatlar:\n"
                     "• 5xxxxxxxxx\n"
                     "• 05xxxxxxxxx\n"
                     "• +905xxxxxxxxx\n"
-                    "• 0 5xx xxx xx xx")
+                    "• 0 5xx xxx xx xx"))
                 return
             
             if not phone_clean.startswith("5"):
-                messagebox.showwarning("Geçersiz Telefon", 
-                    "Telefon numarası 5 ile başlamalıdır (cep telefonu).")
+                messagebox.showwarning(_("Geçersiz Telefon"), 
+                    _("Telefon numarası 5 ile başlamalıdır (cep telefonu)."))
                 return
             
             phone = phone_clean
 
         # Password strength check (if provided)
         if password and len(password) < 6:
-            messagebox.showwarning("Zayıf Şifre", "Şifre en az 6 karakter olmalıdır.")
+            messagebox.showwarning(_("Zayıf Şifre"), _("Şifre en az 6 karakter olmalıdır."))
             return
 
         data = {
@@ -187,4 +188,4 @@ class EditStaffDialog(ctk.CTkToplevel):
             self.destroy()
         except Exception as e:
             print(f"Error updating staff: {e}")
-            messagebox.showerror("Hata", f"Personel güncellenemedi: {e}")
+            messagebox.showerror(_("Hata"), _("Personel güncellenemedi: {err}").format(err=str(e)))

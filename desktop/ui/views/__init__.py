@@ -1,4 +1,5 @@
 from .dashboard import DashboardView
+from desktop.core.locale import _
 from .members import MembersView
 from .staff import StaffView
 from .sales import SalesView

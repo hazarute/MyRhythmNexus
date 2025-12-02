@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from datetime import datetime
 from tkinter import messagebox
 from typing import Callable, Optional
@@ -36,7 +37,7 @@ class FinanceTab(ctk.CTkFrame):
 
         self.label_title = ctk.CTkLabel(
             title_frame,
-            text="Finansal Geçmiş",
+            text=_("Finansal Geçmiş"),
             font=("Roboto", 26, "bold"),
         )
         self.label_title.pack(side="left")
@@ -44,7 +45,7 @@ class FinanceTab(ctk.CTkFrame):
         if self.member_id:
             self.btn_clear_filter = ctk.CTkButton(
                 title_frame,
-                text="Filtreyi Temizle",
+                text=_("Filtreyi Temizle"),
                 width=150,
                 command=self.clear_filter,
                 fg_color="#6C757D",
@@ -66,7 +67,7 @@ class FinanceTab(ctk.CTkFrame):
 
         self.lbl_summary = ctk.CTkLabel(
             info_frame,
-            text="Yükleniyor...",
+            text=_("Yükleniyor..."),
             font=("Roboto", 12),
             text_color=("#888888", "#CCCCCC"),
         )
@@ -102,12 +103,12 @@ class FinanceTab(ctk.CTkFrame):
         self.pagination.pack(fill="x")
 
     def _build_subtitle(self) -> str:
-        return "Üyeye özel kayıtlar" if self.member_id else "Tüm ödemeler"
+        return _("Üyeye özel kayıtlar") if self.member_id else _("Tüm ödemeler")
 
     def clear_filter(self):
         self.member_id = None
         self.page = 1
-        self.label_title.configure(text="Finansal Geçmiş")
+        self.label_title.configure(text=_("Finansal Geçmiş"))
         self.label_subtitle.configure(text=self._build_subtitle())
         if hasattr(self, "btn_clear_filter"):
             self.btn_clear_filter.destroy()
@@ -132,9 +133,9 @@ class FinanceTab(ctk.CTkFrame):
 
             self.pagination.update_page_info(self.page, self.total_pages)
 
-            summary_text = f"Toplam {self.total_records} kayıt"
+            summary_text = _("Toplam {} kayıt").format(self.total_records)
             if self.member_id:
-                summary_text += " (Üyeye özel)"
+                summary_text += _(" (Üyeye özel)")
             self.lbl_summary.configure(text=summary_text)
 
             if not items:
@@ -145,7 +146,7 @@ class FinanceTab(ctk.CTkFrame):
 
         except Exception as exc:
             print(f"Error loading payments: {exc}")
-            self._show_empty_state("Bir hata oluştu. Lütfen tekrar dene.")
+            self._show_empty_state(_("Bir hata oluştu. Lütfen tekrar dene."))
 
     def _show_empty_state(self, text: str):
         placeholder = ctk.CTkLabel(
@@ -182,11 +183,11 @@ class FinanceTab(ctk.CTkFrame):
 
     def confirm_delete_payment(self, payment_id, member_name):
         if not payment_id:
-            messagebox.showerror("Silme Hatası", "Ödeme kimliği mevcut değil.")
+            messagebox.showerror(_("Silme Hatası"), _("Ödeme kimliği mevcut değil."))
             return
 
         if not messagebox.askyesno(
-            "Ödemeyi Sil", f"{member_name} kaydını silmek istediğinize emin misiniz?"
+            _("Ödemeyi Sil"), _("{} kaydını silmek istediğinize emin misiniz?").format(member_name)
         ):
             return
 
@@ -195,7 +196,7 @@ class FinanceTab(ctk.CTkFrame):
             self.load_data()
         except Exception as exc:
             print(f"Error deleting payment: {exc}")
-            messagebox.showerror("Silme Hatası", "İşlem başarısız oldu. Lütfen tekrar deneyin.")
+            messagebox.showerror(_("Silme Hatası"), _("İşlem başarısız oldu. Lütfen tekrar deneyin."))
 
     def prev_page(self):
         if self.page > 1:

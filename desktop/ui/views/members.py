@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.views.tabs.member_detail_tab import MemberDetailTab
 from desktop.ui.views.dialogs import AddMemberDialog
@@ -42,7 +43,7 @@ class MemberListView(ctk.CTkFrame):
         self.on_detail = on_detail
         
         # Title
-        self.label_title = ctk.CTkLabel(self, text="👥 Üye Yönetimi", font=("Roboto", 28, "bold"))
+        self.label_title = ctk.CTkLabel(self, text=_("👥 Üye Yönetimi"), font=("Roboto", 28, "bold"))
         self.label_title.pack(pady=20, padx=20, anchor="w")
 
         # Top Bar: Search and Add
@@ -55,9 +56,9 @@ class MemberListView(ctk.CTkFrame):
         
         self.search_bar = SearchBar(
             search_frame,
-            placeholder="🔍 Üye Ara (Ad, Email, Tel)...",
+            placeholder=_("🔍 Üye Ara (Ad, Email, Tel)..."),
             on_search=self.load_data,
-            button_text="🔎 Ara",
+            button_text=_("🔎 Ara"),
             width=400,
             height=40
         )
@@ -67,7 +68,7 @@ class MemberListView(ctk.CTkFrame):
         self.show_inactive_only = ctk.BooleanVar(value=False)
         self.chk_inactive = ctk.CTkCheckBox(
             search_frame,
-            text="⛔ Sadece Pasif Üyeler",
+            text=_("⛔ Sadece Pasif Üyeler"),
             variable=self.show_inactive_only,
             command=self.load_data,
             font=("Roboto", 12),
@@ -76,7 +77,7 @@ class MemberListView(ctk.CTkFrame):
         self.chk_inactive.pack(side="left", padx=(0, 10))
         
         # Add button
-        ctk.CTkButton(self.top_bar, text="➕ Yeni Üye", command=self.show_add_dialog, 
+        ctk.CTkButton(self.top_bar, text=_("➕ Yeni Üye"), command=self.show_add_dialog, 
                      height=40, fg_color="#2CC985", hover_color="#229966",
                      font=("Roboto", 14, "bold")).pack(side="right", padx=5)
 
@@ -108,10 +109,14 @@ class MemberListView(ctk.CTkFrame):
                 members_list = [member for member in members_list if not member.get('is_active', True)]
             
             if not members_list:
-                checkbox_text = " (pasif üyeler)" if self.show_inactive_only.get() else ""
-                no_data = ctk.CTkLabel(self.scroll_frame, 
-                                      text=f"📋 Henüz üye kaydı bulunmuyor{checkbox_text}" if not search_term else f"🔍 Arama sonucu bulunamadı{checkbox_text}",
-                                      font=("Roboto", 16), 
+                suffix = _(" (pasif üyeler)") if self.show_inactive_only.get() else ""
+                if not search_term:
+                    msg = _("📋 Henüz üye kaydı bulunmuyor{suffix}").format(suffix=suffix)
+                else:
+                    msg = _("🔍 Arama sonucu bulunamadı{suffix}").format(suffix=suffix)
+                no_data = ctk.CTkLabel(self.scroll_frame,
+                                      text=msg,
+                                      font=("Roboto", 16),
                                       text_color=("gray50", "gray60"))
                 no_data.pack(pady=50)
                 return
@@ -122,7 +127,7 @@ class MemberListView(ctk.CTkFrame):
         except Exception as e:
             print(f"Error loading members: {e}")
             error_label = ctk.CTkLabel(self.scroll_frame, 
-                                      text="❌ Veri yüklenirken hata oluştu",
+                                      text=_("❌ Veri yüklenirken hata oluştu"),
                                       font=("Roboto", 16),
                                       text_color="red")
             error_label.pack(pady=50)
@@ -158,7 +163,7 @@ class MemberListView(ctk.CTkFrame):
         
         # Status badge next to name
         is_active = member.get('is_active')
-        status_text = "✅ Aktif" if is_active else "⛔ Pasif"
+        status_text = _("✅ Aktif") if is_active else _("⛔ Pasif")
         status_color = ("#2CC985", "#229966") if is_active else ("#E74C3C", "#C0392B")
         
         lbl_status = ctk.CTkLabel(name_row, text=status_text,
@@ -194,7 +199,7 @@ class MemberListView(ctk.CTkFrame):
         right_frame.bind("<Button-1>", lambda e: self.on_detail(member))
         
         # Detail button
-        btn_detail = ctk.CTkButton(right_frame, text="📋 Detay", 
+        btn_detail = ctk.CTkButton(right_frame, text=_("📋 Detay"), 
                                   width=110, height=40,
                                   fg_color="#3B8ED0", 
                                   hover_color="#2E7AB8",
@@ -204,7 +209,7 @@ class MemberListView(ctk.CTkFrame):
         
         # Activate button if member is inactive
         if not member.get('is_active', True):
-            btn_activate = ctk.CTkButton(right_frame, text="✅ Aktif Et", 
+            btn_activate = ctk.CTkButton(right_frame, text=_("✅ Aktif Et"), 
                                         width=110, height=40,
                                         fg_color="#2CC985", 
                                         hover_color="#229966",
@@ -213,7 +218,7 @@ class MemberListView(ctk.CTkFrame):
             btn_activate.pack(side="left", padx=(0, 5))
         
         # Delete button
-        btn_delete = ctk.CTkButton(right_frame, text="🗑️ Sil", 
+        btn_delete = ctk.CTkButton(right_frame, text=_("🗑️ Sil"), 
                                   width=80, height=40,
                                   fg_color="red", 
                                   hover_color="darkred",
@@ -223,13 +228,13 @@ class MemberListView(ctk.CTkFrame):
 
     def delete_member(self, member):
         """Delete member with confirmation"""
-        if messagebox.askyesno("Onay", "Bu üyeyi silmek istediğinize emin misiniz?"):
+        if messagebox.askyesno(_("Onay"), _("Bu üyeyi silmek istediğinize emin misiniz?")):
             try:
                 self.api_client.delete(f"/api/v1/members/{member['id']}")
-                messagebox.showinfo("Başarılı", "Üye silindi.")
+                messagebox.showinfo(_("Başarılı"), _("Üye silindi."))
                 self.load_data(self.search_bar.get_search_term())
             except Exception as e:
-                messagebox.showerror("Hata", f"Silme işlemi başarısız: {e}")
+                messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {err}").format(err=str(e)))
 
     def activate_member(self, member):
         """Activate member and update timestamp"""
@@ -239,10 +244,10 @@ class MemberListView(ctk.CTkFrame):
                 "updated_at": get_turkey_time().isoformat()
             }
             self.api_client.put(f"/api/v1/members/{member['id']}", json=data)
-            messagebox.showinfo("Başarılı", "Üye aktif edildi.")
+            messagebox.showinfo(_("Başarılı"), _("Üye aktif edildi."))
             self.load_data(self.search_bar.get_search_term())
         except Exception as e:
-            messagebox.showerror("Hata", f"Aktif etme işlemi başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Aktif etme işlemi başarısız: {err}").format(err=str(e)))
 
     def show_add_dialog(self):
         AddMemberDialog(self, self.api_client, self.load_data)

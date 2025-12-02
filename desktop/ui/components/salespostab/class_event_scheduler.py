@@ -6,6 +6,7 @@ Handles day selection, time input, instructor selection, and repeat weeks.
 """
 
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Dict, List, Optional
 from desktop.ui.components.time_spinner import TimeSpinner
 
@@ -54,7 +55,7 @@ class ClassEventScheduler(ctk.CTkFrame):
         # Title
         title_label = ctk.CTkLabel(
             self, 
-            text="📚 Özel Ders Zamanlaması", 
+            text=_("📚 Özel Ders Zamanlaması"), 
             font=("Roboto", 14, "bold"),
             text_color="#2CC985"
         )
@@ -63,7 +64,7 @@ class ClassEventScheduler(ctk.CTkFrame):
         # Eğitmen seçimi
         ctk.CTkLabel(
             self, 
-            text="Eğitmen:", 
+            text=_("Eğitmen:"), 
             font=("Roboto", 12)
         ).pack(anchor="w", padx=15, pady=(10, 5))
         
@@ -80,7 +81,7 @@ class ClassEventScheduler(ctk.CTkFrame):
         # Hafta günleri ve saatler
         ctk.CTkLabel(
             self, 
-            text="Ders Günleri ve Saatleri:", 
+            text=_("Ders Günleri ve Saatleri:"), 
             font=("Roboto", 12, "bold")
         ).pack(anchor="w", padx=15, pady=(0, 10))
         
@@ -96,7 +97,7 @@ class ClassEventScheduler(ctk.CTkFrame):
         # Tekrar haftalar
         ctk.CTkLabel(
             self, 
-            text="Tekrar Eden Haftalar:", 
+            text=_("Tekrar Eden Haftalar:"), 
             font=("Roboto", 12)
         ).pack(anchor="w", padx=15, pady=(15, 5))
         
@@ -148,7 +149,7 @@ class ClassEventScheduler(ctk.CTkFrame):
         setattr(self, f"{day_key}_hour_spinner", hour_spinner)
         
         # Separator
-        ctk.CTkLabel(time_frame, text=":", font=("Roboto", 12, "bold")).pack(side="left", padx=2)
+        ctk.CTkLabel(time_frame, text=_(":"), font=("Roboto", 12, "bold")).pack(side="left", padx=2)
         
         # Minutes spinner (0-59, step 30, default 0)
         minute_spinner = TimeSpinner(

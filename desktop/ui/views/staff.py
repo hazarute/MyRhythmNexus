@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.views.dialogs.add_staff_dialog import AddStaffDialog
 from desktop.ui.views.dialogs.edit_staff_dialog import EditStaffDialog
@@ -30,7 +31,7 @@ class StaffListView(ctk.CTkFrame):
         self.api_client = api_client
         
         # Title
-        self.label_title = ctk.CTkLabel(self, text="👔 Personel Yönetimi", font=("Roboto", 28, "bold"))
+        self.label_title = ctk.CTkLabel(self, text=_("👔 Personel Yönetimi"), font=("Roboto", 28, "bold"))
         self.label_title.pack(pady=20, padx=20, anchor="w")
 
         # Top Bar: Search and Add
@@ -43,7 +44,7 @@ class StaffListView(ctk.CTkFrame):
         
         self.search_bar = SearchBar(
             search_frame,
-            placeholder="🔍 Personel Ara (Ad, Email, Tel)...",
+            placeholder=_("🔍 Personel Ara (Ad, Email, Tel)..."),
             on_search=self.load_data,
             button_text="🔎 Ara",
             width=400,
@@ -52,7 +53,7 @@ class StaffListView(ctk.CTkFrame):
         self.search_bar.pack(side="left", fill="x", expand=True, padx=(0, 10))
         
         # Add button
-        ctk.CTkButton(self.top_bar, text="➕ Yeni Personel", command=self.show_add_dialog, 
+        ctk.CTkButton(self.top_bar, text=_("➕ Yeni Personel"), command=self.show_add_dialog, 
                      height=40, fg_color="#2CC985", hover_color="#229966",
                      font=("Roboto", 14, "bold")).pack(side="right", padx=5)
 
@@ -76,9 +77,13 @@ class StaffListView(ctk.CTkFrame):
             staff_list = self.api_client.get("/api/v1/staff/", params=params)
             
             if not staff_list:
-                no_data = ctk.CTkLabel(self.scroll_frame, 
-                                      text="📋 Henüz personel kaydı bulunmuyor" if not search_term else "🔍 Arama sonucu bulunamadı",
-                                      font=("Roboto", 16), 
+                if not search_term:
+                    msg = _("📋 Henüz personel kaydı bulunmuyor")
+                else:
+                    msg = _("🔍 Arama sonucu bulunamadı")
+                no_data = ctk.CTkLabel(self.scroll_frame,
+                                      text=msg,
+                                      font=("Roboto", 16),
                                       text_color=("gray50", "gray60"))
                 no_data.pack(pady=50)
                 return
@@ -89,7 +94,7 @@ class StaffListView(ctk.CTkFrame):
         except Exception as e:
             print(f"Error loading staff: {e}")
             error_label = ctk.CTkLabel(self.scroll_frame, 
-                                      text="❌ Veri yüklenirken hata oluştu",
+                                      text=_("❌ Veri yüklenirken hata oluştu"),
                                       font=("Roboto", 16),
                                       text_color="red")
             error_label.pack(pady=50)
@@ -118,9 +123,9 @@ class StaffListView(ctk.CTkFrame):
             if isinstance(r, dict):
                 role_name = r.get('role_name', '')
                 if role_name == 'ADMIN':
-                    role_names.append('Yönetici')
+                    role_names.append(_('Yönetici'))
                 elif role_name == 'INSTRUCTOR':
-                    role_names.append('Antrenör')
+                    role_names.append(_('Antrenör'))
                 else:
                     role_names.append(role_name)
             else:
@@ -133,7 +138,7 @@ class StaffListView(ctk.CTkFrame):
         
         # Status badge next to name
         is_active = staff.get('is_active')
-        status_text = "✅ Aktif" if is_active else "⛔ Pasif"
+        status_text = _("✅ Aktif") if is_active else _("⛔ Pasif")
         status_color = ("#2CC985", "#229966") if is_active else ("#E74C3C", "#C0392B")
         
         lbl_status = ctk.CTkLabel(name_row, text=status_text,
@@ -164,7 +169,7 @@ class StaffListView(ctk.CTkFrame):
         right_frame.pack(side="right", padx=20, pady=15)
         
         # Edit button
-        btn_edit = ctk.CTkButton(right_frame, text="✏️ Düzenle", 
+        btn_edit = ctk.CTkButton(right_frame, text=_("✏️ Düzenle"), 
                                 width=110, height=40,
                                 fg_color="#F39C12", 
                                 hover_color="#D68910",
@@ -173,7 +178,7 @@ class StaffListView(ctk.CTkFrame):
         btn_edit.pack(side="left", padx=5)
         
         # Delete button
-        btn_delete = ctk.CTkButton(right_frame, text="🗑️ Sil", 
+        btn_delete = ctk.CTkButton(right_frame, text=_("🗑️ Sil"), 
                                   width=100, height=40,
                                   fg_color="#E74C3C", 
                                   hover_color="#C0392B",
@@ -188,7 +193,7 @@ class StaffListView(ctk.CTkFrame):
         """Open edit dialog for a staff member"""
         staff_id = staff.get('id')
         if not staff_id:
-            messagebox.showerror("Hata", "Personel ID bulunamadı")
+            messagebox.showerror(_("Hata"), _("Personel ID bulunamadı"))
             return
         EditStaffDialog(self, self.api_client, staff_id, staff, self.load_data)
     
@@ -198,13 +203,13 @@ class StaffListView(ctk.CTkFrame):
         name = f"{staff.get('first_name')} {staff.get('last_name')}"
         
         if not staff_id:
-            messagebox.showerror("Hata", "Personel ID bulunamadı")
+            messagebox.showerror(_("Hata"), _("Personel ID bulunamadı"))
             return
         
         # Confirmation dialog
         confirm = messagebox.askyesno(
-            "Silme Onayı",
-            f"'{name}' personelini silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!"
+            _("Silme Onayı"),
+            _("'{name}' personelini silmek istediğinize emin misiniz?\n\nBu işlem geri alınamaz!").format(name=name)
         )
         
         if not confirm:
@@ -212,8 +217,8 @@ class StaffListView(ctk.CTkFrame):
         
         try:
             self.api_client.delete(f"/api/v1/staff/{staff_id}")
-            messagebox.showinfo("Başarılı", f"'{name}' personeli silindi.")
+            messagebox.showinfo(_("Başarılı"), _("'{name}' personeli silindi.").format(name=name))
             self.load_data()  # Refresh the list
         except Exception as e:
             print(f"Error deleting staff: {e}")
-            messagebox.showerror("Hata", f"Personel silinirken hata oluştu: {e}")
+            messagebox.showerror(_("Hata"), _("Personel silinirken hata oluştu: {err}").format(err=str(e)))

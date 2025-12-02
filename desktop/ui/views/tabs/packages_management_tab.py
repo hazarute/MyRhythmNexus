@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 from typing import Callable, Optional
@@ -26,7 +27,7 @@ class PackagesManagementTab(ctk.CTkFrame):
 
         ctk.CTkButton(
             top_bar,
-            text="+ Yeni Paket",
+            text=_("+ Yeni Paket"),
             command=self.show_add_package_dialog,
         ).pack(side="right")
 
@@ -49,13 +50,13 @@ class PackagesManagementTab(ctk.CTkFrame):
         try:
             packages = self.api_client.get("/api/v1/services/packages")
         except Exception as e:
-            messagebox.showerror("Hata", f"Paketler yüklenemedi: {e}")
+            messagebox.showerror(_("Hata"), _("Paketler yüklenemedi: {}").format(e))
             return
 
         if not packages:
             ctk.CTkLabel(
                 self.packages_scroll,
-                text="Henüz paket bulunmuyor.",
+                text=_("Henüz paket bulunmuyor."),
                 font=("Roboto", 16),
                 text_color=("gray50", "gray70"),
             ).pack(pady=60)
@@ -64,7 +65,7 @@ class PackagesManagementTab(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self.packages_scroll,
-            text="Tanımlı Paketler",
+            text=_("Tanımlı Paketler"),
             font=("Roboto", 24, "bold"),
             anchor="w",
         ).pack(fill="x", pady=(0, 12))
@@ -97,7 +98,7 @@ class PackagesManagementTab(ctk.CTkFrame):
 
         title = ctk.CTkLabel(
             header,
-            text=package_data.get("name", "Bilinmeyen Paket"),
+            text=package_data.get("name", _("Bilinmeyen Paket")),
             font=("Roboto", 18, "bold"),
             anchor="w",
         )
@@ -107,7 +108,7 @@ class PackagesManagementTab(ctk.CTkFrame):
         badge_color = "#3B8ED0" if package_data.get("is_active") else "#6C757D"
         status_label = ctk.CTkLabel(
             header,
-            text=f"{badge_text}",
+            text=_("{}").format(badge_text),
             font=("Roboto", 12, "bold"),
             text_color=badge_color,
         )
@@ -144,14 +145,14 @@ class PackagesManagementTab(ctk.CTkFrame):
 
         price_label = ctk.CTkLabel(
             footer,
-            text=f"₺{price:.2f}",
+            text=_("₺{:.2f}").format(price),
             font=("Roboto", 18, "bold"),
         )
         price_label.pack(side="left")
 
         del_btn = ctk.CTkButton(
             footer,
-            text="Sil",
+            text=_("Sil"),
             fg_color="#E74C3C",
             hover_color="#C0392B",
             width=78,
@@ -205,19 +206,18 @@ class PackagesManagementTab(ctk.CTkFrame):
         if not target:
             return
         confirm = messagebox.askyesno(
-            "Paket Sil",
-            f"'{target['name']}' paketini silmek istediğinize emin misiniz?\n\n"
-            "DİKKAT: Eğer bu pakete bağlı aktif abonelikler varsa silme işlemi engellenecektir."
+            _("Paket Sil"),
+            _("'{}' paketini silmek istediğinize emin misiniz?\n\nDİKKAT: Eğer bu pakete bağlı aktif abonelikler varsa silme işlemi engellenecektir.").format(target['name'])
         )
         if not confirm:
             return
         try:
             self.api_client.delete(f"/api/v1/services/packages/{target_id}")
-            messagebox.showinfo("Başarılı", "Paket silindi.")
+            messagebox.showinfo(_("Başarılı"), _("Paket silindi."))
             self.load_packages()
         except Exception as e:
             error_msg = self._parse_error_message(e)
-            messagebox.showerror("Hata", f"Silme başarısız:\n{error_msg}")
+            messagebox.showerror(_("Hata"), _("Silme başarısız:\n{}").format(error_msg))
 
     def edit_package(self):
         if not self.selected_package_id:

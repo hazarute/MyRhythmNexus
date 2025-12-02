@@ -7,6 +7,7 @@ package selection, class event scheduling, and submission.
 """
 
 from .member_selector import MemberSelector
+from desktop.core.locale import _
 from .payment_details import PaymentDetails
 from .date_selector import DateSelector
 from .package_selector import PackageSelector

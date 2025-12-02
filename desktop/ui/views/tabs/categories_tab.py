@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
 from desktop.ui.views.dialogs import AddCategoryDialog
@@ -15,11 +16,11 @@ class CategoriesTab(ctk.CTkFrame):
         frame_toolbar = ctk.CTkFrame(self, fg_color="transparent")
         frame_toolbar.pack(fill="x", pady=(10, 20), padx=10)
 
-        ctk.CTkButton(frame_toolbar, text="🔄 Yenile", width=100, height=32,
+        ctk.CTkButton(frame_toolbar, text=_("🔄 Yenile"), width=100, height=32,
                      fg_color="#3B8ED0", hover_color="#2E7AB8",
                      command=self.load_categories).pack(side="left", padx=5)
 
-        ctk.CTkButton(frame_toolbar, text="➕ Yeni Kategori", height=32,
+        ctk.CTkButton(frame_toolbar, text=_("➕ Yeni Kategori"), height=32,
                      fg_color="#2CC985", hover_color="#229966",
                      command=self.open_add_category_dialog).pack(side="right", padx=5)
 
@@ -40,7 +41,7 @@ class CategoriesTab(ctk.CTkFrame):
             for cat in categories:
                 self.create_category_row(cat)
         except Exception as e:
-            messagebox.showerror("Hata", f"Kategoriler yüklenemedi: {e}")
+            messagebox.showerror(_("Hata"), _("Kategoriler yüklenemedi: {}").format(e))
 
     def create_category_row(self, category):
         """Create a category card widget"""
@@ -53,18 +54,18 @@ class CategoriesTab(ctk.CTkFrame):
         content_frame = ctk.CTkFrame(card, fg_color="transparent")
         content_frame.pack(side="left", fill="both", expand=True, padx=15, pady=12)
 
-        lbl_name = ctk.CTkLabel(content_frame, text=f"📁 {category['name']}", 
+        lbl_name = ctk.CTkLabel(content_frame, text=_("📁 {}").format(category['name']), 
                                font=("Roboto", 15, "bold"), anchor="w")
         lbl_name.pack(anchor="w")
 
-        desc_text = category.get('description', '') or 'Açıklama yok'
+        desc_text = category.get('description', '') or _('Açıklama yok')
         lbl_desc = ctk.CTkLabel(content_frame, text=desc_text, 
                                font=("Roboto", 12), anchor="w",
                                text_color=("#666666", "#999999"))
         lbl_desc.pack(anchor="w", pady=(4, 0))
 
         # Right side - Delete button
-        btn_delete = ctk.CTkButton(card, text="🗑️ Sil", width=80, height=28,
+        btn_delete = ctk.CTkButton(card, text=_("🗑️ Sil"), width=80, height=28,
                                   fg_color="#E74C3C", hover_color="#C0392B",
                                   command=lambda: self.delete_category(category['id']))
         btn_delete.pack(side="right", padx=15, pady=12)
@@ -73,19 +74,19 @@ class CategoriesTab(ctk.CTkFrame):
         """Delete a category after confirmation"""
         from tkinter import messagebox as mb
         import httpx
-        if mb.askyesno("Onay", "Bu kategoriyi silmek istediğinizden emin misiniz?"):
+        if mb.askyesno(_("Onay"), _("Bu kategoriyi silmek istediğinizden emin misiniz?")):
             try:
                 self.api_client.delete(f"/api/v1/services/categories/{category_id}")
-                mb.showinfo("Başarılı", "Kategori silindi.")
+                mb.showinfo(_("Başarılı"), _("Kategori silindi."))
                 self.load_categories()
             except httpx.HTTPStatusError as e:
                 try:
                     error_detail = e.response.json().get('detail', str(e))
                 except:
                     error_detail = str(e)
-                mb.showerror("Hata", error_detail)
+                mb.showerror(_("Hata"), error_detail)
             except Exception as e:
-                mb.showerror("Hata", f"Silme işlemi başarısız: {e}")
+                mb.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(e))
 
     def open_add_category_dialog(self):
         """Open dialog for adding a new category"""

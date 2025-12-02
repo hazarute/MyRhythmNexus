@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.api_client import ApiClient
+from desktop.core.locale import _
 from datetime import datetime
 
 class CheckInDialog(ctk.CTkToplevel):
@@ -9,7 +10,7 @@ class CheckInDialog(ctk.CTkToplevel):
         self.qr_token = qr_token
         self.on_refresh = on_refresh
         
-        self.title("Giriş Kontrol")
+        self.title(_("Giriş Kontrol"))
         self.geometry("500x600")
         
         # Center the window
@@ -22,7 +23,7 @@ class CheckInDialog(ctk.CTkToplevel):
         
         self.grid_columnconfigure(0, weight=1)
         
-        self.label_status = ctk.CTkLabel(self, text="Kontrol Ediliyor...", font=("Roboto", 18))
+        self.label_status = ctk.CTkLabel(self, text=_("Kontrol Ediliyor..."), font=("Roboto", 18))
         self.label_status.pack(pady=20)
         
         self.content_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -39,51 +40,51 @@ class CheckInDialog(ctk.CTkToplevel):
             if response.get("valid"):
                 self.show_valid_result(response)
             else:
-                self.show_error(response.get("message", "Geçersiz QR"))
+                self.show_error(response.get("message", _("Geçersiz QR")))
         except Exception as e:
-            self.show_error(f"Bağlantı Hatası: {e}")
+            self.show_error(f"{_('Bağlantı Hatası')}: {e}")
 
     def show_error(self, message):
-        self.label_status.configure(text="❌ Giriş Başarısız", text_color="red")
+        self.label_status.configure(text=_("❌ Giriş Başarısız"), text_color="red")
         
         lbl = ctk.CTkLabel(self.content_frame, text=message, font=("Roboto", 16))
         lbl.pack(pady=20)
         
-        btn = ctk.CTkButton(self.content_frame, text="Kapat", command=self.destroy, fg_color="gray")
+        btn = ctk.CTkButton(self.content_frame, text=_("Kapat"), command=self.destroy, fg_color="gray")
         btn.pack(pady=20)
         
         # Play error sound (placeholder)
         self.bell()
 
     def show_valid_result(self, data):
-        self.label_status.configure(text="✅ QR Kod Geçerli", text_color="green")
+        self.label_status.configure(text=_("✅ QR Kod Geçerli"), text_color="green")
         
         # Member Info
         info_frame = ctk.CTkFrame(self.content_frame)
         info_frame.pack(fill="x", pady=10)
         
-        ctk.CTkLabel(info_frame, text=f"Üye: {data.get('member_name')}", font=("Roboto", 16, "bold")).pack(anchor="w", padx=10, pady=5)
-        ctk.CTkLabel(info_frame, text=f"Paket: {data.get('subscription_name')}", font=("Roboto", 14)).pack(anchor="w", padx=10, pady=2)
+        ctk.CTkLabel(info_frame, text=_("Üye: {}").format(data.get('member_name')), font=("Roboto", 16, "bold")).pack(anchor="w", padx=10, pady=5)
+        ctk.CTkLabel(info_frame, text=_("Paket: {}").format(data.get('subscription_name')), font=("Roboto", 14)).pack(anchor="w", padx=10, pady=2)
         
         rem = data.get('remaining_sessions')
-        rem_text = f"Kalan Hak: {rem}" if rem is not None else "Kalan Hak: Sınırsız"
+        rem_text = _("Kalan Hak: {}").format(rem) if rem is not None else _("Kalan Hak: Sınırsız")
         ctk.CTkLabel(info_frame, text=rem_text, font=("Roboto", 14), text_color="orange").pack(anchor="w", padx=10, pady=5)
 
         # Events
         events = data.get("eligible_events", [])
         
-        ctk.CTkLabel(self.content_frame, text="Giriş Yapılacak Ders:", font=("Roboto", 14, "bold")).pack(anchor="w", pady=(10, 5))
+        ctk.CTkLabel(self.content_frame, text=_("Giriş Yapılacak Ders:"), font=("Roboto", 14, "bold")).pack(anchor="w", pady=(10, 5))
         
         if not events:
-            ctk.CTkLabel(self.content_frame, text="Şu an uygun ders bulunamadı.", text_color="orange").pack(pady=10)
-            ctk.CTkLabel(self.content_frame, text="Ders seçmeden giriş yapabilirsiniz.", font=("Roboto", 12)).pack(pady=5)
+            ctk.CTkLabel(self.content_frame, text=_("Şu an uygun ders bulunamadı."), text_color="orange").pack(pady=10)
+            ctk.CTkLabel(self.content_frame, text=_("Ders seçmeden giriş yapabilirsiniz."), font=("Roboto", 12)).pack(pady=5)
             
             # Allow check-in without event
             btn_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
             btn_frame.pack(fill="x", pady=20)
             
-            ctk.CTkButton(btn_frame, text="İptal", command=self.destroy, fg_color="gray", width=100).pack(side="left", padx=10)
-            ctk.CTkButton(btn_frame, text="Giriş Yap (Ders Seçmeden)", command=self.do_check_in_without_event, fg_color="green", width=200).pack(side="right", padx=10)
+            ctk.CTkButton(btn_frame, text=_("İptal"), command=self.destroy, fg_color="gray", width=100).pack(side="left", padx=10)
+            ctk.CTkButton(btn_frame, text=_("Giriş Yap (Ders Seçmeden)"), command=self.do_check_in_without_event, fg_color="green", width=200).pack(side="right", padx=10)
             return
 
         self.events_frame = ctk.CTkScrollableFrame(self.content_frame, height=200)
@@ -97,7 +98,7 @@ class CheckInDialog(ctk.CTkToplevel):
             
             rb = ctk.CTkRadioButton(
                 self.events_frame, 
-                text=f"{start} - {name} ({instr})",
+                text=_("{} - {} ({})").format(start, name, instr),
                 variable=self.selected_event_id,
                 value=eid
             )
@@ -111,8 +112,8 @@ class CheckInDialog(ctk.CTkToplevel):
         btn_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=20)
         
-        ctk.CTkButton(btn_frame, text="İptal", command=self.destroy, fg_color="gray", width=100).pack(side="left", padx=10)
-        ctk.CTkButton(btn_frame, text="Giriş Yap", command=self.do_check_in, fg_color="green", width=150).pack(side="right", padx=10)
+        ctk.CTkButton(btn_frame, text=_("İptal"), command=self.destroy, fg_color="gray", width=100).pack(side="left", padx=10)
+        ctk.CTkButton(btn_frame, text=_("Giriş Yap"), command=self.do_check_in, fg_color="green", width=150).pack(side="right", padx=10)
 
     def do_check_in(self):
         event_id = self.selected_event_id.get()
@@ -148,12 +149,12 @@ class CheckInDialog(ctk.CTkToplevel):
         for widget in self.content_frame.winfo_children():
             widget.destroy()
             
-        self.label_status.configure(text="🎉 Giriş Başarılı!", text_color="green")
+        self.label_status.configure(text=_("🎉 Giriş Başarılı!"), text_color="green")
         
-        ctk.CTkLabel(self.content_frame, text=f"Hoşgeldin, {res.get('member_name')}", font=("Roboto", 18)).pack(pady=20)
+        ctk.CTkLabel(self.content_frame, text=_("Hoşgeldin, {}").format(res.get('member_name')), font=("Roboto", 18)).pack(pady=20)
         
         rem = res.get('remaining_sessions')
-        ctk.CTkLabel(self.content_frame, text=f"Kalan Hak: {rem}", font=("Roboto", 24, "bold")).pack(pady=10)
+        ctk.CTkLabel(self.content_frame, text=_("Kalan Hak: {}").format(rem), font=("Roboto", 24, "bold")).pack(pady=10)
         
         def on_close():
             if self.on_refresh:
@@ -161,15 +162,9 @@ class CheckInDialog(ctk.CTkToplevel):
                     self.on_refresh()
                 except Exception as e:
                     print(f"Error during refresh: {e}")
-            # Update parent subscription data if it's PackageDetailDialog
-            if hasattr(self.master, 'update_subscription'):
-                try:
-                    self.master.update_subscription()
-                except Exception as e:
-                    print(f"Error updating parent subscription: {e}")
             self.destroy()
         
-        ctk.CTkButton(self.content_frame, text="Tamam", command=on_close).pack(pady=20)
+        ctk.CTkButton(self.content_frame, text=_("Tamam"), command=on_close).pack(pady=20)
         
         # Play success sound (placeholder)
         # In Windows, print('\a') might work or winsound

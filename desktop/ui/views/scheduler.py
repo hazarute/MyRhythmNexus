@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from datetime import datetime, timedelta
 from desktop.core.api_client import ApiClient
@@ -18,19 +19,19 @@ class SchedulerView(ctk.CTkFrame):
         self.top_bar = ctk.CTkFrame(self, fg_color="transparent")
         self.top_bar.pack(fill="x", padx=20, pady=10)
         
-        self.btn_prev = ctk.CTkButton(self.top_bar, text="< Önceki Hafta", width=100, command=self.prev_week)
+        self.btn_prev = ctk.CTkButton(self.top_bar, text=_("< Önceki Hafta"), width=100, command=self.prev_week)
         self.btn_prev.pack(side="left")
         
         self.lbl_week = ctk.CTkLabel(self.top_bar, text="", font=("Roboto", 16, "bold"))
         self.lbl_week.pack(side="left", padx=20)
         
-        self.btn_next = ctk.CTkButton(self.top_bar, text="Sonraki Hafta >", width=100, command=self.next_week)
+        self.btn_next = ctk.CTkButton(self.top_bar, text=_("Sonraki Hafta >"), width=100, command=self.next_week)
         self.btn_next.pack(side="left")
         
-        self.btn_add = ctk.CTkButton(self.top_bar, text="+ Seans Ekle", command=self.open_add_dialog)
+        self.btn_add = ctk.CTkButton(self.top_bar, text=_("+ Seans Ekle"), command=self.open_add_dialog)
         self.btn_add.pack(side="right", padx=(0, 10))
         
-        self.btn_manage = ctk.CTkButton(self.top_bar, text="⚙️ Şablonlar", command=self.open_templates_dialog)
+        self.btn_manage = ctk.CTkButton(self.top_bar, text=_("⚙️ Şablonlar"), command=self.open_templates_dialog)
         self.btn_manage.pack(side="right")
 
         # Calendar Grid
@@ -45,7 +46,7 @@ class SchedulerView(ctk.CTkFrame):
         self.day_headers = []
         self.day_frames = []
         
-        days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+        days = [_("Pazartesi"), _("Salı"), _("Çarşamba"), _("Perşembe"), _("Cuma"), _("Cumartesi"), _("Pazar")]
         for i, day in enumerate(days):
             # Header
             lbl = ctk.CTkLabel(self.grid_frame, text=day, font=("Roboto", 14, "bold"))
@@ -80,7 +81,7 @@ class SchedulerView(ctk.CTkFrame):
         self.lbl_week.configure(text=f"{self.current_week_start.strftime('%d %b')} - {end.strftime('%d %b %Y')}")
         
         # Update headers with dates
-        days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+        days = [_("Pazartesi"), _("Salı"), _("Çarşamba"), _("Perşembe"), _("Cuma"), _("Cumartesi"), _("Pazar")]
         for i, day in enumerate(days):
             date = self.current_week_start + timedelta(days=i)
             self.day_headers[i].configure(text=f"{day}\n{date.strftime('%d.%m')}")
@@ -120,7 +121,7 @@ class SchedulerView(ctk.CTkFrame):
             event.get("template", {}).get("name") or
             event.get("name") or
             event.get("class_name") or
-            "Ders"
+            _("Ders")
         )
         
         # Instructor info
@@ -153,7 +154,7 @@ class SchedulerView(ctk.CTkFrame):
             ctk.CTkLabel(content, text=f"👨‍🏫 {instructor_info}", font=("Roboto", 10), text_color="gray").pack(anchor="w", padx=(20, 0), pady=(0, 2))
         
         # Row 3: Capacity
-        ctk.CTkLabel(content, text=f"Kapasite: {capacity}", font=("Roboto", 10), text_color="gray").pack(anchor="w", padx=(20, 0))
+        ctk.CTkLabel(content, text=_("Kapasite: {capacity}").format(capacity=capacity), font=("Roboto", 10), text_color="gray").pack(anchor="w", padx=(20, 0))
 
         # Click event
         card.bind("<Button-1>", lambda e, ev=event: self.show_event_detail(ev))
@@ -177,23 +178,22 @@ class EventDetailDialog(ctk.CTkToplevel):
         self.event = event
         self.on_close = on_close
         
-        self.title("Seans Detayı")
+        self.title(_("Seans Detayı"))
         self.geometry("600x500")
         
         # Info
         info_frame = ctk.CTkFrame(self)
         info_frame.pack(fill="x", padx=10, pady=10)
         
-        tmpl_name = event.get("template", {}).get("name", "Ders")
+        tmpl_name = event.get("template", {}).get("name", _("Ders"))
         start_dt = datetime.fromisoformat(event["start_time"])
         time_str = start_dt.strftime("%d.%m.%Y %H:%M")
-        
         ctk.CTkLabel(info_frame, text=tmpl_name, font=("Roboto", 20, "bold")).pack(anchor="w", padx=10)
-        ctk.CTkLabel(info_frame, text=f"Zaman: {time_str}").pack(anchor="w", padx=10)
-        ctk.CTkLabel(info_frame, text=f"Kapasite: {event['capacity']}").pack(anchor="w", padx=10)
+        ctk.CTkLabel(info_frame, text=_("Zaman: {time}").format(time=time_str)).pack(anchor="w", padx=10)
+        ctk.CTkLabel(info_frame, text=_("Kapasite: {capacity}").format(capacity=event['capacity'])).pack(anchor="w", padx=10)
         
         # Participants
-        ctk.CTkLabel(self, text="Katılımcılar", font=("Roboto", 16, "bold")).pack(pady=(20, 5))
+        ctk.CTkLabel(self, text=_("Katılımcılar"), font=("Roboto", 16, "bold")).pack(pady=(20, 5))
         
         self.list_frame = ctk.CTkScrollableFrame(self)
         self.list_frame.pack(fill="both", expand=True, padx=10, pady=5)
@@ -202,13 +202,13 @@ class EventDetailDialog(ctk.CTkToplevel):
         add_frame = ctk.CTkFrame(self)
         add_frame.pack(fill="x", padx=10, pady=10)
         
-        self.entry_search = ctk.CTkEntry(add_frame, placeholder_text="Üye Ara (Ad/Tel)...")
+        self.entry_search = ctk.CTkEntry(add_frame, placeholder_text=_("Üye Ara (Ad/Tel)..."))
         self.entry_search.pack(side="left", fill="x", expand=True, padx=(0, 5))
         
-        ctk.CTkButton(add_frame, text="Ara & Ekle", command=self.search_and_add).pack(side="left")
+        ctk.CTkButton(add_frame, text=_("Ara & Ekle"), command=self.search_and_add).pack(side="left")
         
         # Cancel Class Button
-        ctk.CTkButton(self, text="Seansı İptal Et", fg_color="red", hover_color="darkred", command=self.cancel_class).pack(pady=10)
+        ctk.CTkButton(self, text=_("Seansı İptal Et"), fg_color="red", hover_color="darkred", command=self.cancel_class).pack(pady=10)
         
         self.load_participants()
 
@@ -219,7 +219,7 @@ class EventDetailDialog(ctk.CTkToplevel):
             bookings = self.api_client.get(f"/api/v1/operations/events/{self.event['id']}/bookings")
             
             if not bookings:
-                ctk.CTkLabel(self.list_frame, text="Henüz katılımcı yok.").pack(pady=10)
+                ctk.CTkLabel(self.list_frame, text=_("Henüz katılımcı yok.")).pack(pady=10)
                 return
                 
             for b in bookings:
@@ -229,11 +229,11 @@ class EventDetailDialog(ctk.CTkToplevel):
                 ctk.CTkLabel(row, text=b.get("member_name", "Bilinmeyen Üye")).pack(side="left", padx=10)
                 ctk.CTkLabel(row, text=b.get("status", "-")).pack(side="left", padx=10)
                 
-                ctk.CTkButton(row, text="Sil", width=50, fg_color="red", height=24, 
+                ctk.CTkButton(row, text=_("Sil"), width=50, fg_color="red", height=24, 
                             command=lambda bid=b["id"]: self.remove_booking(bid)).pack(side="right", padx=5)
                             
         except Exception as e:
-            ctk.CTkLabel(self.list_frame, text=f"Hata: {e}").pack()
+            ctk.CTkLabel(self.list_frame, text=_("Hata: {err}").format(err=str(e))).pack()
 
     def search_and_add(self):
         term = self.entry_search.get()
@@ -243,7 +243,7 @@ class EventDetailDialog(ctk.CTkToplevel):
         try:
             members = self.api_client.get("/api/v1/members/", params={"search": term})
             if not members:
-                messagebox.showwarning("Uyarı", "Üye bulunamadı.")
+                messagebox.showwarning(_("Uyarı"), _("Üye bulunamadı."))
                 return
             
             # If multiple, show selection dialog (Simplified: pick first or show list)
@@ -255,7 +255,7 @@ class EventDetailDialog(ctk.CTkToplevel):
             active_sub = next((s for s in subs if s["status"] == "active"), None)
             
             if not active_sub:
-                messagebox.showwarning("Uyarı", f"{member['first_name']} {member['last_name']} için aktif abonelik bulunamadı.")
+                messagebox.showwarning(_("Uyarı"), _("{first} {last} için aktif abonelik bulunamadı.").format(first=member['first_name'], last=member['last_name']))
                 return
                 
             # 3. Create Booking
@@ -266,30 +266,30 @@ class EventDetailDialog(ctk.CTkToplevel):
             }
             
             self.api_client.post("/api/v1/operations/bookings", json=payload)
-            messagebox.showinfo("Başarılı", "Üye eklendi.")
+            messagebox.showinfo(_("Başarılı"), _("Üye eklendi."))
             self.entry_search.delete(0, "end")
             self.load_participants()
         except Exception as e:
-            messagebox.showerror("Hata", f"İşlem hatası: {e}")
+            messagebox.showerror(_("Hata"), _("İşlem hatası: {err}").format(err=str(e)))
 
     def remove_booking(self, booking_id):
-        if not messagebox.askyesno("Onay", "Bu rezervasyonu silmek istediğinize emin misiniz?"):
+        if not messagebox.askyesno(_("Onay"), _("Bu rezervasyonu silmek istediğinize emin misiniz?")):
             return
             
         try:
             self.api_client.delete(f"/api/v1/operations/bookings/{booking_id}")
             self.load_participants()
         except Exception as e:
-            messagebox.showerror("Hata", f"Silme başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Silme başarısız: {err}").format(err=str(e)))
 
     def cancel_class(self):
-        if not messagebox.askyesno("Onay", "Bu seansı iptal etmek istediğinize emin misiniz?"):
+        if not messagebox.askyesno(_("Onay"), _("Bu seansı iptal etmek istediğinize emin misiniz?")):
             return
             
         try:
             self.api_client.delete(f"/api/v1/operations/events/{self.event['id']}")
-            messagebox.showinfo("Başarılı", "Seans iptal edildi.")
+            messagebox.showinfo(_("Başarılı"), _("Seans iptal edildi."))
             self.destroy()
             self.on_close()
         except Exception as e:
-            messagebox.showerror("Hata", f"İptal başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("İptal başarısız: {err}").format(err=str(e)))

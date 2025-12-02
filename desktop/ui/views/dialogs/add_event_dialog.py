@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 import httpx
 from datetime import datetime, timedelta, date
 from tkinter import messagebox
@@ -15,7 +16,7 @@ class AddEventDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.on_success = on_success
 
-        self.title("Yeni Seans Ekle")
+        self.title(_("Yeni Seans Ekle"))
         self.geometry("480x620")
 
         self.transient(parent)
@@ -31,12 +32,12 @@ class AddEventDialog(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             self.main_frame,
-            text="Yeni Seans Ekle",
+            text=_("Yeni Seans Ekle"),
             font=("Roboto", 22, "bold"),
         ).pack(pady=(0, 24))
 
-        self.combo_template = self.create_combo("Seans Şablonu")
-        self.combo_instructor = self.create_combo("Eğitmen")
+        self.combo_template = self.create_combo(_("Seans Şablonu"))
+        self.combo_instructor = self.create_combo(_("Eğitmen"))
         
         # Date picker button
         self.selected_date = datetime.now().date()
@@ -45,8 +46,8 @@ class AddEventDialog(ctk.CTkToplevel):
         # Time spinners
         self.hour_spinner, self.minute_spinner = self.create_time_spinners()
         
-        self.entry_duration = self.create_input("Süre (dk)")
-        self.entry_capacity = self.create_input("Kapasite")
+        self.entry_duration = self.create_input(_("Süre (dk)"))
+        self.entry_capacity = self.create_input(_("Kapasite"))
 
         for combo in (self.combo_template, self.combo_instructor):
             self._bind_combo_dropdown(combo)
@@ -56,7 +57,7 @@ class AddEventDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             btn_frame,
-            text="❌ İptal",
+            text=_("❌ İptal"),
             fg_color="#555555",
             hover_color="#333333",
             width=110,
@@ -64,7 +65,7 @@ class AddEventDialog(ctk.CTkToplevel):
         ).pack(side="left", padx=10, expand=True)
         ctk.CTkButton(
             btn_frame,
-            text="💾 Kaydet",
+            text=_("💾 Kaydet"),
             fg_color="#2CC985",
             hover_color="#229966",
             width=110,
@@ -91,7 +92,7 @@ class AddEventDialog(ctk.CTkToplevel):
         frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         frame.pack(fill="x", pady=6)
 
-        ctk.CTkLabel(frame, text="Tarih", font=("Roboto", 14), width=110, anchor="w").pack(side="left")
+        ctk.CTkLabel(frame, text=_("Tarih"), font=("Roboto", 14), width=110, anchor="w").pack(side="left")
         btn = ctk.CTkButton(
             frame,
             text=self.selected_date.strftime("%d.%m.%Y"),
@@ -109,7 +110,7 @@ class AddEventDialog(ctk.CTkToplevel):
         frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         frame.pack(fill="x", pady=6)
 
-        ctk.CTkLabel(frame, text="Saat", font=("Roboto", 14), width=110, anchor="w").pack(side="left")
+        ctk.CTkLabel(frame, text=_("Saat"), font=("Roboto", 14), width=110, anchor="w").pack(side="left")
         
         # Hour spinner (0-23)
         hour_spinner = TimeSpinner(
@@ -141,7 +142,7 @@ class AddEventDialog(ctk.CTkToplevel):
         return hour_spinner, minute_spinner
 
     def open_date_picker(self):
-        picker = DatePickerDialog(self, initial_date=self.selected_date, title="Seans Tarihi")
+        picker = DatePickerDialog(self, initial_date=self.selected_date, title=_("Seans Tarihi"))
         selected = picker.get_date()
         if selected:
             self.selected_date = selected
@@ -154,7 +155,7 @@ class AddEventDialog(ctk.CTkToplevel):
         ctk.CTkLabel(frame, text=label_text, font=("Roboto", 14), width=110, anchor="w").pack(side="left")
         combo = ctk.CTkComboBox(
             frame,
-            values=["Yükleniyor..."],
+            values=[_("Yükleniyor...")],
             state="readonly",
             height=36,
             font=("Roboto", 13),
@@ -177,12 +178,12 @@ class AddEventDialog(ctk.CTkToplevel):
             if self.templates:
                 self.combo_template.set(self.templates[0]["name"])
             else:
-                self.combo_template.configure(values=["Şablon Yok"])
+                self.combo_template.configure(values=[_("Şablon Yok")])
 
             if self.instructors:
                 self.combo_instructor.set(f"{self.instructors[0]['first_name']} {self.instructors[0]['last_name']}")
             else:
-                self.combo_instructor.configure(values=["Eğitmen Yok"])
+                self.combo_instructor.configure(values=[_("Eğitmen Yok")])
 
         except Exception as e:
             print(f"Error loading options: {e}")
@@ -197,7 +198,7 @@ class AddEventDialog(ctk.CTkToplevel):
             instr_id = next((i["id"] for i in self.instructors if f"{i['first_name']} {i['last_name']}" == instr_name), None)
 
             if not tmpl_id or not instr_id:
-                messagebox.showwarning("Uyarı", "Lütfen tüm alanları doldurunuz.")
+                messagebox.showwarning(_("Uyarı"), _("Lütfen tüm alanları doldurunuz."))
                 return
 
             time_str = f"{self.hour_spinner.get_value():02d}:{self.minute_spinner.get_value():02d}"
@@ -206,7 +207,7 @@ class AddEventDialog(ctk.CTkToplevel):
             try:
                 start_dt = datetime.combine(self.selected_date, datetime.strptime(time_str, "%H:%M").time())
             except ValueError:
-                messagebox.showwarning("Geçersiz Format", "Saat formatı: HH:MM")
+                messagebox.showwarning(_("Geçersiz Format"), _("Saat formatı: HH:MM"))
                 return
 
             # Validate numeric inputs
@@ -214,11 +215,11 @@ class AddEventDialog(ctk.CTkToplevel):
                 duration = int(self.entry_duration.get().strip())
                 capacity = int(self.entry_capacity.get().strip())
             except ValueError:
-                messagebox.showwarning("Geçersiz Değer", "Süre ve Kapasite sayısal değer olmalıdır.")
+                messagebox.showwarning(_("Geçersiz Değer"), _("Süre ve Kapasite sayısal değer olmalıdır."))
                 return
 
             if duration <= 0 or capacity <= 0:
-                messagebox.showwarning("Geçersiz Değer", "Süre ve Kapasite 0'dan büyük olmalıdır.")
+                messagebox.showwarning(_("Geçersiz Değer"), _("Süre ve Kapasite 0'dan büyük olmalıdır."))
                 return
 
             end_dt = start_dt + timedelta(minutes=duration)
@@ -233,16 +234,16 @@ class AddEventDialog(ctk.CTkToplevel):
             }
 
             self.api_client.post("/api/v1/operations/events", json=data)
-            messagebox.showinfo("Başarılı", "Seans eklendi.")
+            messagebox.showinfo(_("Başarılı"), _("Seans eklendi."))
             self.on_success()
             self.destroy()
 
         except httpx.HTTPStatusError as exc:
-            detail = "Bilinmeyen hata"
+            detail = _("Bilinmeyen hata")
             try:
                 detail = exc.response.json().get("detail") or detail
             except ValueError:
                 detail = exc.response.text
-            messagebox.showerror("Hata", f"İşlem başarısız: {detail}")
+            messagebox.showerror(_("Hata"), _("İşlem başarısız: {detail}").format(detail=detail))
         except Exception as e:
-            messagebox.showerror("Hata", f"İşlem başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("İşlem başarısız: {err}").format(err=str(e)))

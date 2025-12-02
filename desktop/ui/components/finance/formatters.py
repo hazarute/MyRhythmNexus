@@ -1,4 +1,5 @@
 from datetime import datetime
+from desktop.core.locale import _
 
 
 def format_currency(value):

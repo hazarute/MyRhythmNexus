@@ -1,3 +1,4 @@
+from desktop.core.locale import _
 # Finance component style constants for consistent theming
 
 # Card backgrounds

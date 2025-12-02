@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from typing import Callable, Optional
 
@@ -12,7 +13,7 @@ class DebtMembersDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.refresh_callback = refresh_callback
 
-        self.title("Borçlu Üyeler")
+        self.title(_("Borçlu Üyeler"))
         self.geometry("640x640")
         self.resizable(False, False)
         self.attributes("-topmost", True)
@@ -26,13 +27,13 @@ class DebtMembersDialog(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             header_frame,
-            text="Borçlu Üyeler",
+            text=_("Borçlu Üyeler"),
             font=("Roboto", 24, "bold"),
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             header_frame,
-            text="Her üye sadece bir kere listelenir; detay için ödeme işlemini başlatabilirsiniz.",
+            text=_("Her üye sadece bir kere listelenir; detay için ödeme işlemini başlatabilirsiniz."),
             font=("Roboto", 12),
             text_color="gray",
         ).pack(anchor="w", pady=4)
@@ -43,19 +44,19 @@ class DebtMembersDialog(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             table_header,
-            text="Üye",
+            text=_("Üye"),
             font=("Roboto", 12, "bold"),
             text_color="#555555",
         ).grid(row=0, column=0, sticky="w", padx=16, pady=8)
         ctk.CTkLabel(
             table_header,
-            text="Toplam Borç",
+            text=_("Toplam Borç"),
             font=("Roboto", 12, "bold"),
             text_color="#555555",
         ).grid(row=0, column=1, sticky="e", padx=16, pady=8)
         ctk.CTkLabel(
             table_header,
-            text="İşlem",
+            text=_("İşlem"),
             font=("Roboto", 12, "bold"),
             text_color="#555555",
         ).grid(row=0, column=2, sticky="e", padx=16, pady=8)
@@ -72,14 +73,14 @@ class DebtMembersDialog(ctk.CTkToplevel):
         try:
             members = self.api_client.get("/api/v1/stats/debt-members")
         except Exception as exc:
-            messagebox.showerror("Hata", "Borçlu üyeler alınamadı.")
+            messagebox.showerror(_("Hata"), _("Borçlu üyeler alınamadı."))
             print(f"Error loading debt members: {exc}")
             return
 
         if not members:
             ctk.CTkLabel(
                 self.list_frame,
-                text="Şu anda borçlu üye bulunmuyor.",
+                text=_("Şu anda borçlu üye bulunmuyor."),
                 font=("Roboto", 14),
                 text_color="gray",
             ).pack(pady=60)
@@ -104,7 +105,7 @@ class DebtMembersDialog(ctk.CTkToplevel):
         full_name = f"{member.get('first_name', '')} {member.get('last_name', '')}".strip()
         ctk.CTkLabel(
             row,
-            text=full_name or "Bilinmeyen Üye",
+            text=full_name or _("Bilinmeyen Üye"),
             font=("Roboto", 14, "bold"),
             anchor="w",
         ).grid(row=0, column=0, sticky="w", padx=(14, 8), pady=12)
@@ -119,7 +120,7 @@ class DebtMembersDialog(ctk.CTkToplevel):
 
         btn = ctk.CTkButton(
             row,
-            text="Ödeme",
+            text=_("Ödeme"),
             width=110,
             height=30,
             fg_color="#2CC985",

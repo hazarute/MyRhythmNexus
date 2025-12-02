@@ -1,4 +1,5 @@
 from datetime import datetime
+from desktop.core.locale import _
 from typing import Dict, Optional, Callable, Any
 from decimal import Decimal
 from tkinter import messagebox
@@ -32,22 +33,22 @@ class SubmissionHandler:
         """
         # Member check
         if not member:
-            return False, "Lütfen bir üye seçiniz."
+            return False, _("Lütfen bir üye seçiniz.")
         
         # Package check
         if not package:
-            return False, "Lütfen bir paket seçiniz."
+            return False, _("Lütfen bir paket seçiniz.")
         
         # Payment check
         if not payment_data:
-            return False, "Ödeme detayları alınamadı."
+            return False, _("Ödeme detayları alınamadı.")
         
         if not payment_data.get("is_valid"):
-            return False, payment_data.get("error", "Ödeme bilgileri geçersiz.")
+            return False, payment_data.get("error", _("Ödeme bilgileri geçersiz."))
         
         # Start date check
         if not start_date:
-            return False, "Başlangıç tarihi seçilmedi."
+            return False, _("Başlangıç tarihi seçilmedi.")
         
         return True, ""
     
@@ -65,7 +66,7 @@ class SubmissionHandler:
         """
         # Validate inputs
         if not member or not package or not payment_data:
-            messagebox.showerror("Hata", "Gerekli veriler eksik.")
+            messagebox.showerror(_("Hata"), _("Gerekli veriler eksik."))
             return None
         
         try:
@@ -78,8 +79,8 @@ class SubmissionHandler:
             
             if amount_paid > pkg_price:
                 messagebox.showwarning(
-                    "Uyarı",
-                    f"Ödeme tutarı paket fiyatından ({float(pkg_price):.2f} TL) fazla olamaz."
+                    _("Uyarı"),
+                    _("Ödeme tutarı paket fiyatından ({:.2f} TL) fazla olamaz.").format(float(pkg_price))
                 )
                 return None
             
@@ -113,7 +114,7 @@ class SubmissionHandler:
             return payload
             
         except Exception as e:
-            messagebox.showerror("Hata", f"Payload oluşturma hatası: {e}")
+            messagebox.showerror(_("Hata"), _("Payload oluşturma hatası: {}").format(e))
             return None
     
     def send_to_api(self, payload: Dict) -> bool:
@@ -128,13 +129,13 @@ class SubmissionHandler:
                 json=payload
             )
             messagebox.showinfo(
-                "Başarılı",
-                "Satış tamamlandı!\nAbonelik oluşturuldu."
+                _("Başarılı"),
+                _("Satış tamamlandı!\nAbonelik oluşturuldu.")
             )
             return True
                 
         except Exception as e:
-            messagebox.showerror("Hata", f"Satış başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Satış başarısız: {}").format(e))
             return False
             return False
     
@@ -152,7 +153,7 @@ class SubmissionHandler:
         # 1. Validate
         is_valid, error_msg = self.validate_inputs(member, package, payment_data, start_date)
         if not is_valid:
-            messagebox.showwarning("Uyarı", error_msg)
+            messagebox.showwarning(_("Uyarı"), error_msg)
             return False
         
         # 2. Build payload

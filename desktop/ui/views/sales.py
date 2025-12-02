@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.views.tabs.sales_pos_tab import SalesPOSTab
 from desktop.ui.views.tabs.packages_management_tab import PackagesManagementTab
@@ -28,8 +29,11 @@ class SalesView(ctk.CTkFrame):
         self.tabview._segmented_button.configure(font=("Roboto", 16, "bold"), border_width=0)
         
         # Add tabs
-        tab_pos = self.tabview.add("Satış Ekranı (POS)")
-        tab_packages = self.tabview.add("Paket Yönetimi")
+        self.tab_pos_name = _("Satış Ekranı (POS)")
+        self.tab_packages_name = _("Paket Yönetimi")
+
+        tab_pos = self.tabview.add(self.tab_pos_name)
+        tab_packages = self.tabview.add(self.tab_packages_name)
 
         # Initialize tab content
         self.pos_tab = SalesPOSTab(tab_pos, self.api_client)
@@ -46,7 +50,7 @@ class SalesView(ctk.CTkFrame):
 
     def bind_tab_click_events(self):
         """Bind mouse click events to tab buttons for refresh on every click"""
-        tab_names = ["Satış Ekranı (POS)", "Paket Yönetimi"]
+        tab_names = [self.tab_pos_name, self.tab_packages_name]
         try:
             buttons = self.tabview._segmented_button._buttons
         except AttributeError:
@@ -68,7 +72,7 @@ class SalesView(ctk.CTkFrame):
 
     def refresh_tab_by_name(self, tab_name):
         """Refresh tab by name"""
-        if tab_name == "Satış Ekranı (POS)":
+        if tab_name == self.tab_pos_name:
             self.pos_tab.refresh()
-        elif tab_name == "Paket Yönetimi":
+        elif tab_name == self.tab_packages_name:
             self.packages_tab.refresh()

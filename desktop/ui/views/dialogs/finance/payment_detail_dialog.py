@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from datetime import datetime
 from typing import Any, Callable, Optional
 
@@ -10,7 +11,7 @@ class PaymentDetailDialog(ctk.CTkToplevel):
         super().__init__(master)
         self.payload = payload
         self._on_close = on_close
-        self.title("Ödeme Detayı")
+        self.title(_("Ödeme Detayı"))
         self.geometry("720x520")
         self.configure(fg_color="#1A1A1A")
 
@@ -47,14 +48,14 @@ class PaymentDetailDialog(ctk.CTkToplevel):
         body = ctk.CTkFrame(container, fg_color="transparent")
         body.pack(fill="both", expand=True, padx=15, pady=(0, 12))
 
-        self._detail_row(body, "Üye", self.payload.get("member_name", "-"))
-        self._detail_row(body, "Paket", self.payload.get("package_name", "-"))
-        self._detail_row(body, "Yöntem", self.payload.get("payment_method", "-"))
-        self._detail_row(body, "Durum", self.payload.get("status", "Tamamlandı"))
-        self._detail_row(body, "Çekilen Tutar", amount)
+        self._detail_row(body, _("Üye"), self.payload.get("member_name", "-"))
+        self._detail_row(body, _("Paket"), self.payload.get("package_name", "-"))
+        self._detail_row(body, _("Yöntem"), self.payload.get("payment_method", "-"))
+        self._detail_row(body, _("Durum"), self.payload.get("status", _("Tamamlandı")))
+        self._detail_row(body, _("Çekilen Tutar"), amount)
         self._detail_row(
             body,
-            "İşlem Notu",
+            _("İşlem Notu"),
             self.payload.get("notes", self.payload.get("description", "-")),
             wrap=True,
         )
@@ -64,7 +65,7 @@ class PaymentDetailDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             footer,
-            text="✓ Kapat",
+            text=_("✓ Kapat"),
             font=("Roboto", 14, "bold"),
             fg_color="#3B8ED0",
             hover_color="#2E7AB8",

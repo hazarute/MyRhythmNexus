@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -24,18 +25,18 @@ class MemberDetailTab(ctk.CTkFrame):
         self.header = ctk.CTkFrame(self, fg_color="transparent")
         self.header.pack(fill="x", padx=20, pady=20)
         
-        self.btn_back = ctk.CTkButton(self.header, text="< Geri", width=60, 
+        self.btn_back = ctk.CTkButton(self.header, text=_("< Geri"), width=60, 
                                        command=self.on_back, fg_color="gray")
         self.btn_back.pack(side="left", padx=(0, 20))
         
         info_col = ctk.CTkFrame(self.header, fg_color="transparent")
         info_col.pack(side="left")
 
-        name = f"{member.get('first_name')} {member.get('last_name')}"
+        name = _("{} {}").format(member.get('first_name'), member.get('last_name'))
         self.label_title = ctk.CTkLabel(info_col, text=name, font=("Roboto", 30, "bold"))
         self.label_title.pack(anchor="w")
         
-        contact = f"📧 {member.get('email')}   📞 {member.get('phone_number') or '-'}"
+        contact = _("📧 {}   📞 {}").format(member.get('email'), member.get('phone_number') or '-')
         self.label_contact = ctk.CTkLabel(info_col, text=contact, 
                                           font=("Roboto", 18), text_color="gray")
         self.label_contact.pack(anchor="w")
@@ -44,13 +45,13 @@ class MemberDetailTab(ctk.CTkFrame):
         btn_bar = ctk.CTkFrame(self.header, fg_color="transparent")
         btn_bar.pack(side="right", padx=20)
         
-        ctk.CTkButton(btn_bar, text="✏️ Bilgileri Güncelle", 
+        ctk.CTkButton(btn_bar, text=_("✏️ Bilgileri Güncelle"), 
                      command=self.show_update_dialog).pack(side="left", padx=2)
-        ctk.CTkButton(btn_bar, text="🔑 Şifre Değiştir", 
+        ctk.CTkButton(btn_bar, text=_("🔑 Şifre Değiştir"), 
                      command=self.show_password_dialog).pack(side="left", padx=2)
-        ctk.CTkButton(btn_bar, text="💰 Borç Öde", fg_color="#2CC985", hover_color="#229966",
+        ctk.CTkButton(btn_bar, text=_("💰 Borç Öde"), fg_color="#2CC985", hover_color="#229966",
                      command=self.show_debt_payment_dialog).pack(side="left", padx=2)
-        ctk.CTkButton(btn_bar, text="🗑️ Sil", fg_color="red", hover_color="darkred", 
+        ctk.CTkButton(btn_bar, text=_("🗑️ Sil"), fg_color="red", hover_color="darkred", 
                      command=self.delete_member).pack(side="left", padx=2)
         
         # === TAB VIEW ===
@@ -64,11 +65,11 @@ class MemberDetailTab(ctk.CTkFrame):
         self.tabview.pack(fill="both", expand=True, padx=20, pady=10)
         self.tabview._segmented_button.configure(font=("Roboto", 16, "bold"), border_width=0)
         
-        self.tab_profile = self.tabview.add("👤  Profil")
-        self.tab_packages = self.tabview.add("📦  Paketler")
-        self.tab_payments = self.tabview.add("💳  Ödemeler")
-        self.tab_attendance = self.tabview.add("✅  Katılım")
-        self.tab_measurements = self.tabview.add("📏  Vücut Ölçümleri")
+        self.tab_profile = self.tabview.add(_("👤  Profil"))
+        self.tab_packages = self.tabview.add(_("📦  Paketler"))
+        self.tab_payments = self.tabview.add(_("💳  Ödemeler"))
+        self.tab_attendance = self.tabview.add(_("✅  Katılım"))
+        self.tab_measurements = self.tabview.add(_("📏  Vücut Ölçümleri"))
         
         # Initialize tab controllers
         self.profile_tab = ProfileTab(self.tab_profile, self.api_client, self.member, 
@@ -92,7 +93,7 @@ class MemberDetailTab(ctk.CTkFrame):
 
     def bind_tab_click_events(self):
         """Bind mouse click events to tab buttons for refresh on every click"""
-        tab_names = ["👤  Profil", "📦  Paketler", "💳  Ödemeler", "✅  Katılım", "📏  Vücut Ölçümleri"]
+        tab_names = [_("👤  Profil"), _("📦  Paketler"), _("💳  Ödemeler"), _("✅  Katılım"), _("📏  Vücut Ölçümleri")]
         buttons = self.tabview._segmented_button.winfo_children()
         
         for i, button in enumerate(buttons):
@@ -111,15 +112,15 @@ class MemberDetailTab(ctk.CTkFrame):
 
     def refresh_tab_by_name(self, tab_name):
         """Refresh tab by name"""
-        if tab_name == "👤  Profil":
+        if tab_name == _("👤  Profil"):
             self.profile_tab.refresh()
-        elif tab_name == "📦  Paketler":
+        elif tab_name == _("📦  Paketler"):
             self.packages_tab.refresh()
-        elif tab_name == "💳  Ödemeler":
+        elif tab_name == _("💳  Ödemeler"):
             self.payments_tab.refresh()
-        elif tab_name == "✅  Katılım":
+        elif tab_name == _("✅  Katılım"):
             self.attendance_tab.refresh()
-        elif tab_name == "📏  Vücut Ölçümleri":
+        elif tab_name == _("📏  Vücut Ölçümleri"):
             self.measurements_tab.refresh()
 
     # === DIALOG HANDLERS ===
@@ -167,10 +168,10 @@ class MemberDetailTab(ctk.CTkFrame):
             self.member = updated_member
             
             # Update header
-            name = f"{self.member.get('first_name')} {self.member.get('last_name')}"
+            name = _("{} {}").format(self.member.get('first_name'), self.member.get('last_name'))
             self.label_title.configure(text=name)
             
-            contact = f"📧 {self.member.get('email')}   📞 {self.member.get('phone_number') or '-'}"
+            contact = _("📧 {}   📞 {}").format(self.member.get('email'), self.member.get('phone_number') or '-')
             self.label_contact.configure(text=contact)
             
             # Update member reference in all tabs
@@ -188,10 +189,10 @@ class MemberDetailTab(ctk.CTkFrame):
     # === DELETE HANDLER ===
     def delete_member(self):
         """Delete member with confirmation"""
-        if messagebox.askyesno("Onay", "Bu üyeyi silmek istediğinize emin misiniz?"):
+        if messagebox.askyesno(_("Onay"), _("Bu üyeyi silmek istediğinize emin misiniz?")):
             try:
                 self.api_client.delete(f"/api/v1/members/{self.member['id']}")
-                messagebox.showinfo("Başarılı", "Üye silindi.")
+                messagebox.showinfo(_("Başarılı"), _("Üye silindi."))
                 self.on_back()
             except Exception as e:
-                messagebox.showerror("Hata", f"Silme işlemi başarısız: {e}")
+                messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(e))

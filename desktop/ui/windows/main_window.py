@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.api_client import ApiClient
+from desktop.core.locale import _
 from desktop.ui.views import DashboardView, MembersView, StaffView, SalesView, DefinitionsView, SchedulerView, FinanceView
 from desktop.services.qr_reader import QrReaderService
 from desktop.ui.views.checkin_dialog import CheckInDialog
@@ -20,31 +21,34 @@ class MainWindow(ctk.CTkFrame):
         self.sidebar = ctk.CTkFrame(self, width=200, corner_radius=0)
         self.sidebar.pack(side="left", fill="y")
 
-        self.label_logo = ctk.CTkLabel(self.sidebar, text="MyRhythmNexus", font=("Roboto", 20, "bold"))
+        self.label_logo = ctk.CTkLabel(self.sidebar, text=_("MyRhythmNexus"), font=("Roboto", 20, "bold"))
         self.label_logo.pack(pady=20, padx=10)
 
-        self.btn_dashboard = ctk.CTkButton(self.sidebar, text="Dashboard", command=lambda: self.show_view("dashboard"))
+        self.btn_dashboard = ctk.CTkButton(self.sidebar, text=_("Dashboard"), command=lambda: self.show_view("dashboard"))
         self.btn_dashboard.pack(pady=10, padx=10)
 
-        self.btn_scheduler = ctk.CTkButton(self.sidebar, text="Ders Programı", command=lambda: self.show_view("scheduler"))
+        self.btn_scheduler = ctk.CTkButton(self.sidebar, text=_("Ders Programı"), command=lambda: self.show_view("scheduler"))
         self.btn_scheduler.pack(pady=10, padx=10)
 
-        self.btn_members = ctk.CTkButton(self.sidebar, text="Üyeler", command=lambda: self.show_view("members"))
+        self.btn_members = ctk.CTkButton(self.sidebar, text=_("Üyeler"), command=lambda: self.show_view("members"))
         self.btn_members.pack(pady=10, padx=10)
 
-        self.btn_sales = ctk.CTkButton(self.sidebar, text="Satış & Paketler", command=lambda: self.show_view("sales"))
+        self.btn_sales = ctk.CTkButton(self.sidebar, text=_("Satış & Paketler"), command=lambda: self.show_view("sales"))
         self.btn_sales.pack(pady=10, padx=10)
 
-        self.btn_finance = ctk.CTkButton(self.sidebar, text="Finans Geçmişi", command=lambda: self.show_view("finance"))
+        self.btn_finance = ctk.CTkButton(self.sidebar, text=_("Finans Geçmişi"), command=lambda: self.show_view("finance"))
         self.btn_finance.pack(pady=10, padx=10)
 
-        self.btn_definitions = ctk.CTkButton(self.sidebar, text="Tanımlar", command=lambda: self.show_view("definitions"))
+        self.btn_definitions = ctk.CTkButton(self.sidebar, text=_("Tanımlar"), command=lambda: self.show_view("definitions"))
         self.btn_definitions.pack(pady=10, padx=10)
 
-        self.btn_staff = ctk.CTkButton(self.sidebar, text="Personel", command=lambda: self.show_view("staff"))
+        self.btn_staff = ctk.CTkButton(self.sidebar, text=_("Personel"), command=lambda: self.show_view("staff"))
         self.btn_staff.pack(pady=10, padx=10)
 
-        self.btn_logout = ctk.CTkButton(self.sidebar, text="Çıkış Yap", fg_color="red", hover_color="darkred", command=self.on_logout)
+        self.btn_settings = ctk.CTkButton(self.sidebar, text=_("⚙️ Dil Seçimi"), command=self.show_language_dialog, fg_color="#555555", hover_color="#444444")
+        self.btn_settings.pack(pady=10, padx=10)
+
+        self.btn_logout = ctk.CTkButton(self.sidebar, text=_("Çıkış Yap"), fg_color="red", hover_color="darkred", command=self.on_logout)
         self.btn_logout.pack(side="bottom", pady=20, padx=10)
 
         # Main Content Area
@@ -80,3 +84,72 @@ class MainWindow(ctk.CTkFrame):
         
         if self.current_view:
             self.current_view.pack(fill="both", expand=True)
+
+    def show_language_dialog(self):
+        """Show language selection dialog"""
+        from desktop.core.locale import get_available_languages, set_language, get_current_language
+        from desktop.core.config import DesktopConfig
+        
+        dialog = ctk.CTkToplevel(self.master)
+        dialog.title(_("Dil Seçimi"))
+        dialog.geometry("400x280")
+        dialog.resizable(False, False)
+        
+        # Center and grab
+        dialog.grab_set()
+        
+        # Title
+        title = ctk.CTkLabel(dialog, text=_("Dil Seçimi / Language Selection"), 
+                            font=("Roboto", 16, "bold"))
+        title.pack(pady=15, padx=20)
+        
+        # Current language
+        current_lang = get_current_language()
+        lang_names = get_available_languages()
+        current_display = lang_names.get(current_lang, current_lang)
+        
+        info = ctk.CTkLabel(dialog, text=f"{_('Seçili Dil')}: {current_display}", 
+                           font=("Roboto", 12), text_color="gray")
+        info.pack(pady=10, padx=20)
+        
+        # Separator
+        separator = ctk.CTkFrame(dialog, height=1, fg_color="gray30")
+        separator.pack(fill="x", padx=20, pady=10)
+        
+        # Language buttons frame
+        button_frame = ctk.CTkFrame(dialog, fg_color="transparent")
+        button_frame.pack(pady=15, padx=20, fill="both", expand=False)
+        
+        def select_language(lang: str):
+            """Change language and restart application"""
+            DesktopConfig.set_language(lang)
+            set_language(lang)
+            dialog.destroy()
+            # Show message
+            from tkinter import messagebox
+            messagebox.showinfo(_("Başarılı"), 
+                              _("Dil değiştirildi. Lütfen uygulamayı yeniden başlatınız."))
+            # Restart app
+            import os
+            os.execl(__import__('sys').executable, __import__('sys').executable, *__import__('sys').argv)
+        
+        # Turkish button
+        btn_tr = ctk.CTkButton(button_frame, text=_("Türkçe (Turkish)"), 
+                              command=lambda: select_language("tr"),
+                              height=35,
+                              fg_color="#3B8ED0", hover_color="#36719F")
+        btn_tr.pack(pady=8, fill="x", expand=False)
+        
+        # English button
+        btn_en = ctk.CTkButton(button_frame, text=_("English (İngilizce)"), 
+                              command=lambda: select_language("en"),
+                              height=35,
+                              fg_color="#3B8ED0", hover_color="#36719F")
+        btn_en.pack(pady=8, fill="x", expand=False)
+        
+        # Close button
+        btn_close = ctk.CTkButton(dialog, text=_("❌ İptal"), 
+                                 command=dialog.destroy,
+                                 height=35,
+                                 fg_color="#555555", hover_color="#333333")
+        btn_close.pack(pady=15, padx=20, fill="x")

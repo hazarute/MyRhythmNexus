@@ -20,6 +20,12 @@
 *   **Database Container:** PostgreSQL 15 (Production database)
 *   **Uluslararasılaştırma:** Python gettext (Çoklu dil desteği)
 
+## i18n Araçları & Yardımcı Scriptler
+*   **i18n_manager.py** - Extract/Update/Compile workflow aracı (compile çalıştırıldı: 2025-12-02 17:08+0300)
+*   **fill_translations.py** - Otomatik Türkçe/ingilizce çeviri doldurma (dictionary tabanlı)
+*   **scan_ui_strings.py** - UI dosyalarını tarayıp gettext ile sarmamış stringleri bulma aracı
+*   **wrap_ui_strings.py** - Basit auto-wrap aracı: Turkish stringleri _() içine alır ve import ekler
+
 ## Geliştirme Standartları
 *   **Tip Güvenliği:** Python Type Hinting zorunlu.
 *   **Veritabanı:** `prisma/schema.prisma` dosyasına sadık kalınacak.

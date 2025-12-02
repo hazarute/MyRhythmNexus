@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
 
@@ -11,7 +12,7 @@ class AddCategoryDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.on_success_callback = on_success_callback
         
-        self.title("Yeni Kategori Ekle")
+        self.title(_("Yeni Kategori Ekle"))
         self.geometry("450x350")
         
         self.lift()
@@ -23,21 +24,21 @@ class AddCategoryDialog(ctk.CTkToplevel):
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Header
-        ctk.CTkLabel(self.main_frame, text="📁 Yeni Kategori Ekle", 
+        ctk.CTkLabel(self.main_frame, text=_("📁 Yeni Kategori Ekle"), 
                     font=("Roboto", 22, "bold")).pack(pady=(20, 30))
         
         # Form Fields
-        self.entry_name = self.create_input(self.main_frame, "📝 Kategori Adı")
-        self.entry_desc = self.create_input(self.main_frame, "💬 Açıklama")
+        self.entry_name = self.create_input(self.main_frame, _("📝 Kategori Adı"))
+        self.entry_desc = self.create_input(self.main_frame, _("💬 Açıklama"))
         
         # Buttons
         btn_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=30, padx=20)
         
-        ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                      hover_color="#333333", width=100, 
                      command=self.destroy).pack(side="left", padx=10, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", fg_color="#2CC985", 
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), fg_color="#2CC985", 
                      hover_color="#229966", width=100, 
                      command=self.save).pack(side="left", padx=10, expand=True)
 
@@ -60,14 +61,14 @@ class AddCategoryDialog(ctk.CTkToplevel):
         desc = self.entry_desc.get()
         
         if not name:
-            messagebox.showwarning("Uyarı", "Kategori adı boş olamaz.")
+            messagebox.showwarning(_("Uyarı"), _("Kategori adı boş olamaz."))
             return
 
         data = {"name": name, "description": desc}
         try:
             self.api_client.post("/api/v1/services/categories", json=data)
-            messagebox.showinfo("Başarılı", "Kategori eklendi.")
+            messagebox.showinfo(_("Başarılı"), _("Kategori eklendi."))
             self.destroy()
             self.on_success_callback()
         except Exception as e:
-            messagebox.showerror("Hata", f"Ekleme başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Ekleme başarısız: {err}").format(err=str(e)))

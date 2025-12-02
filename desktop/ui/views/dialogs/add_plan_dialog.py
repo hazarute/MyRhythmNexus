@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from tkinter import messagebox
 from typing import Callable, Optional
 
@@ -13,7 +14,7 @@ class AddPlanDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.on_success_callback = on_success_callback
         
-        self.title("Yeni Plan Ekle")
+        self.title(_("Yeni Plan Ekle"))
         self.geometry("500x650")
         
         self.lift()
@@ -25,52 +26,52 @@ class AddPlanDialog(ctk.CTkToplevel):
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Header
-        ctk.CTkLabel(self.main_frame, text="📋 Yeni Plan Ekle", 
+        ctk.CTkLabel(self.main_frame, text=_("📋 Yeni Plan Ekle"), 
                     font=("Roboto", 22, "bold")).pack(pady=(20, 30))
         
         # Form Fields
-        self.entry_name = self.create_input(self.main_frame, "📝 Plan Adı", placeholder="Örn: 3 Aylık 24 Seans")
+        self.entry_name = self.create_input(self.main_frame, _("📝 Plan Adı"), placeholder=_("Örn: 3 Aylık 24 Seans"))
         
         # Cycle period mapping (Turkish -> English)
         self.cycle_map = {
-            "📅 Aylık (28 gün)": "MONTHLY",
-            "📆 3 Aylık (84 gün)": "QUARTERLY",
-            "📊 6 Aylık (168 gün)": "SEMI_ANNUAL",
-            "🎯 Yıllık (365 gün)": "YEARLY",
-            "📆 Haftalık (7 gün)": "WEEKLY",
-            "🔒 Özel Tarih (Manuel)": "FIXED"
+            _("📅 Aylık (28 gün)"): "MONTHLY",
+            _("📆 3 Aylık (84 gün)"): "QUARTERLY",
+            _("📊 6 Aylık (168 gün)"): "SEMI_ANNUAL",
+            _("🎯 Yıllık (365 gün)"): "YEARLY",
+            _("📆 Haftalık (7 gün)"): "WEEKLY",
+            _("🔒 Özel Tarih (Manuel)"): "FIXED"
         }
         
         self.entry_cycle = self.create_combo(
             self.main_frame,
-            "📆 Geçerlilik Süresi",
+            _("📆 Geçerlilik Süresi"),
             list(self.cycle_map.keys()),
-            "📅 Aylık (28 gün)",
+            _("📅 Aylık (28 gün)"),
             command=self._on_cycle_change,
         )
         
-        self.entry_sessions = self.create_input(self.main_frame, "🎯 Seans Sayısı", 
-                                               placeholder="Boş bırakırsan sınırsız (0 veya boş)")
+        self.entry_sessions = self.create_input(self.main_frame, _("🎯 Seans Sayısı"), 
+                                               placeholder=_("Boş bırakırsan sınırsız (0 veya boş)"))
 
         self.entry_repeat_weeks = self.create_input(
             self.main_frame,
-            "♻️ Tekrarlayan Haftalar",
-            placeholder="Girdiğin seans haftada tekrar eder (örnek: 4)",
+            _("♻️ Tekrarlayan Haftalar"),
+            placeholder=_("Girdiğin seans haftada tekrar eder (örnek: 4)"),
             value="1",
         )
         self.entry_repeat_weeks.configure(state="disabled")
         self._on_cycle_change(self.entry_cycle.get())
         
-        self.entry_desc = self.create_input(self.main_frame, "💬 Açıklama")
+        self.entry_desc = self.create_input(self.main_frame, _("💬 Açıklama"))
         
         # Buttons
         btn_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         btn_frame.pack(fill="x", pady=30, padx=20)
         
-        ctk.CTkButton(btn_frame, text="❌ İptal", fg_color="#555555", 
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), fg_color="#555555", 
                      hover_color="#333333", width=100, 
                      command=self.destroy).pack(side="left", padx=10, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", fg_color="#2CC985", 
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), fg_color="#2CC985", 
                      hover_color="#229966", width=100, 
                      command=self.save).pack(side="left", padx=10, expand=True)
 
@@ -117,7 +118,7 @@ class AddPlanDialog(ctk.CTkToplevel):
         return combo
 
     def _on_cycle_change(self, value: str):
-        weekly_label = "📆 Haftalık (7 gün)"
+        weekly_label = _("📆 Haftalık (7 gün)")
         is_weekly = value == weekly_label
         self.entry_repeat_weeks.configure(state="normal" if is_weekly else "disabled")
         if not is_weekly:
@@ -135,7 +136,7 @@ class AddPlanDialog(ctk.CTkToplevel):
         cycle = self.cycle_map[cycle_tr]
 
         if not name:
-            messagebox.showwarning("Uyarı", "Plan adı zorunludur.")
+            messagebox.showwarning(_("Uyarı"), _("Plan adı zorunludur."))
             return
         
         # Parse sessions (0 or empty = unlimited)
@@ -144,10 +145,10 @@ class AddPlanDialog(ctk.CTkToplevel):
             try:
                 sessions = int(sessions_str)
                 if sessions < 0:
-                    messagebox.showwarning("Uyarı", "Seans sayısı negatif olamaz.")
+                    messagebox.showwarning(_("Uyarı"), _("Seans sayısı negatif olamaz."))
                     return
             except ValueError:
-                messagebox.showwarning("Uyarı", "Seans sayısı geçerli bir sayı olmalıdır.")
+                messagebox.showwarning(_("Uyarı"), _("Seans sayısı geçerli bir sayı olmalıdır."))
                 return
 
         repeat_weeks_str = self.entry_repeat_weeks.get().strip()
@@ -156,10 +157,10 @@ class AddPlanDialog(ctk.CTkToplevel):
             try:
                 repeat_weeks = int(repeat_weeks_str)
                 if repeat_weeks < 1:
-                    messagebox.showwarning("Uyarı", "Tekrarlayan hafta en az 1 olabilir.")
+                    messagebox.showwarning(_("Uyarı"), _("Tekrarlayan hafta en az 1 olabilir."))
                     return
             except ValueError:
-                messagebox.showwarning("Uyarı", "Tekrarlayan hafta geçerli bir sayı olmalıdır.")
+                messagebox.showwarning(_("Uyarı"), _("Tekrarlayan hafta geçerli bir sayı olmalıdır."))
                 return
 
         # Determine access_type based on sessions
@@ -176,8 +177,8 @@ class AddPlanDialog(ctk.CTkToplevel):
         }
         try:
             self.api_client.post("/api/v1/services/plans", json=data)
-            messagebox.showinfo("Başarılı", "Plan eklendi.")
+            messagebox.showinfo(_("Başarılı"), _("Plan eklendi."))
             self.destroy()
             self.on_success_callback()
         except Exception as e:
-            messagebox.showerror("Hata", f"Ekleme başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Ekleme başarısız: {err}").format(err=str(e)))

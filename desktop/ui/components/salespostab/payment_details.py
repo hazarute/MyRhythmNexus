@@ -5,6 +5,7 @@ Modular component for payment method and amount input.
 """
 
 import customtkinter as ctk
+from desktop.core.locale import _
 from decimal import Decimal
 from typing import Dict, Optional
 
@@ -39,7 +40,7 @@ class PaymentDetails(ctk.CTkFrame):
         # Header
         ctk.CTkLabel(
             self, 
-            text="💰 Ödeme Detayları", 
+            text=_("💰 Ödeme Detayları"), 
             font=("Roboto", 18, "bold"),
             text_color="#3B8ED0"
         ).pack(anchor="w", padx=15, pady=(15, 5))
@@ -47,7 +48,7 @@ class PaymentDetails(ctk.CTkFrame):
         # Payment Method
         ctk.CTkLabel(
             self, 
-            text="Ödeme Yöntemi:", 
+            text=_("Ödeme Yöntemi:"), 
             font=("Roboto", 14)
         ).pack(anchor="w", padx=15, pady=(10, 5))
         
@@ -69,7 +70,7 @@ class PaymentDetails(ctk.CTkFrame):
         # Payment Amount
         ctk.CTkLabel(
             self, 
-            text="Ödenen Tutar (TL):", 
+            text=_("Ödenen Tutar (TL):"), 
             font=("Roboto", 14)
         ).pack(anchor="w", padx=15, pady=(5, 5))
         
@@ -118,7 +119,7 @@ class PaymentDetails(ctk.CTkFrame):
             if amount < 0:
                 return {
                     "is_valid": False,
-                    "error": "Tutar negatif olamaz."
+                    "error": _("Tutar negatif olamaz.")
                 }
             
             if amount > Decimal("100000000"):
@@ -135,7 +136,7 @@ class PaymentDetails(ctk.CTkFrame):
         except Exception as e:
             return {
                 "is_valid": False,
-                "error": f"Geçersiz tutar: {str(e)}"
+                "error": _("Geçersiz tutar: {}").format(str(e))
             }
     
     def reset(self):

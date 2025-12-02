@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Optional
 
 from desktop.core.api_client import ApiClient

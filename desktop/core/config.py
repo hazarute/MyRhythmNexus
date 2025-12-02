@@ -44,3 +44,37 @@ class DesktopConfig:
                 return config.get("backend_url", cls.BACKEND_URL)
         except (FileNotFoundError, json.JSONDecodeError):
             return cls.BACKEND_URL
+
+    @classmethod
+    def get_language(cls) -> str:
+        """Get user's preferred language (tr or en)"""
+        try:
+            import json
+            with open(cls.CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                lang = config.get("language", "tr")
+                return lang if lang in ["tr", "en"] else "tr"
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            return "tr"  # Default to Turkish
+
+    @classmethod
+    def set_language(cls, language: str):
+        """Save user's language preference"""
+        cls.ensure_app_data_dir()
+        import json
+        try:
+            # Load existing config
+            try:
+                with open(cls.CONFIG_FILE, 'r') as f:
+                    config = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError):
+                config = {}
+            
+            # Update language
+            config["language"] = language if language in ["tr", "en"] else "tr"
+            
+            # Save back
+            with open(cls.CONFIG_FILE, 'w') as f:
+                json.dump(config, f, indent=2)
+        except Exception as e:
+            print(f"Error saving language preference: {e}")

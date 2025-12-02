@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import List, Tuple, Optional, Callable
 
 from desktop.ui.components.finance.stat_card import StatCard

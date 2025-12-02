@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Callable, Optional, Dict, Any
 
 class SearchBar(ctk.CTkFrame):
@@ -15,9 +16,9 @@ class SearchBar(ctk.CTkFrame):
         search_bar.pack(side="left", fill="x", expand=True)
     """
     
-    def __init__(self, master, placeholder: str = "🔍 Ara...", 
+    def __init__(self, master, placeholder: str | None = None, 
                  on_search: Optional[Callable[[str], None]] = None,
-                 button_text: str = "🔎 Ara",
+                 button_text: str | None = None,
                  width: int = 400, height: int = 40,
                  fg_color: str = "transparent"):
         super().__init__(master, fg_color=fg_color)
@@ -29,7 +30,7 @@ class SearchBar(ctk.CTkFrame):
         # Entry field
         self.entry = ctk.CTkEntry(
             self, 
-            placeholder_text=placeholder, 
+            placeholder_text=placeholder or _("🔍 Ara..."), 
             height=height, 
             font=("Roboto", 14)
         )
@@ -42,7 +43,7 @@ class SearchBar(ctk.CTkFrame):
         # Search button
         self.btn_search = ctk.CTkButton(
             self,
-            text=button_text,
+            text=button_text or _("🔎 Ara"),
             command=self.search_immediate,
             width=100,
             height=height,

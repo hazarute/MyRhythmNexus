@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import Callable
 
 
@@ -15,7 +16,7 @@ class PaginationControls(ctk.CTkFrame):
 
         self.btn_prev = ctk.CTkButton(
             self,
-            text="< Önceki",
+            text=_("< Önceki"),
             width=120,
             command=self.on_prev,
         )
@@ -23,14 +24,14 @@ class PaginationControls(ctk.CTkFrame):
 
         self.lbl_page = ctk.CTkLabel(
             self,
-            text="Sayfa 1 / 1",
+            text=_("Sayfa 1 / 1"),
             font=("Roboto", 14),
         )
         self.lbl_page.pack(side="left", expand=True)
 
         self.btn_next = ctk.CTkButton(
             self,
-            text="Sonraki >",
+            text=_("Sonraki >"),
             width=120,
             command=self.on_next,
         )
@@ -38,6 +39,6 @@ class PaginationControls(ctk.CTkFrame):
 
     def update_page_info(self, current_page: int, total_pages: int):
         """Update the page label and button states."""
-        self.lbl_page.configure(text=f"Sayfa {current_page} / {total_pages}")
+        self.lbl_page.configure(text=_("Sayfa {current} / {total}").format(current=current_page, total=total_pages))
         self.btn_prev.configure(state="normal" if current_page > 1 else "disabled")
         self.btn_next.configure(state="normal" if current_page < total_pages else "disabled")

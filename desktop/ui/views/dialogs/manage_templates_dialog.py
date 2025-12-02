@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 import httpx
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
@@ -12,7 +13,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         self.api_client = api_client
         self.on_success = on_success
 
-        self.title("Seans Şablonları Yönetimi")
+        self.title(_("Seans Şablonları Yönetimi"))
         self.geometry("600x550")
 
         self.transient(parent)
@@ -27,7 +28,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             self.main_frame,
-            text="Seans Şablonları Yönetimi",
+            text=_("Seans Şablonları Yönetimi"),
             font=("Roboto", 22, "bold"),
         ).pack(pady=(0, 24))
 
@@ -35,13 +36,13 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         input_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         input_frame.pack(fill="x", pady=(0, 16))
 
-        ctk.CTkLabel(input_frame, text="Şablon Adı", font=("Roboto", 14), width=100, anchor="w").pack(side="left")
+        ctk.CTkLabel(input_frame, text=_("Şablon Adı"), font=("Roboto", 14), width=100, anchor="w").pack(side="left")
         self.entry_name = ctk.CTkEntry(input_frame, height=36, font=("Roboto", 13))
         self.entry_name.pack(side="left", fill="x", expand=True, padx=(8, 8))
 
         ctk.CTkButton(
             input_frame,
-            text="➕ Ekle",
+            text=_("➕ Ekle"),
             width=90,
             fg_color="#3B8ED0",
             hover_color="#2E7AB8",
@@ -52,7 +53,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         ctk.CTkLabel(self.main_frame, text="", fg_color="gray").pack(fill="x", pady=8, ipady=1)
 
         # Templates list
-        ctk.CTkLabel(self.main_frame, text="Mevcut Şablonlar", font=("Roboto", 14, "bold")).pack(anchor="w", pady=(8, 8))
+        ctk.CTkLabel(self.main_frame, text=_("Mevcut Şablonlar"), font=("Roboto", 14, "bold")).pack(anchor="w", pady=(8, 8))
 
         self.list_frame = ctk.CTkScrollableFrame(self.main_frame)
         self.list_frame.pack(fill="both", expand=True, pady=(0, 16))
@@ -63,7 +64,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
 
         ctk.CTkButton(
             btn_frame,
-            text="❌ Kapat",
+            text=_("❌ Kapat"),
             fg_color="#555555",
             hover_color="#333333",
             width=110,
@@ -83,7 +84,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
             if not self.templates:
                 ctk.CTkLabel(
                     self.list_frame,
-                    text="Henüz şablon yok. Yukarıdan yeni şablon ekleyebilirsiniz.",
+                    text=_("Henüz şablon yok. Yukarıdan yeni şablon ekleyebilirsiniz."),
                     text_color="gray",
                 ).pack(pady=20)
                 return
@@ -92,7 +93,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
                 self.create_template_row(template)
 
         except Exception as e:
-            ctk.CTkLabel(self.list_frame, text=f"Hata: {e}", text_color="red").pack(pady=10)
+            ctk.CTkLabel(self.list_frame, text=_("Hata: {err}").format(err=str(e)), text_color="red").pack(pady=10)
 
     def create_template_row(self, template):
         """Create a row for each template with edit/delete buttons."""
@@ -110,7 +111,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         # Edit button
         ctk.CTkButton(
             row,
-            text="✏️ Düzenle",
+            text=_("✏️ Düzenle"),
             width=90,
             font=("Roboto", 12),
             fg_color="#F39C12",
@@ -121,7 +122,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         # Delete button
         ctk.CTkButton(
             row,
-            text="🗑️ Sil",
+            text=_("🗑️ Sil"),
             width=80,
             font=("Roboto", 12),
             fg_color="#E74C3C",
@@ -134,37 +135,37 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         name = self.entry_name.get().strip()
 
         if not name:
-            messagebox.showwarning("Uyarı", "Lütfen şablon adı giriniz.")
+            messagebox.showwarning(_("Uyarı"), _("Lütfen şablon adı giriniz."))
             return
 
         try:
             payload = {"name": name}
             self.api_client.post("/api/v1/operations/templates", json=payload)
-            messagebox.showinfo("Başarılı", f"'{name}' şablonu oluşturuldu.")
+            messagebox.showinfo(_("Başarılı"), _("'{name}' şablonu oluşturuldu.").format(name=name))
             self.entry_name.delete(0, "end")
             self.load_templates()
             if self.on_success:
                 self.on_success()
         except httpx.HTTPStatusError as exc:
-            detail = "Bilinmeyen hata"
+            detail = _("Bilinmeyen hata")
             try:
                 detail = exc.response.json().get("detail") or detail
             except ValueError:
                 detail = exc.response.text
-            messagebox.showerror("Hata", f"İşlem başarısız: {detail}")
+            messagebox.showerror(_("Hata"), _("İşlem başarısız: {detail}").format(detail=detail))
         except Exception as e:
-            messagebox.showerror("Hata", f"İşlem başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("İşlem başarısız: {err}").format(err=str(e)))
 
     def edit_template(self, template):
         """Edit an existing template."""
         # Create a simple edit dialog
         edit_dialog = ctk.CTkToplevel(self)
-        edit_dialog.title("Şablonu Düzenle")
+        edit_dialog.title(_("Şablonu Düzenle"))
         edit_dialog.geometry("400x180")
         edit_dialog.transient(self)
         edit_dialog.grab_set()
 
-        ctk.CTkLabel(edit_dialog, text="Yeni Ad", font=("Roboto", 14), padx=10, pady=10).pack(anchor="w")
+        ctk.CTkLabel(edit_dialog, text=_("Yeni Ad"), font=("Roboto", 14), padx=10, pady=10).pack(anchor="w")
 
         entry = ctk.CTkEntry(edit_dialog, font=("Roboto", 13), height=36)
         entry.pack(fill="x", padx=10, pady=5)
@@ -173,50 +174,50 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         def save_edit():
             new_name = entry.get().strip()
             if not new_name:
-                messagebox.showwarning("Uyarı", "Şablon adı boş olamaz.")
+                messagebox.showwarning(_("Uyarı"), _("Şablon adı boş olamaz."))
                 return
 
             try:
                 payload = {"name": new_name}
                 self.api_client.put(f"/api/v1/operations/templates/{template['id']}", json=payload)
-                messagebox.showinfo("Başarılı", "Şablon güncellendi.")
+                messagebox.showinfo(_("Başarılı"), _("Şablon güncellendi."))
                 edit_dialog.destroy()
                 self.load_templates()
                 if self.on_success:
                     self.on_success()
             except httpx.HTTPStatusError as exc:
-                detail = "Bilinmeyen hata"
+                detail = _("Bilinmeyen hata")
                 try:
                     detail = exc.response.json().get("detail") or detail
                 except ValueError:
                     detail = exc.response.text
-                messagebox.showerror("Hata", f"İşlem başarısız: {detail}")
+                messagebox.showerror(_("Hata"), _("İşlem başarısız: {detail}").format(detail=detail))
             except Exception as e:
-                messagebox.showerror("Hata", f"İşlem başarısız: {e}")
+                messagebox.showerror(_("Hata"), _("İşlem başarısız: {err}").format(err=str(e)))
 
         btn_frame = ctk.CTkFrame(edit_dialog, fg_color="transparent")
         btn_frame.pack(fill="x", padx=10, pady=20)
 
-        ctk.CTkButton(btn_frame, text="❌ İptal", width=90, command=edit_dialog.destroy).pack(side="left", padx=5, expand=True)
-        ctk.CTkButton(btn_frame, text="💾 Kaydet", width=90, fg_color="#2CC985", hover_color="#27A770", command=save_edit).pack(side="left", padx=5, expand=True)
+        ctk.CTkButton(btn_frame, text=_("❌ İptal"), width=90, command=edit_dialog.destroy).pack(side="left", padx=5, expand=True)
+        ctk.CTkButton(btn_frame, text=_("💾 Kaydet"), width=90, fg_color="#2CC985", hover_color="#27A770", command=save_edit).pack(side="left", padx=5, expand=True)
 
     def delete_template(self, template):
         """Delete a template after confirmation."""
-        if not messagebox.askyesno("Onay", f"'{template['name']}' şablonunu silmek istediğinize emin misiniz?"):
+        if not messagebox.askyesno(_("Onay"), _("'{name}' şablonunu silmek istediğinize emin misiniz?").format(name=template['name'])):
             return
 
         try:
             self.api_client.delete(f"/api/v1/operations/templates/{template['id']}")
-            messagebox.showinfo("Başarılı", "Şablon silindi.")
+            messagebox.showinfo(_("Başarılı"), _("Şablon silindi."))
             self.load_templates()
             if self.on_success:
                 self.on_success()
         except httpx.HTTPStatusError as exc:
-            detail = "Bilinmeyen hata"
+            detail = _("Bilinmeyen hata")
             try:
                 detail = exc.response.json().get("detail") or detail
             except ValueError:
                 detail = exc.response.text
-            messagebox.showerror("Hata", f"Silme başarısız: {detail}")
+            messagebox.showerror(_("Hata"), _("Silme başarısız: {detail}").format(detail=detail))
         except Exception as e:
-            messagebox.showerror("Hata", f"Silme başarısız: {e}")
+            messagebox.showerror(_("Hata"), _("Silme başarısız: {err}").format(err=str(e)))

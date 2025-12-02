@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from datetime import datetime, date
 import calendar
 
@@ -6,9 +7,9 @@ import calendar
 class DatePickerDialog(ctk.CTkToplevel):
     """Modern tarih seçer dialog — CustomTkinter tarzı, gün/ay/yıl spinner'ları"""
     
-    def __init__(self, parent, initial_date: date | None = None, title: str = "Tarih Seçin"):
+    def __init__(self, parent, initial_date: date | None = None, title: str | None = None):
         super().__init__(parent)
-        self.title(title)
+        self.title(title or _("Tarih Seçin"))
         self.geometry("420x450")
         self.resizable(False, False)
         
@@ -33,7 +34,7 @@ class DatePickerDialog(ctk.CTkToplevel):
         main_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Header
-        header = ctk.CTkLabel(main_frame, text="📅 Tarih Seçimi",
+        header = ctk.CTkLabel(main_frame, text=_("📅 Tarih Seçimi"),
                             font=("Roboto", 16, "bold"),
                             text_color="#3B8ED0")
         header.pack(anchor="w", pady=(0, 15))
@@ -57,7 +58,7 @@ class DatePickerDialog(ctk.CTkToplevel):
         day_frame = ctk.CTkFrame(controls_frame, fg_color="transparent")
         day_frame.pack(side="left", fill="both", expand=True, padx=(0, 10))
         
-        ctk.CTkLabel(day_frame, text="Gün", font=("Roboto", 11, "bold"),
+        ctk.CTkLabel(day_frame, text=_("Gün"), font=("Roboto", 11, "bold"),
                     text_color=("#666", "#ccc")).pack(anchor="center", pady=(0, 10))
         
         ctk.CTkButton(day_frame, text="▲", width=50, height=35,
@@ -79,7 +80,7 @@ class DatePickerDialog(ctk.CTkToplevel):
         month_frame = ctk.CTkFrame(controls_frame, fg_color="transparent")
         month_frame.pack(side="left", fill="both", expand=True, padx=(0, 10))
         
-        ctk.CTkLabel(month_frame, text="Ay", font=("Roboto", 11, "bold"),
+        ctk.CTkLabel(month_frame, text=_("Ay"), font=("Roboto", 11, "bold"),
                     text_color=("#666", "#ccc")).pack(anchor="center", pady=(0, 10))
         
         ctk.CTkButton(month_frame, text="▲", width=50, height=35,
@@ -102,7 +103,7 @@ class DatePickerDialog(ctk.CTkToplevel):
         year_frame = ctk.CTkFrame(controls_frame, fg_color="transparent")
         year_frame.pack(side="left", fill="both", expand=True)
         
-        ctk.CTkLabel(year_frame, text="Yıl", font=("Roboto", 11, "bold"),
+        ctk.CTkLabel(year_frame, text=_("Yıl"), font=("Roboto", 11, "bold"),
                     text_color=("#666", "#ccc")).pack(anchor="center", pady=(0, 10))
         
         ctk.CTkButton(year_frame, text="▲", width=50, height=35,
@@ -127,12 +128,12 @@ class DatePickerDialog(ctk.CTkToplevel):
         button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         button_frame.pack(fill="x", pady=(15, 0))
         
-        ctk.CTkButton(button_frame, text="✅ Seç", height=40,
+        ctk.CTkButton(button_frame, text=_("✅ Seç"), height=40,
                      fg_color="#2CC985", hover_color="#27A770",
                      font=("Roboto", 13, "bold"),
                      command=self.confirm).pack(side="left", fill="both", expand=True, padx=(0, 10))
         
-        ctk.CTkButton(button_frame, text="❌ İptal", height=40,
+        ctk.CTkButton(button_frame, text=_("❌ İptal"), height=40,
                      fg_color="#E74C3C", hover_color="#C0392B",
                      font=("Roboto", 13, "bold"),
                      command=self.cancel).pack(side="left", fill="both", expand=True)
@@ -150,7 +151,7 @@ class DatePickerDialog(ctk.CTkToplevel):
     
     def update_display(self):
         """Güncelle tarih gösterimi: GÜN_ADI, GÜN/AYNO/YIL formatında"""
-        days_tr = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
+        days_tr = [_("Pazartesi"), _("Salı"), _("Çarşamba"), _("Perşembe"), _("Cuma"), _("Cumartesi"), _("Pazar")]
         day_name = days_tr[self.selected_date.weekday()]
         date_str = f"{day_name}, {self.selected_date.day:02d}/{self.selected_date.month:02d}/{self.selected_date.year}"
         self.lbl_display.configure(text=date_str)
@@ -161,8 +162,8 @@ class DatePickerDialog(ctk.CTkToplevel):
     
     def update_month_label(self):
         """Ay labelını güncelle — Türkçe ay ismi"""
-        months_tr = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-                    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        months_tr = [_("Ocak"), _("Şubat"), _("Mart"), _("Nisan"), _("Mayıs"), _("Haziran"),
+                    _("Temmuz"), _("Ağustos"), _("Eylül"), _("Ekim"), _("Kasım"), _("Aralık")]
         month_name = months_tr[self.selected_date.month - 1]
         self.lbl_month.configure(text=month_name)
     

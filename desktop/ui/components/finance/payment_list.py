@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from desktop.core.locale import _
 from typing import List, Dict, Any, Callable
 
 from desktop.ui.components.finance.payment_card import PaymentCard
@@ -22,21 +23,11 @@ class PaymentList(ctk.CTkFrame):
             widget.destroy()
 
         if not items:
-            self._show_empty_state("Henüz ödeme kaydı yok")
+            self._show_empty_state(_("Henüz ödeme kaydı yok"))
             return
 
         for item in items:
             PaymentCard(self, item, self.on_detail, self.on_delete).pack(fill="x", pady=8)
-
-    def _show_empty_state(self, text: str):
-        """Show empty state message."""
-        placeholder = ctk.CTkLabel(
-            self,
-            text=text,
-            font=("Roboto", 16),
-            text_color=("gray45", "gray65"),
-        )
-        placeholder.pack(pady=80)
 
     def _show_empty_state(self, text: str):
         """Show empty state message."""

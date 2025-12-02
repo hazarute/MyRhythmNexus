@@ -41,6 +41,7 @@ cd MyRhythmNexus
 - [Configuration](#-configuration)
 - [Usage](#-usage)
 - [Architecture](#-architecture)
+- [Internationalization (i18n)](#-internationalization-i18n)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -79,6 +80,12 @@ Unlike monolithic systems, MyRhythmNexus follows a **modular architecture** wher
 - **Auto Member Deactivation:** 60+ day inactive members automatically deactivated
 - **Background Jobs:** Scheduled tasks for member status updates
 - **Timezone Management:** All operations in Turkey timezone (Europe/Istanbul)
+
+### 🌍 Internationalization (i18n)
+- **Multi-language Support:** English and Turkish translations available.
+- **Dynamic Locale Management:** Language selection via settings menu.
+- **Translation Tools:** Includes `i18n_manager.py`, `fill_translations.py`, `scan_ui_strings.py`, and `wrap_ui_strings.py` for managing translations.
+- **Gettext Integration:** `.po` and `.mo` files for efficient translation handling.
 
 ### 🐳 Deployment
 - **Containerized:** Docker & Docker Compose for production deployment
@@ -272,6 +279,28 @@ checkin_response = httpx.post("http://localhost:8000/api/v1/checkin", json={
 - **Single Source of Truth:** `prisma/schema.prisma`
 - **Async Operations:** SQLAlchemy 2.0+ with asyncpg
 - **Migrations:** Alembic for schema evolution
+
+---
+
+## 🌍 Internationalization (i18n)
+
+### Overview
+MyRhythmNexus supports multiple languages, including English and Turkish, to provide a seamless user experience for global users.
+
+### Key Features
+- **Dynamic Locale Management:** Users can switch languages via the settings menu.
+- **Translation Tools:** Includes `i18n_manager.py` for managing `.po` and `.mo` files.
+- **Multi-language Support:** All UI elements are wrapped with `_()` for translation.
+- **Helper Scripts:**
+  - `fill_translations.py`: Auto-fill translations.
+  - `scan_ui_strings.py`: Detect untranslated strings.
+  - `wrap_ui_strings.py`: Automatically wrap strings with `_()`.
+
+### Workflow
+1. Extract translatable strings using `i18n_manager.py`.
+2. Update `.po` files with translations.
+3. Compile `.mo` files for runtime use.
+4. Load the appropriate locale at application startup.
 
 ---
 

@@ -6,6 +6,9 @@ class DesktopConfig:
 
     # Backend URL - Production'da değiştirilebilir
     BACKEND_URL = os.getenv("RHYTHM_NEXUS_BACKEND_URL", "http://localhost:8000")
+    
+    # License Server URL
+    LICENSE_SERVER_URL = os.getenv("RHYTHM_NEXUS_LICENSE_SERVER_URL", "http://localhost:8001/api/v1")
 
     # App settings
     APP_NAME = "MyRhythmNexus Desktop"

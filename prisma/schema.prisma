@@ -304,24 +304,5 @@ Table measurement_values {
   Note: 'Bir ölçüm seansındaki tek bir veriyi tutar. Örn: "17 Kasım" seansındaki "Kilo" ölçümünün değeri "68.5" idi.'
 }
 
-// =============================================
-// BÖLÜM 7: LİSANSLAMA ALTYAPISI
-// =============================================
 
-// License: Kurumsal lisans anahtarlarını ve aktiflik durumunu tutan tablo.
-Table licenses {
-  id string [pk, default: `uuid()`]
-  licanseKey string [unique, not null] // Örn: MRN-A1B2-C3D4-E5F6
-  clientName string [not null] // Örn: "FitLife Studio Alsancak"
-  contactEmail string
-  isActive boolean [default: true]
-  expiresAt timestamp [not null]
-  hardwareId string
-  lastCheckIn timestamp [default: `now()`]
-  features json
-  createdAt timestamp [default: `now()`]
-  updatedAt timestamp [default: `now()`]
-
-  Note: 'Lisans anahtarı, müşteri bilgisi, donanım kilidi ve özellik bayraklarını tutar.'
-}
 

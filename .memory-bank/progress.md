@@ -39,6 +39,23 @@
 - [X] `wrap_ui_strings.py` - Otomatik wrapper aracı
 
 ## Devam Eden Geliştirmeler
+### Faz 21: Merkezi Lisanslama Sistemi (SaaS Dönüşümü) 🚀
+- [x] **License Server Projesi:**
+    - [x] `license_server/` klasör yapısının oluşturulması
+    - [x] Bağımsız FastAPI projesi ve veritabanı (SQLite/Postgres) kurulumu
+    - [x] RSA Key Pair (Private/Public) üretimi ve yönetimi
+    - [x] Admin API: Lisans oluşturma, süresini uzatma, iptal etme
+    - [x] Client API: `/validate` endpoint (Machine ID alır, İmzalı JWT döner)
+    - [x] Rate Limiting (SlowAPI) entegrasyonu
+- [x] **MyRhythmNexus Client Entegrasyonu:**
+    - [x] `backend/services/license.py` refactor: Yerel DB kontrolü yerine JWT doğrulama (Desktop tarafında yapıldı)
+    - [x] Offline-First: Public Key ile yerel doğrulama
+    - [x] Hardware ID (Machine ID) kontrolü
+- [x] **Temizlik ve Geçiş:**
+    - [x] Eski `License` modelinin ve API'lerinin silinmesi
+    - [x] `alembic` migrasyonu ile `licenses` tablosunun düşürülmesi
+    - [x] `backend` konfigürasyonunun temizlenmesi
+
 🔄 **Admin Arayüz Deneyimi**
 - Kullanıcı deneyimi iyileştirmeleri (UX/UI optimizasyonları)
 - Dashboard görselleştirmelerinin geliştirilmesi
@@ -59,67 +76,3 @@
 
 ## Bilinen Hatalar / Notlar
 - `desktop/ui` altında modüler bir klasörleme (views/members, views/sales vb.) yapılarak ilerlenecek.
-
-## Faz 21: Licensing System (Lisanslama Sistemi)
-
-### 🏗️ Altyapı Hazırlığı
-- [x] `prisma/schema.prisma` içinde `License` modeli oluştur
-- [x] `backend/models/license.py` - SQLAlchemy License modeli oluştur
-- [x] `backend/schemas/license.py` - Pydantic şemaları oluştur
-  - `LicenseBase`, `LicenseCreate`, `LicenseRead`, `LicenseValidate`
-  - `LicenseValidateResponse` (success, message, expires_at, features)
-
-### 🔧 Service Katmanı (YENİ)
-- [x] `backend/services/` klasörü oluştur
-- [x] `backend/services/license.py` oluştur:
-  - `generate_license_key()` - Format: MRN-XXXX-XXXX-XXXX
-  - `validate_license(db, license_key, machine_id)` fonksiyonu:
-    * Lisans key'i veritabanında bul
-    * `isActive` kontrolü (False ise hata)
-    * `expiresAt` kontrolü (geçmişse hata)
-    * `hardwareId` NULL ise → gelen `machine_id` ile kilitle ve `lastCheckIn` güncelle
-    * `hardwareId` dolu ise → eşleşme kontrolü (farklıysa hata)
-    * Başarılıysa `lastCheckIn` güncelle ve `features` JSON'unu döndür
-  - `check_feature(license_key, feature_name)` - Modül izni kontrolü
-
-### 🌐 API Endpoints
-- [x] `backend/api/v1/license.py` oluştur (Public):
-  - `POST /api/v1/license/validate` - Lisans doğrulama
-    * Body: `{license_key: str, machine_id: str}`
-    * Response: `{valid: bool, message: str, expires_at: datetime, features: dict}`
-  - `GET /api/v1/license/check-feature/{feature_name}` - Modül kontrolü
-
-- [x] `backend/api/v1/admin.py` güncelle (Superuser only):
-  - `POST /api/v1/admin/licenses` - Yeni lisans oluştur
-    * Body: `{client_name: str, contact_email: str, expires_at: datetime, features: dict}`
-  - `GET /api/v1/admin/licenses` - Tüm lisansları listele
-  - `GET /api/v1/admin/licenses/{license_id}` - Lisans detayı
-  - `PATCH /api/v1/admin/licenses/{license_id}` - Lisans güncelle (süre uzat, features değiştir)
-  - `DELETE /api/v1/admin/licenses/{license_id}` - Lisans deaktif et
-
-### 🖥️ Desktop Entegrasyonu
-- [x] `desktop/core/license_manager.py` oluştur:
-  - `get_machine_id()` - Donanım kimliği hesapla (UUID node based)
-  - `validate_license_sync()` - Backend'e doğrulama isteği gönder
-  - `save_license_key()` / `get_license_key()` - Config entegrasyonu
-  
-- [x] `desktop/main.py` - Başlangıçta lisans kontrolü:
-  - Önbellekte geçerli lisans varsa → Uygulama açılır
-  - Yoksa → Lisans doğrulama dialog'u (`LicenseWindow`) göster
-  - Geçersizse → Hata mesajı ve uygulama kapanır
-
-### 📝 Dokümantasyon ve Test
-- [x] Lisans API dökümantasyonunu `docs/` altına ekle (`docs/LICENSING.md`)
-- [x] Test senaryoları (`tests/test_licensing.py`):
-  - [x] Geçerli lisans doğrulama
-  - [x] Süresi dolmuş lisans
-  - [x] Farklı donanımda kullanma denemesi
-  - [x] Deaktif lisans
-  - [x] Modül erişim kontrolleri
-
-### 🔒 Güvenlik Kontrolleri
-- [ ] Rate limiting ekle (brute-force koruması)
-- [ ] API key'leri şifrelenmiş sakla
-- [ ] Lisans validation loglarını kaydet
-- [x] Admin endpoint'lerinde role-based access control (RBAC)
-- [ ] Sistem zamanı manipülasyonunu engelle: İnternete bağlıysa backend/NTP saat kontrolü, offline ise cache’e kaydedilen "son çalışma zamanı" geriye alınmışsa uygulamayı bloke et.

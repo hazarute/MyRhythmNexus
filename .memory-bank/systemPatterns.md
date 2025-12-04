@@ -32,11 +32,13 @@
     *   **Desteklenen Diller:** Türkçe (tr) ve İngilizce (en) - genişletilebilir yapı
     *   **i18n Yardımcı Araçlar:** `i18n_manager.py` (extract/update/compile), `fill_translations.py`, `scan_ui_strings.py`, `wrap_ui_strings.py` — geliştirme sürecini kolaylaştırmak için eklendi
 
-    6.  **Lisanslama Sistemi:**
-        *   **Veritabanı:** `licenses` tablosu `prisma/schema.prisma` içinde tanımlı (`features` JSON, `hardwareId`, `expiresAt`).
-        *   **Servis Katmanı:** `backend/services/license.py` ile tüm lisans doğrulamaları ve feature check adımları burada olmalı.
-        *   **API:** `/api/v1/license/validate`, `/api/v1/admin/licenses` endpoint’leri FastAPI ile superuser erişimleri kontrol edecek.
-        *   **Desktop Entegrasyonu:** `desktop/core/license_manager.py` ile machine_id hesaplama, cache ve doğrulama isteklerini yönet.
+    6.  **Merkezi Lisanslama Sistemi (SaaS):**
+        *   **Mimari:** Ayrık "License Server" (Railway) ve "Client" (MyRhythmNexus) yapısı.
+        *   **İletişim:** RSA-2048 Asimetrik Şifreleme. Server Private Key ile imzalar, Client Public Key ile doğrular.
+        *   **Token:** JWT (JSON Web Token) formatında lisans verisi.
+        *   **Offline-First:** Client, geçerli bir imzalı token'ı veritabanında saklar ve internet yoksa bile Public Key ile doğrulayarak çalışmaya devam eder.
+        *   **License Server:** Bağımsız FastAPI projesi. Kendi veritabanı vardır. Müşterileri ve lisansları yönetir.
+        *   **Client Entegrasyonu:** `desktop/core/license_manager.py` artık yerel üretim değil, sunucu ile senkronizasyon ve imza doğrulama yapar.
 
 4.  **Modüler Klasör Yapısı:**
 MyRhythmNexus/

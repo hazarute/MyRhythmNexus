@@ -1,5 +1,8 @@
 import uuid
 import logging
+import jwt
+import requests
+from pathlib import Path
 from typing import Optional, Dict, Any
 from desktop.core.config import DesktopConfig
 from desktop.core.api_client import ApiClient
@@ -11,6 +14,7 @@ class LicenseManager:
         self.api_client = api_client
         self._cached_features: Dict[str, Any] = {}
         self._license_status: Dict[str, Any] = {}
+        self.LICENSE_SERVER_URL = DesktopConfig.LICENSE_SERVER_URL 
 
     def get_machine_id(self) -> str:
         """Generates a unique machine ID based on hardware."""
@@ -26,39 +30,76 @@ class LicenseManager:
     def save_license_key(self, key: str):
         DesktopConfig.set_value("license_key", key)
 
+    def get_license_token(self) -> Optional[str]:
+        return DesktopConfig.get_value("license_token")
+
+    def save_license_token(self, token: str):
+        DesktopConfig.set_value("license_token", token)
+
     def validate_license_sync(self) -> Dict[str, Any]:
-        """Synchronous validation for startup checks"""
+        """
+        Validates license with Offline-First strategy.
+        1. Try to reach License Server -> Get Token -> Save Token -> Verify
+        2. If unreachable -> Load Token -> Verify
+        """
         key = self.get_license_key()
         if not key:
             return {"valid": False, "message": "No license key found."}
 
         machine_id = self.get_machine_id()
         
+        # 1. Try Online Validation
         try:
-            # Using the underlying httpx client for a direct call if needed, 
-            # or we can make ApiClient support sync calls. 
-            # Since ApiClient uses httpx.Client (sync by default unless AsyncClient is used),
-            # we can use it directly.
-            
-            response = self.api_client.client.post(
-                "/api/v1/license/validate",
-                json={"license_key": key, "machine_id": machine_id}
+            response = requests.post(
+                f"{self.LICENSE_SERVER_URL}/license/validate",
+                json={"license_key": key, "hardware_id": machine_id},
+                timeout=5
             )
             
             if response.status_code == 200:
                 data = response.json()
-                self._license_status = data
-                self._cached_features = data.get("features", {}) or {}
-                return data
-            else:
-                try:
-                    detail = response.json().get("detail", response.text)
-                except:
-                    detail = response.text
-                return {"valid": False, "message": f"Validation failed: {detail}"}
+                if data.get("valid") and data.get("token"):
+                    # Save token
+                    self.save_license_token(data["token"])
+                    return self._verify_token(data["token"], machine_id)
+                else:
+                    return {"valid": False, "message": data.get("message", "Validation failed")}
         except Exception as e:
-            logger.error(f"License validation error: {e}")
-            return {"valid": False, "message": f"Connection error: {str(e)}"}
+            logger.warning(f"Online validation failed ({e}). Switching to offline mode.")
+
+        # 2. Offline Validation
+        token = self.get_license_token()
+        if token:
+            return self._verify_token(token, machine_id)
+        
+        return {"valid": False, "message": "License validation failed. Internet connection required for first activation."}
+
+    def _verify_token(self, token: str, machine_id: str) -> Dict[str, Any]:
+        try:
+            # Load Public Key
+            pub_key_path = Path(__file__).parent.parent / "assets" / "public.pem"
+            if not pub_key_path.exists():
+                 return {"valid": False, "message": "Security error: Public key missing."}
+                 
+            public_key = pub_key_path.read_bytes()
+            
+            # Decode & Verify
+            payload = jwt.decode(token, public_key, algorithms=["RS256"])
+            
+            # Check Hardware ID
+            if payload.get("hwid") != machine_id:
+                 return {"valid": False, "message": "License is locked to another device."}
+            
+            # Success
+            self._cached_features = payload.get("features", {})
+            return {"valid": True, "message": "License valid", "features": self._cached_features}
+            
+        except jwt.ExpiredSignatureError:
+            return {"valid": False, "message": "License token expired. Please connect to internet."}
+        except jwt.InvalidTokenError as e:
+            return {"valid": False, "message": f"Invalid license token: {e}"}
+        except Exception as e:
+            return {"valid": False, "message": f"Verification error: {e}"}
 
     def is_feature_enabled(self, feature_name: str) -> bool:
         # Check cache first

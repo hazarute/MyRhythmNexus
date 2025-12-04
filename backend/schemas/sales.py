@@ -4,6 +4,7 @@ from datetime import datetime, time
 from pydantic import BaseModel, field_validator
 from backend.models.operation import SubscriptionStatus, PaymentMethod
 from backend.schemas.service import ServicePackageRead
+from backend.schemas.operations import ClassEventRead
 
 # --- ClassEvent Schemas for Subscription ---
 class DayAndTime(BaseModel):
@@ -84,6 +85,7 @@ class SubscriptionRead(SubscriptionBase):
     attendance_count: int = 0
     payments: List[PaymentRead] = []
     package: Optional[ServicePackageRead] = None
+    class_events: List[ClassEventRead] = []
 
     class Config:
         from_attributes = True

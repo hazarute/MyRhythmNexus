@@ -32,6 +32,12 @@
     *   **Desteklenen Diller:** Türkçe (tr) ve İngilizce (en) - genişletilebilir yapı
     *   **i18n Yardımcı Araçlar:** `i18n_manager.py` (extract/update/compile), `fill_translations.py`, `scan_ui_strings.py`, `wrap_ui_strings.py` — geliştirme sürecini kolaylaştırmak için eklendi
 
+    6.  **Lisanslama Sistemi:**
+        *   **Veritabanı:** `licenses` tablosu `prisma/schema.prisma` içinde tanımlı (`features` JSON, `hardwareId`, `expiresAt`).
+        *   **Servis Katmanı:** `backend/services/license.py` ile tüm lisans doğrulamaları ve feature check adımları burada olmalı.
+        *   **API:** `/api/v1/license/validate`, `/api/v1/admin/licenses` endpoint’leri FastAPI ile superuser erişimleri kontrol edecek.
+        *   **Desktop Entegrasyonu:** `desktop/core/license_manager.py` ile machine_id hesaplama, cache ve doğrulama isteklerini yönet.
+
 4.  **Modüler Klasör Yapısı:**
 MyRhythmNexus/
 ├── .memory-bank/          # Proje hafızası (Mevcut)

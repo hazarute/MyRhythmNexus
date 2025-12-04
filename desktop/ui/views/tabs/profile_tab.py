@@ -23,6 +23,8 @@ class ProfileTab:
         stats_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         # Fetch Data for Stats
+        subs = []
+        checkins = []
         try:
             subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
             try:

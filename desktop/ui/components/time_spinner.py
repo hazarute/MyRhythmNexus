@@ -7,7 +7,7 @@ Supports configurable min/max values, step size, and callbacks.
 
 import customtkinter as ctk
 from desktop.core.locale import _
-from typing import Optional, Callable
+from typing import Optional, Callable, Sequence
 
 
 class TimeSpinner(ctk.CTkFrame):
@@ -46,6 +46,7 @@ class TimeSpinner(ctk.CTkFrame):
         label_width: int = 30,
         font: tuple = ("Roboto", 12, "bold"),
         on_change: Optional[Callable[[int], None]] = None,
+        values: Optional[Sequence[int]] = None,
         **kwargs
     ):
         super().__init__(parent, fg_color="transparent", **kwargs)
@@ -55,9 +56,17 @@ class TimeSpinner(ctk.CTkFrame):
         self.step = step
         self.on_change = on_change
         self.font = font
+        self.allowed_values: Optional[list[int]] = list(values) if values else None
         
         # Internal value variable
-        self.value_var = ctk.IntVar(value=default)
+        if self.allowed_values:
+            if default in self.allowed_values:
+                initial = default
+            else:
+                initial = self.allowed_values[0]
+            self.value_var = ctk.IntVar(value=initial)
+        else:
+            self.value_var = ctk.IntVar(value=default)
         
         # Minus button
         self.btn_minus = ctk.CTkButton(
@@ -97,22 +106,42 @@ class TimeSpinner(ctk.CTkFrame):
     
     def _on_minus_click(self):
         """Handle minus button click"""
+        if self.allowed_values:
+            current = self.value_var.get()
+            if current in self.allowed_values:
+                idx = self.allowed_values.index(current)
+                idx = (idx - 1) % len(self.allowed_values)
+                self.value_var.set(self.allowed_values[idx])
+            else:
+                self.value_var.set(self.allowed_values[0])
+            return
+
         new_val = self.value_var.get() - self.step
-        
+
         # Wrap around at boundaries
         if new_val < self.min_val:
             new_val = self.max_val
-        
+
         self.value_var.set(new_val)
     
     def _on_plus_click(self):
         """Handle plus button click"""
+        if self.allowed_values:
+            current = self.value_var.get()
+            if current in self.allowed_values:
+                idx = self.allowed_values.index(current)
+                idx = (idx + 1) % len(self.allowed_values)
+                self.value_var.set(self.allowed_values[idx])
+            else:
+                self.value_var.set(self.allowed_values[0])
+            return
+
         new_val = self.value_var.get() + self.step
-        
+
         # Wrap around at boundaries
         if new_val > self.max_val:
             new_val = self.min_val
-        
+
         self.value_var.set(new_val)
     
     def _on_value_changed(self, *args):
@@ -132,6 +161,13 @@ class TimeSpinner(ctk.CTkFrame):
     
     def set_value(self, value: int):
         """Set spinner value (with bounds checking)"""
+        if self.allowed_values:
+            if value in self.allowed_values:
+                self.value_var.set(value)
+            else:
+                self.value_var.set(self.allowed_values[0])
+            return
+
         bounded_value = max(self.min_val, min(self.max_val, value))
         self.value_var.set(bounded_value)
     

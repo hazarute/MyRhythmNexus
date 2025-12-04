@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from backend.api.deps import get_db
+from backend.api.deps import get_db, get_current_user
 from backend.core.security import verify_password, create_access_token, hash_password
 from backend.models.user import User, Role
 from backend.schemas.token import Token
@@ -65,4 +65,12 @@ async def login_access_token(
             detail="Incorrect email or password",
         )
     access_token = create_access_token(data={"sub": user.id})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/refresh-token", response_model=Token)
+async def refresh_access_token(
+    current_user: User = Depends(get_current_user),
+):
+    access_token = create_access_token(data={"sub": current_user.id})
     return {"access_token": access_token, "token_type": "bearer"}

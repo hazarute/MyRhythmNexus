@@ -1,6 +1,8 @@
 import customtkinter as ctk
+from datetime import datetime
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
+from desktop.ui.components.date_picker import get_weekday_name
 from tkinter import messagebox
 
 class PackagesTab:
@@ -104,6 +106,13 @@ class PackagesTab:
         access_type = plan.get('access_type', 'SESSION_BASED')
         used = sub.get('used_sessions', 0)
         limit = plan.get('sessions_granted', 0)
+
+        schedule_summary = None
+        if is_active and access_type == 'SESSION_BASED':
+            schedule_summary = self._format_schedule_summary(sub.get('class_events', []))
+        if schedule_summary:
+            ctk.CTkLabel(content, text=_("📅 Ders Günleri: {}").format(schedule_summary),
+                        font=("Roboto", 14, "bold"), text_color="#E6D1CF").pack(anchor="w", pady=(0, 5))
         
         if access_type == 'TIME_BASED':
             ctk.CTkLabel(bottom_row, text=_("♾️ Zaman Bazlı ({} giriş)").format(used), 
@@ -130,6 +139,42 @@ class PackagesTab:
                               font=("Segoe UI Emoji", 16),
                               command=lambda s=sub: self.delete_subscription(s['id']))
         btn_del.pack(side="right", padx=15)
+
+    def _format_schedule_summary(self, class_events):
+        if not class_events:
+            return None
+
+        seen = set()
+        schedule_parts = []
+        for event in class_events:
+            if event.get('is_cancelled'):
+                continue
+
+            start_time = event.get('start_time')
+            if isinstance(start_time, str):
+                try:
+                    start_dt = datetime.fromisoformat(start_time)
+                except ValueError:
+                    continue
+            elif isinstance(start_time, datetime):
+                start_dt = start_time
+            else:
+                continue
+
+            time_key = (start_dt.weekday(), start_dt.strftime('%H:%M'))
+            if time_key in seen:
+                continue
+            seen.add(time_key)
+
+            weekday_name = get_weekday_name(start_dt.date())
+            schedule_parts.append(f"{weekday_name} {start_dt.strftime('%H:%M')}")
+            if len(schedule_parts) >= 3:
+                break
+
+        if not schedule_parts:
+            return None
+
+        return ", ".join(schedule_parts)
 
     def show_package_detail(self, subscription: dict):
         """Show detailed package information dialog"""

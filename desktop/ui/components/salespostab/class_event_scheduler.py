@@ -154,10 +154,8 @@ class ClassEventScheduler(ctk.CTkFrame):
         # Minutes spinner (0-59, step 30, default 0)
         minute_spinner = TimeSpinner(
             time_frame,
-            min_val=0,
-            max_val=59,
             default=0,
-            step=30,
+            values=(0, 30),
             label_width=30,
         )
         minute_spinner.pack(side="left", padx=3)

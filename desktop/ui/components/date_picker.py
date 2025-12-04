@@ -3,6 +3,20 @@ from desktop.core.locale import _
 from datetime import datetime, date
 import calendar
 
+WEEKDAY_NAMES = [
+    "Pazartesi",
+    "Salı",
+    "Çarşamba",
+    "Perşembe",
+    "Cuma",
+    "Cumartesi",
+    "Pazar",
+]
+
+
+def get_weekday_name(target_date: date) -> str:
+    return _(WEEKDAY_NAMES[target_date.weekday()])
+
 
 class DatePickerDialog(ctk.CTkToplevel):
     """Modern tarih seçer dialog — CustomTkinter tarzı, gün/ay/yıl spinner'ları"""
@@ -151,8 +165,7 @@ class DatePickerDialog(ctk.CTkToplevel):
     
     def update_display(self):
         """Güncelle tarih gösterimi: GÜN_ADI, GÜN/AYNO/YIL formatında"""
-        days_tr = [_("Pazartesi"), _("Salı"), _("Çarşamba"), _("Perşembe"), _("Cuma"), _("Cumartesi"), _("Pazar")]
-        day_name = days_tr[self.selected_date.weekday()]
+        day_name = get_weekday_name(self.selected_date)
         date_str = f"{day_name}, {self.selected_date.day:02d}/{self.selected_date.month:02d}/{self.selected_date.year}"
         self.lbl_display.configure(text=date_str)
     

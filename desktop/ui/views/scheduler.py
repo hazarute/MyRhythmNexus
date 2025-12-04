@@ -161,6 +161,19 @@ class SchedulerView(ctk.CTkFrame):
         for child in card.winfo_children():
             child.bind("<Button-1>", lambda e, ev=event: self.show_event_detail(ev))
 
+        # Participant names
+        try:
+            bookings = self.api_client.get(f"/api/v1/operations/events/{event['id']}/bookings") or []
+            member_names = [b.get("member_name") or b.get("member", {}).get("full_name") for b in bookings]
+            member_names = [name for name in member_names if name]
+            if member_names:
+                preview = ", ".join(member_names[:3])
+                if len(member_names) > 3:
+                    preview += f" (+{len(member_names) - 3})"
+                ctk.CTkLabel(content, text=_("Katılımcılar: {names}").format(names=preview), font=("Roboto", 12, "bold"), text_color="#B37E7E").pack(anchor="w", padx=(20, 0), pady=(4, 0))
+        except Exception:
+            pass
+
     def show_event_detail(self, event):
         EventDetailDialog(self, self.api_client, event, self.load_events)
 

@@ -8,7 +8,8 @@ from desktop.core.api_client import ApiClient
 from desktop.core.config import DesktopConfig
 from desktop.core.updater import check_and_update_on_startup
 from desktop.core.locale import _, initialize_locale
-from desktop.ui.windows import LoginWindow, MainWindow
+from desktop.core.license_manager import LicenseManager
+from desktop.ui.windows import LoginWindow, MainWindow, LicenseWindow
 
 class App(ctk.CTk):
     def __init__(self):
@@ -29,9 +30,27 @@ class App(ctk.CTk):
         # Load backend URL from config
         backend_url = DesktopConfig.load_backend_url()
         self.api_client = ApiClient(base_url=backend_url)
+        self.license_manager = LicenseManager(self.api_client)
         
         self.current_window = None
-        self.show_login()
+        
+        # Check license first
+        self.check_license()
+
+    def check_license(self):
+        # Try to validate existing license
+        result = self.license_manager.validate_license_sync()
+        if result.get("valid"):
+            self.show_login()
+        else:
+            self.show_license_activation()
+
+    def show_license_activation(self):
+        if self.current_window:
+            self.current_window.destroy()
+        
+        # LicenseWindow is a Frame, so we pack it into the main window
+        self.current_window = LicenseWindow(self, self.license_manager, on_success=self.show_login)
 
     def show_login(self):
         if self.current_window:

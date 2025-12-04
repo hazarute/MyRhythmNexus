@@ -2,7 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from datetime import date, timedelta, datetime
 from typing import Callable, Optional
-from desktop.ui.components.date_picker import DatePickerDialog
+from desktop.ui.components.date_picker import DatePickerDialog, get_weekday_name
 import sys
 from pathlib import Path
 
@@ -54,7 +54,7 @@ class DateSelector(ctk.CTkFrame):
         
         # Start Date Button
         self.btn_start_date = ctk.CTkButton(date_frame, 
-                                           text=_("Değiştirmek İçin Tıklayın - {}").format(self.start_date.strftime("%d/%m/%Y")),
+                           text=self._format_start_button_text(),
                                            font=("Roboto", 16, "bold"),
                                            fg_color="#21415A", 
                                            hover_color="#0A1B2C",
@@ -78,11 +78,11 @@ class DateSelector(ctk.CTkFrame):
     def open_date_picker(self):
         """DatePickerDialog'u aç ve seçilen tarihi al"""
         dialog = DatePickerDialog(self.master, initial_date=self.start_date)
-        self.master.wait_window(dialog)
+        selected = dialog.get_date()
         
-        if dialog.selected_date:
-            self.start_date = dialog.selected_date
-            self.btn_start_date.configure(text=self.start_date.strftime("%d/%m/%Y"))
+        if selected:
+            self.start_date = selected
+            self.btn_start_date.configure(text=self._format_start_button_text())
             
             # Update end date when start date changes
             self.set_end_date_from_plan(self.cycle_period, self.repeat_weeks)
@@ -125,5 +125,10 @@ class DateSelector(ctk.CTkFrame):
     def reset(self):
         """Tarihleri sıfırla"""
         self.start_date = date.today()
-        self.btn_start_date.configure(text=self.start_date.strftime("%d/%m/%Y"))
+        self.btn_start_date.configure(text=self._format_start_button_text())
         self.lbl_end_date.configure()
+
+    def _format_start_button_text(self) -> str:
+        day_label = get_weekday_name(self.start_date)
+        formatted_date = self.start_date.strftime("%d/%m/%Y")
+        return _("Değiştirmek İçin Tıklayın - {}" ).format(f"({day_label}) - {formatted_date}")

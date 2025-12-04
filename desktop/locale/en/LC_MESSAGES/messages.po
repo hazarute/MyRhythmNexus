@@ -71,6 +71,10 @@ msgstr "❌ Cancel"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:84
 msgid "Pazartesi"
 msgstr "Monday"
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:92
+msgid "Katılımcılar: {names}"
+msgstr "Participants: {names}"
+
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/date_picker.py:154
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:49
@@ -2321,6 +2325,10 @@ msgstr "Active Members"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:72
 msgid "Aktif paket yok."
 msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:110
+#, python-brace-format
+msgid "📅 Ders Günleri: {}"
+msgstr "📅 Class Days: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:42
 msgid "🗄️ Geçmiş Paketler (Son 5)"

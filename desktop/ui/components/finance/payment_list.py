@@ -26,8 +26,16 @@ class PaymentList(ctk.CTkFrame):
             self._show_empty_state(_("Henüz ödeme kaydı yok"))
             return
 
-        for item in items:
-            PaymentCard(self, item, self.on_detail, self.on_delete).pack(fill="x", pady=8)
+        try:
+            for item in items:
+                try:
+                    card = PaymentCard(self, item, self.on_detail, self.on_delete)
+                    card.pack(fill="x", pady=8)
+                except Exception:
+                    # Continue with next item instead of breaking
+                    continue
+        except Exception:
+            self._show_empty_state(_("Ödeme listesi yükleme hatası"))
 
     def _show_empty_state(self, text: str):
         """Show empty state message."""

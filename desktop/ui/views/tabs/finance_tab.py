@@ -116,6 +116,7 @@ class FinanceTab(ctk.CTkFrame):
         self.load_data()
 
     def load_data(self):
+        # Load summary independently - errors shouldn't block payment list
         self.load_summary_data()
 
         params: dict[str, object] = {
@@ -127,6 +128,7 @@ class FinanceTab(ctk.CTkFrame):
 
         try:
             data = self.api_client.get("/api/v1/sales/payments", params=params)
+            
             items = data.get("items", [])
             self.total_pages = max(1, data.get("pages", 1))
             self.total_records = data.get("total", 0)
@@ -137,37 +139,30 @@ class FinanceTab(ctk.CTkFrame):
             if self.member_id:
                 summary_text += _(" (Üyeye özel)")
             self.lbl_summary.configure(text=summary_text)
-
-            if not items:
-                self.payment_list.load_items([])
-                return
-
+            
             self.payment_list.load_items(items)
 
-        except Exception as exc:
-            print(f"Error loading payments: {exc}")
-            self._show_empty_state(_("Bir hata oluştu. Lütfen tekrar dene."))
+        except Exception:
+            self.payment_list.load_items([])
+            self.lbl_summary.configure(text=_("Hata oluştu"))
 
     def _show_empty_state(self, text: str):
-        placeholder = ctk.CTkLabel(
-            self.scroll_frame,
-            text=text,
-            font=("Roboto", 16),
-            text_color=("gray45", "gray65"),
-        )
-        placeholder.pack(pady=80)
+        """This method is now deprecated - use payment_list.load_items([]) instead"""
+        # For backwards compatibility, this delegates to payment_list
+        self.payment_list._show_empty_state(text)
 
     def load_summary_data(self):
         try:
             stats = self.api_client.get("/api/v1/stats/dashboard")
+            
             self.summary_row.set_value("active_members", str(stats.get("active_members", 0)))
             self.summary_row.set_value("debt_members_count", str(stats.get("debt_members_count", 0)))
             pending = stats.get("pending_payments_amount", 0)
             self.summary_row.set_value("pending_payments_amount", format_currency(pending))
             revenue = stats.get("monthly_revenue", 0)
             self.summary_row.set_value("monthly_revenue", format_currency(revenue))
-        except Exception as exc:
-            print(f"Error loading summary stats: {exc}")
+        except Exception:
+            # Gracefully handle stats loading failure - don't block payment list
             for key in self.summary_row.stat_cards:
                 self.summary_row.set_value(key, "—")
 
@@ -194,6 +189,8 @@ class FinanceTab(ctk.CTkFrame):
         try:
             self.api_client.delete(f"/api/v1/sales/payments/{payment_id}")
             self.load_data()
+            # Inform the user that deletion succeeded
+            messagebox.showinfo(_("Silme Başarılı"), _("Ödeme kaydı başarıyla silindi."))
         except Exception as exc:
             print(f"Error deleting payment: {exc}")
             messagebox.showerror(_("Silme Hatası"), _("İşlem başarısız oldu. Lütfen tekrar deneyin."))

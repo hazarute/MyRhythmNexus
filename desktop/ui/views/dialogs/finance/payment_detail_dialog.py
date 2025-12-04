@@ -12,7 +12,7 @@ class PaymentDetailDialog(ctk.CTkToplevel):
         self.payload = payload
         self._on_close = on_close
         self.title(_("Ödeme Detayı"))
-        self.geometry("720x520")
+        self.geometry("720x740")
         self.configure(fg_color="#1A1A1A")
 
         self.lift()

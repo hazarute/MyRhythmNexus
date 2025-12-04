@@ -12,10 +12,8 @@ from backend.models.operation import (
     Subscription, 
     SubscriptionStatus, 
     Payment, 
-    SessionCheckIn, 
-    Booking
+    SessionCheckIn
 )
-from backend.models.service import ServicePackage
 from backend.models.user import User, Role, UserRole
 from backend.schemas.stats import DashboardStats, ScheduleItem, ActivityItem, DebtMember
 
@@ -138,7 +136,7 @@ async def get_dashboard_stats(
             status="active"
         ))
 
-    # 6. Activity Feed (Check-ins, Sales, Bookings)
+    # 6. Activity Feed (Check-ins)
     activities = []
 
     # Check-ins
@@ -147,7 +145,7 @@ async def get_dashboard_stats(
             selectinload(SessionCheckIn.member), 
             selectinload(SessionCheckIn.event).selectinload(ClassEvent.template),
             selectinload(SessionCheckIn.subscription).selectinload(Subscription.package)
-        ).order_by(SessionCheckIn.check_in_time.desc()).limit(5)
+        ).order_by(SessionCheckIn.check_in_time.desc()).limit(20)
     )
     for ci in checkins_result.scalars():
         if ci.member:
@@ -177,43 +175,9 @@ async def get_dashboard_stats(
                 user_name=f"{ci.member.first_name} {ci.member.last_name}"
             ))
 
-    # Sales (Subscriptions)
-    sales_result = await db.execute(
-        select(Subscription).options(
-            selectinload(Subscription.member), 
-            selectinload(Subscription.package)
-        ).order_by(Subscription.start_date.desc()).limit(5)
-    )
-    for sub in sales_result.scalars():
-        if sub.member and sub.package:
-            activities.append(ActivityItem(
-                id=f"sale_{sub.id}",
-                type="sale",
-                description=f"{sub.package.name} paketi satın aldı",
-                timestamp=sub.start_date,
-                user_name=f"{sub.member.first_name} {sub.member.last_name}"
-            ))
-
-    # Bookings
-    bookings_result = await db.execute(
-        select(Booking).options(
-            selectinload(Booking.member), 
-            selectinload(Booking.event).selectinload(ClassEvent.template)
-        ).order_by(Booking.created_at.desc()).limit(5)
-    )
-    for bk in bookings_result.scalars():
-        if bk.member and bk.event and bk.event.template:
-            activities.append(ActivityItem(
-                id=f"booking_{bk.id}",
-                type="booking",
-                description=f"{bk.event.template.name} dersine rezervasyon yaptı",
-                timestamp=bk.created_at,
-                user_name=f"{bk.member.first_name} {bk.member.last_name}"
-            ))
-
     # Sort by timestamp desc and take top 10
     activities.sort(key=lambda x: x.timestamp, reverse=True)
-    recent_activities = activities[:10]
+    recent_activities = activities[:20]
 
     return DashboardStats(
         active_members=active_members_count,

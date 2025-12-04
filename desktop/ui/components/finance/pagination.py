@@ -39,6 +39,7 @@ class PaginationControls(ctk.CTkFrame):
 
     def update_page_info(self, current_page: int, total_pages: int):
         """Update the page label and button states."""
-        self.lbl_page.configure(text=_("Sayfa {current} / {total}").format(current=current_page, total=total_pages))
+        page_text = _("Sayfa") + f" {current_page} / {total_pages}"
+        self.lbl_page.configure(text=page_text)
         self.btn_prev.configure(state="normal" if current_page > 1 else "disabled")
         self.btn_next.configure(state="normal" if current_page < total_pages else "disabled")

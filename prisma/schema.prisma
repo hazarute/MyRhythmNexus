@@ -92,7 +92,7 @@ Table service_categories {
   Note: 'Hizmetlerin ana çatısı. Örn: "Grup Dersleri", "Özel Dersler".'
 }
 
-// ServiceOffering: Stüdyoda sunulan spesifik dersler.
+// ServiceOffering: Stüdyoda sunulan spesifik hizmetler.
 Table service_offerings {
   id string [pk, default: `uuid()`]
   name string [unique, not null] // Örn: "Reformer Pilates", "Mat Pilates", "Yoga Akışı"
@@ -104,23 +104,21 @@ Table service_offerings {
 // PlanDefinition: Müşterilerin satın alabileceği paketler.
 Table plan_definitions {
   id string [pk, default: `uuid()`]
-  name string [unique, not null] // Örn: "Aylık 8'li Grup Dersi Paketi"
+  name string [unique, not null] // Örn: "Aylık 8 seans, Haftalık Sınırsız Seans"
   description string
-  access_type string [not null, default: "SESSION_BASED"] // "SESSION_BASED" veya "UNLIMITED"
+  access_type string [not null, default: "SESSION_BASED"] // "SESSION_BASED" veya "UNLIMITED (TIME_BASED)"
   sessions_granted int [null] // Paketin verdiği seans hakkı sayısı (örn: 8) - SESSION_BASED için gerekli
   cycle_period string [not null] // Geçerlilik süresi (örn: "4 weeks", "12 weeks")
   repeat_weeks int [not null, default: 1] // Kaç hafta boyunca geçerli (dönem sayısı)
   is_active boolean [default: true] // Bu plan şu an satışta mı?
-  Note: "Satışa sunulan üyelik paketleri. Örn: Aylık 8'li Paket, (Grup Dersi) kategorisindeki dersler için geçerlidir."
 }
 
 
 // =============================================
-// BÖLÜM 3: SATIŞ VE OPERASYON ("KART" SİSTEMİ)
+// BÖLÜM 3: SATIŞ VE OPERASYON ("PAKET" SİSTEMİ)
 // =============================================
 
 // Product: Satılabilir nihai Hizmet Paketi.
-// BU, SENİN "KART" DEDİĞİN SÜPER TABLODUR.
 Table service_packages {
   id string [pk, default: `uuid()`]
   name string [not null, unique] // Adminin verdiği isim: "Aylık 8'li Grup Reformer"
@@ -133,7 +131,7 @@ Table service_packages {
   is_bookable boolean [default: true] // Müşteri kendi rezervasyon yapabilir mi?
   is_active boolean [default: true] // Bu kart şu an satışta mı?
   
-  Note: 'Adminin (A+B+C) formülüyle oluşturduğu nihai satış "Kartı" (Hizmet Paketi).'
+  Note: 'Adminin (A+B+C) formülüyle oluşturduğu nihai satış "Paketi" (Hizmet Paketi).'
 }
 
 // Subscription: Bir üyenin satın aldığı spesifik bir abonelik.
@@ -305,3 +303,25 @@ Table measurement_values {
   }
   Note: 'Bir ölçüm seansındaki tek bir veriyi tutar. Örn: "17 Kasım" seansındaki "Kilo" ölçümünün değeri "68.5" idi.'
 }
+
+// =============================================
+// BÖLÜM 7: LİSANSLAMA ALTYAPISI
+// =============================================
+
+// License: Kurumsal lisans anahtarlarını ve aktiflik durumunu tutan tablo.
+Table licenses {
+  id string [pk, default: `uuid()`]
+  licanseKey string [unique, not null] // Örn: MRN-A1B2-C3D4-E5F6
+  clientName string [not null] // Örn: "FitLife Studio Alsancak"
+  contactEmail string
+  isActive boolean [default: true]
+  expiresAt timestamp [not null]
+  hardwareId string
+  lastCheckIn timestamp [default: `now()`]
+  features json
+  createdAt timestamp [default: `now()`]
+  updatedAt timestamp [default: `now()`]
+
+  Note: 'Lisans anahtarı, müşteri bilgisi, donanım kilidi ve özellik bayraklarını tutar.'
+}
+

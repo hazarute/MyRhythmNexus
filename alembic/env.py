@@ -11,6 +11,7 @@ from backend.core.database import Base
 import backend.models.user  # noqa: F401
 import backend.models.service  # noqa: F401
 import backend.models.operation  # noqa: F401
+import backend.models.license  # noqa: F401
 
 config = context.config
 fileConfig(config.config_file_name)

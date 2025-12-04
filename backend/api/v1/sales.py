@@ -135,6 +135,7 @@ async def create_subscription(
         .where(Subscription.id == subscription.id)
         .options(
             selectinload(Subscription.payments),
+            selectinload(Subscription.class_events).selectinload(ClassEvent.template),
             selectinload(Subscription.package).selectinload(ServicePackage.category),
             selectinload(Subscription.package).selectinload(ServicePackage.offering),
             selectinload(Subscription.package).selectinload(ServicePackage.plan)
@@ -152,7 +153,7 @@ async def list_subscriptions(
 ):
     query = select(Subscription).options(
         selectinload(Subscription.payments),
-        selectinload(Subscription.class_events),
+        selectinload(Subscription.class_events).selectinload(ClassEvent.template),
         selectinload(Subscription.package).selectinload(ServicePackage.category),
         selectinload(Subscription.package).selectinload(ServicePackage.offering),
         selectinload(Subscription.package).selectinload(ServicePackage.plan)
@@ -175,6 +176,7 @@ async def get_subscription(
         .where(Subscription.id == subscription_id)
         .options(
             selectinload(Subscription.payments),
+            selectinload(Subscription.class_events).selectinload(ClassEvent.template),
             selectinload(Subscription.package).selectinload(ServicePackage.category),
             selectinload(Subscription.package).selectinload(ServicePackage.offering),
             selectinload(Subscription.package).selectinload(ServicePackage.plan)
@@ -551,6 +553,7 @@ async def create_subscription_with_events(
         .where(Subscription.id == subscription.id)
         .options(
             selectinload(Subscription.payments),
+            selectinload(Subscription.class_events).selectinload(ClassEvent.template),
             selectinload(Subscription.package).selectinload(ServicePackage.category),
             selectinload(Subscription.package).selectinload(ServicePackage.offering),
             selectinload(Subscription.package).selectinload(ServicePackage.plan)

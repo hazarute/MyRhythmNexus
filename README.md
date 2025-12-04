@@ -304,6 +304,17 @@ MyRhythmNexus supports multiple languages, including English and Turkish, to pro
 
 ---
 
+## 🛡️ Licensing System
+
+- **Purpose:** Corporate deployments need hardware-bound licenses, feature flags, and renewal tracking before enterprise-grade modules unlock.
+- **Backend Stack:** FastAPI exposes `/api/v1/license/validate` (runtime) and `/api/v1/admin/licenses` (superuser CRUD). The heavy lifting occurs in `backend/services/license.py`, which enforces expiry, hardware locking (`hardwareId`), active flags, and `features` JSON-based module checks.
+- **Hardware Stability:** The desktop’s `get_machine_id()` hashes motherboard serial, CPU ID, and disk serial so the license survives WiFi or adapter changes but invalidates when the physical machine is replaced.
+- **Database Schema:** Prisma `licenses` table now stores `licenseKey`, `clientName`, `contactEmail`, `isActive`, `expiresAt`, `hardwareId`, `features`, `createdAt`, `updatedAt`.
+- **Desktop Enforcement:** Desktop startup caches `license_status`, encrypts/signs that cache before writing to disk, and prevents module usage if cached time goes backwards (clock tampering) or hardware hash mismatches. Online sessions revalidate against `/validate` and update the encrypted cache with server time.
+- **Documentation Note:** Inspired by "Readme Nasıl Olusturulur.txt", this section states the why/what/next pattern and points to `.memory-bank` docs for deeper rationale.
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! This project follows a structured development process.

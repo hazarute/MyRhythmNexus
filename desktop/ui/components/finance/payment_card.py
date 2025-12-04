@@ -32,9 +32,13 @@ class PaymentCard(ctk.CTkFrame):
         left = ctk.CTkFrame(self, fg_color="transparent")
         left.pack(side="left", fill="both", expand=True, padx=20, pady=15)
 
+        # Safely get payment date
+        payment_date = self.item.get("payment_date")
+        date_text = format_date(payment_date) if payment_date else _("Tarih belirtilmedi")
+        
         date_label = ctk.CTkLabel(
             left,
-            text=format_date(self.item.get("payment_date")),
+            text=date_text,
             font=("Roboto", 12, "bold"),
         )
         date_label.pack(anchor="w")
@@ -101,7 +105,7 @@ class PaymentCard(ctk.CTkFrame):
             font=("Roboto", 12, "bold"),
             fg_color=BTN_DELETE_FG,
             hover_color=BTN_DELETE_HOVER,
-            command=lambda: self.on_delete(self.item.get("id"), member_name),
+            command=lambda: self.on_delete(self.item.get("id") or "", member_name),
         ).pack(side="left")
 
         self._bind_detail(left)

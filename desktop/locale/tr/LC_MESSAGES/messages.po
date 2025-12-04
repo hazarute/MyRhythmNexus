@@ -72,6 +72,10 @@ msgstr "❌ İptal"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:84
 msgid "Pazartesi"
 msgstr "Pazartesi"
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:92
+msgid "Katılımcılar: {names}"
+msgstr "Katılımcılar: {names}"
+
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/date_picker.py:154
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:49
@@ -244,9 +248,9 @@ msgid "Başlangıç Tarihi:"
 msgstr "Başlangıç Tarihi:"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:57
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Değiştirmek İçin Tıklayın - {}"
-msgstr "Değiştirmek İçin Tıklayın - "
+msgstr "Değiştirmek İçin Tıklayın - {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:67
 msgid "Bitiş Tarihi:"
@@ -431,12 +435,25 @@ msgstr "Başlangıç Tarihi:"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:127
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:43
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:111
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:32
+#, python-brace-format
+msgid "📦 Aktif Paketler ({})"
+msgstr "📦 Aktif Paketler ({})"
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:110
+#, python-brace-format
+msgid "📅 Ders Günleri: {}"
+msgstr "📅 Ders Günleri: {}"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:113
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:165
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:298
 msgid "Hata"
 msgstr "Hata"
 
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:72
+#, python-brace-format
+msgid "Aktif paket yok."
+msgstr "Aktif paket yok."
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:69
 msgid "Gerekli veriler eksik."
 msgstr "Gerekli veriler eksik."
@@ -516,11 +533,6 @@ msgstr ""
 msgid "Satış başarısız: {}"
 msgstr "❌ Giriş Başarısız"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:13
-msgid "Giriş Kontrol"
-msgstr "Giriş Kontrol"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:26
 msgid "Kontrol Ediliyor..."
 msgstr "Kontrol Ediliyor..."
 
@@ -535,12 +547,6 @@ msgstr "Bağlantı Hatası"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:48
 msgid "❌ Giriş Başarısız"
 msgstr "❌ Giriş Başarısız"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:53
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:49
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:147
-msgid "Kapat"
-msgstr "Kapat"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:60
 msgid "✅ QR Kod Geçerli"
@@ -1263,9 +1269,8 @@ msgid "En az bir ölçüm değeri giriniz."
 msgstr "En az bir ölçüm değeri giriniz."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:146
-#, fuzzy
 msgid "Ölçümler kaydedildi."
-msgstr "Ölçüm kaydı bulunamadı."
+msgstr "Ölçümler kaydedildi."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:150
 #, python-brace-format
@@ -1700,9 +1705,8 @@ msgid "Silme başarısız: {detail}"
 msgstr "Silme başarısız: {detail}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:17
-#, fuzzy
 msgid "Paket Detayları"
-msgstr "💰 Ödeme Detayları"
+msgstr "Paket Detayları"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:52
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:31

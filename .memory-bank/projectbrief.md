@@ -13,8 +13,8 @@ Stüdyonun arka ofis işlemlerini, üye yönetimini, satışları, ders programl
 4.  **Otomatik Sistemler:** Background scheduler ile pasif üye yönetimi.
 5.  **Otomatik Güncelleme:** Masaüstü uygulamasının GitHub Releases ile otomatik güncellenmesi.
 6.  **Containerized Deployment:** Docker ile production-ready deployment altyapısı.
-7.  **Uluslararasılaştırma (i18n):** Çoklu dil desteği (Türkçe/İngilizce) ile global erişim.
-8.  **Kurumsal Lisanslama:** Donanım-açık lisans anahtarları, modül bazlı özellik bayrakları ve süre kontrolü ile B2B dağıtımı güvence altına alma.
+    7.  **Uluslararasılaştırma (i18n):** Çoklu dil desteği (Türkçe/İngilizce) ile global erişim.
+    8.  **Merkezi Lisanslama (SaaS):** Ayrı bir "License Server" projesi üzerinden yönetilen, RSA imzalı JWT token tabanlı, offline-first çalışabilen güvenli lisanslama mimarisi.
 
 ## Otomatik Özellikler
 *   **Pasif Üye Yönetimi:** 60+ gün paket satın almamış üyeler otomatik olarak `is_active = false` yapılır.

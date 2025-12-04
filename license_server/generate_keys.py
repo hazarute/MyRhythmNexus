@@ -1,6 +1,9 @@
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 import os
+from pathlib import Path
+
+from license_server.core.config import settings
 
 def generate_keys():
     """
@@ -32,10 +35,19 @@ def generate_keys():
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
 
-    # Define paths
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    private_key_path = os.path.join(base_dir, "private.pem")
-    public_key_path = os.path.join(base_dir, "public.pem")
+    # Determine paths from settings (so .env is respected)
+    # Settings may contain relative paths; resolve relative to project root
+    private_key_path = Path(settings.PRIVATE_KEY_PATH)
+    public_key_path = Path(settings.PUBLIC_KEY_PATH)
+
+    if not private_key_path.is_absolute():
+        private_key_path = (Path(__file__).parent / private_key_path).resolve()
+    if not public_key_path.is_absolute():
+        public_key_path = (Path(__file__).parent / public_key_path).resolve()
+
+    # Ensure parent directory exists
+    private_key_path.parent.mkdir(parents=True, exist_ok=True)
+    public_key_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Write private key to file
     with open(private_key_path, "wb") as f:

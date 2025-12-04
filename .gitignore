@@ -1,0 +1,8 @@
+# Ignore local env files
+license_server/.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/

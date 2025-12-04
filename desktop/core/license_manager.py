@@ -102,7 +102,7 @@ class LicenseManager:
             return {"valid": False, "message": f"Verification error: {e}"}
 
     def is_feature_enabled(self, feature_name: str) -> bool:
-        # Check cache first
-        if feature_name in self._cached_features:
-            return bool(self._cached_features.get(feature_name, False))
-        return False
+        # For now, features are not enforced by the desktop app.
+        # Return True to avoid accidentally disabling functionality
+        # if `features` payload is missing or not used yet.
+        return True

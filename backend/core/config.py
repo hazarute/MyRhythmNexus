@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
 from typing import Optional
+from pydantic import Field
 
 
 class Settings(BaseSettings):
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://user:pass@localhost:5432/mydb"
 
     # Security
-    SECRET_KEY: str = "change-me-in-production"
+    # SECRET_KEY is required in production; this makes Settings validation fail if absent.
+    SECRET_KEY: str = Field(..., env="SECRET_KEY")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
     # CORS - Desktop app için gerekli

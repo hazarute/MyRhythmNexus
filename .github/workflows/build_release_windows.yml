@@ -1,0 +1,50 @@
+name: Build & Release (Windows)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Optional version to release (e.g. 1.2.3)'
+        required: false
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pyinstaller
+
+      - name: Determine VERSION
+        id: version
+        shell: powershell
+        run: |
+          if (${{ github.event_name }} -eq 'workflow_dispatch' -and ${{ github.event.inputs.version }}) {
+            Write-Host "VERSION=${{ github.event.inputs.version }}" >> $env:GITHUB_ENV
+          } else {
+            # try to read DesktopConfig.VERSION from file
+            $cfg = Get-Content desktop\core\config.py -Raw
+            if ($cfg -match 'DesktopConfig\.VERSION\s*=\s*["\']([^"\']+)["\']') {
+              $v = $Matches[1]
+              Write-Host "VERSION=$v" >> $env:GITHUB_ENV
+            }
+          }
+
+      - name: Run build and release
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          # Use a repository secret named RELEASE_TOKEN (do not use secrets starting with GITHUB_)
+          python tools\ci_build_and_release.py --version ${{ env.VERSION }} --token ${{ secrets.RELEASE_TOKEN }}

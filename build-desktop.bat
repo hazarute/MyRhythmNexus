@@ -25,8 +25,12 @@ if exist build rmdir /s /q build
 if exist dist rmdir /s /q dist
 if exist *.spec del *.spec
 
-REM Create version info
-echo MyRhythmNexus Desktop v1.0.0> desktop\version.txt
+REM Create version info (use VERSION env if provided)
+if defined VERSION (
+    echo MyRhythmNexus Desktop v%VERSION%> desktop\version.txt
+) else (
+    echo MyRhythmNexus Desktop v1.0.0> desktop\version.txt
+)
 echo Built: %date% %time%>> desktop\version.txt
 echo Git: N/A>> desktop\version.txt
 echo %GREEN% Version info created: desktop\version.txt
@@ -69,6 +73,8 @@ echo %GREEN% 🎉 Build complete!
 echo %GREEN% 📦 Ready for distribution: dist\MyRhythmNexus-Desktop.exe
 echo.
 echo %YELLOW% Remember to test the executable thoroughly before distribution!
-echo %YELLOW% Run: dist\MyRhythmNexus-Desktop.exe
+echo %YELLOW% Run: dist/MyRhythmNexus-Desktop.exe
 
+REM If CI environment variable is set, skip pause so automated runners won't hang
+if defined CI goto :EOF
 pause

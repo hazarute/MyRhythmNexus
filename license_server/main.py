@@ -51,7 +51,7 @@ def list_licenses(skip: int = 0, limit: int = 100, db: Session = Depends(databas
 # --- Client Endpoints ---
 
 @app.post("/api/v1/license/validate", response_model=schemas.LicenseValidateResponse)
-@limiter.limit("5/minute")
+@limiter.limit(settings.LICENSE_VALIDATE_RATE)
 def validate_license(req: schemas.LicenseValidateRequest, request: Request, db: Session = Depends(database.get_db)):
     """
     Client sends License Key + Machine ID.
@@ -88,15 +88,15 @@ def validate_license(req: schemas.LicenseValidateRequest, request: Request, db: 
     payload = {
         "sub": license_obj.license_key,
         "hwid": license_obj.hardware_id,
-        "exp": datetime.utcnow() + timedelta(days=7), # Token valid for 7 days (Offline period)
+        "exp": datetime.utcnow() + timedelta(days=settings.OFFLINE_TOKEN_EXPIRE_DAYS), # Token valid for offline period
         "features": license_obj.features,
-        "customer": license_obj.customer.name if license_obj.customer else "Unknown"
+        "customer": license_obj.customer.name if license_obj.customer else "Unknown",
     }
     
     token = jwt.encode(
-        payload, 
-        settings.PRIVATE_KEY, 
-        algorithm=settings.ALGORITHM
+        payload,
+        settings.PRIVATE_KEY,
+        algorithm=settings.ALGORITHM,
     )
     
     return {

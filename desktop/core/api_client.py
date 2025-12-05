@@ -3,13 +3,22 @@ import jwt
 from typing import Any, Optional, Dict
 from datetime import datetime, timedelta
 
+from .config import get_backend_url
+
 
 class ApiClient:
-    def __init__(self, base_url: str = "http://localhost:8000"):
-        self.base_url = base_url
+    def __init__(self, base_url: Optional[str] = None):
+        # Prefer config-defined backend URL, otherwise use provided base_url or fallback to localhost
+        cfg_url = get_backend_url()
+        if base_url:
+            self.base_url = base_url
+        elif cfg_url:
+            self.base_url = cfg_url
+        else:
+            self.base_url = "http://localhost:8000"
         self.token: Optional[str] = None
         self.token_expiry: Optional[datetime] = None
-        self.client = httpx.Client(base_url=base_url, timeout=10.0)
+        self.client = httpx.Client(base_url=self.base_url, timeout=10.0)
         self._refresh_margin = timedelta(minutes=5)
 
     def _convert_datetime_strings(self, data: Any) -> Any:

@@ -90,7 +90,12 @@ test_executable() {
 # Create version info
 create_version_info() {
     VERSION_FILE="desktop/version.txt"
-    echo "MyRhythmNexus Desktop v1.0.0" > "$VERSION_FILE"
+    # Use VERSION env var if provided, otherwise default to 1.0.0
+    if [ -n "$VERSION" ]; then
+        echo "MyRhythmNexus Desktop v$VERSION" > "$VERSION_FILE"
+    else
+        echo "MyRhythmNexus Desktop v1.0.0" > "$VERSION_FILE"
+    fi
     echo "Built: $(date)" >> "$VERSION_FILE"
     echo "Git: $(git rev-parse --short HEAD 2>/dev/null || echo 'N/A')" >> "$VERSION_FILE"
     print_status "Version info created: $VERSION_FILE"

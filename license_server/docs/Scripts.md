@@ -1,91 +1,110 @@
-# License Server — Admin Scripts
+# Lisans Sunucusu — Yönetici Scriptleri
 
-This document describes the helper scripts located in `license_server/scripts/`. These are small CLI utilities intended for development and administrative use to manage customers and licenses in the license server database.
+Bu belge, `license_server/scripts/` altında bulunan yardımcı scriptleri (betikleri) açıklar. Bunlar, lisans sunucusu veritabanındaki müşterileri ve lisansları yönetmek için geliştirme ve idari kullanım amaçlı küçük CLI (Komut Satırı Arayüzü) araçlarıdır.
 
-Important notes
-- These scripts operate directly against the License Server database configured via `license_server/database.py` and the environment variables your app uses (for development typically an SQLite file). In production you should run safe admin tools only against a properly secured and backed-up database.
-- When running from the repo root on Windows PowerShell, set `PYTHONPATH` to the repository root so the `license_server` package can be imported. Example:
+Önemli notlar
+- Bu scriptler doğrudan `license_server/database.py` aracılığıyla yapılandırılan Lisans Sunucusu veritabanı ve uygulamanızın kullandığı ortam değişkenleri (geliştirme için genellikle bir SQLite dosyası) üzerinde çalışır. Üretim ortamında (production), güvenli yönetici araçlarını yalnızca uygun şekilde güvenliği sağlanmış ve yedeklenmiş bir veritabanına karşı çalıştırmalısınız.
+- Windows PowerShell üzerinde depo kök dizininden (repo root) çalıştırırken, `license_server` paketinin içe aktarılabilmesi için `PYTHONPATH` değişkenini depo kök dizinine ayarlayın. Örnek:
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
 python license_server/scripts/list_customer_licenses.py --all
-```
+````
 
-- Many scripts are interactive and will prompt you for confirmation before making changes. Read prompts carefully.
-- `private.pem` currently exists in the repo for development convenience. Do NOT commit production private keys to git; use your secrets manager in production.
+  - Birçok script etkileşimlidir ve değişiklik yapmadan önce onayınızı isteyecektir. İstemleri (prompts) dikkatlice okuyun.
+  - `private.pem` şu anda geliştirme kolaylığı için depoda bulunmaktadır. Üretim (production) özel anahtarlarını ASLA git'e commit etmeyin; üretimde gizli bilgi yöneticinizi (secrets manager) kullanın.
 
-Scripts
--------
+## Scriptler
 
-1) `create_license_cli.py`
+1)  `create_license_cli.py`
 
-- Purpose: Create a `Customer` and one `License` for that customer. Useful to bootstrap test and demo licenses.
-- Behavior:
-  - Creates a `Customer` row (name, email, optional metadata).
-  - Creates a `License` row associated to the customer with an auto-generated `license_key`, expiry date, features JSON, and optional `hardware_id` (HWID).
-  - Prints the created `license_key` and expiry.
-- Usage examples:
+<!-- end list -->
+
+  - Amaç: Bir `Customer` (Müşteri) ve o müşteri için bir `License` (Lisans) oluşturur. Test ve demo lisanslarını önyüklemek (bootstrap) için kullanışlıdır.
+  - Davranış:
+      - Bir `Customer` satırı oluşturur (isim, e-posta, isteğe bağlı meta veriler).
+      - Otomatik oluşturulmuş bir `license_key`, son kullanma tarihi, özellikler JSON'ı ve isteğe bağlı `hardware_id` (HWID) ile müşteriye bağlı bir `License` satırı oluşturur.
+      - Oluşturulan `license_key` ve son kullanma tarihini ekrana yazdırır.
+  - Kullanım örnekleri:
+
+<!-- end list -->
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
 python license_server/scripts/create_license_cli.py --name "FitLife Studio" --email contact@fitlife.com --days 365
-# interactive: omit args and follow prompts
+# etkileşimli: argümanları atlayın ve istemleri takip edin
 ```
 
-2) `reset_hwid_cli.py`
+2)  `reset_hwid_cli.py`
 
-- Purpose: Reset the `hardware_id` (HWID) associated with an existing license or licenses for a customer, typically when a device is replaced.
-- Behavior:
-  - Prompts to select a customer (or accepts `--email`).
-  - Shows matching licenses and allows selecting one or more.
-  - Sets `hardware_id` to a new value (or clears it) for the selected licenses.
-  - Requires confirmation before updating.
-- Usage example:
+<!-- end list -->
+
+  - Amaç: Genellikle bir cihaz değiştirildiğinde, bir müşteri için mevcut lisans veya lisanslarla ilişkili `hardware_id`'yi (HWID) sıfırlar.
+  - Davranış:
+      - Bir müşteri seçmenizi ister (veya `--email` kabul eder).
+      - Eşleşen lisansları gösterir ve bir veya daha fazlasını seçmenize izin verir.
+      - Seçilen lisanslar için `hardware_id`'yi yeni bir değere ayarlar (veya temizler).
+      - Güncellemeden önce onay gerektirir.
+  - Kullanım örneği:
+
+<!-- end list -->
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
 python license_server/scripts/reset_hwid_cli.py --email contact@fitlife.com
 ```
 
-3) `add_license_for_customer.py`
+3)  `add_license_for_customer.py`
 
-- Purpose: Add an additional license for an existing customer (useful for multi-device or multi-seat purchases).
-- Behavior:
-  - Accepts `--email` or will prompt for the customer email.
-  - Creates a new `License` row for the given customer with options for expiry days and features.
-  - Prints the new `license_key`.
-- Usage example:
+<!-- end list -->
+
+  - Amaç: Mevcut bir müşteri için ek bir lisans ekler (çoklu cihaz veya çoklu koltuk satın alımları için kullanışlıdır).
+  - Davranış:
+      - `--email` kabul eder veya müşteri e-postasını sorar.
+      - Verilen müşteri için, geçerlilik günleri ve özellikler seçenekleriyle yeni bir `License` satırı oluşturur.
+      - Yeni `license_key` değerini yazdırır.
+  - Kullanım örneği:
+
+<!-- end list -->
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
 python license_server/scripts/add_license_for_customer.py --email contact@fitlife.com --days 365
 ```
 
-4) `delete_license_cli.py`
+4)  `delete_license_cli.py`
 
-- Purpose: Soft-delete (set `is_active=False`) or hard-delete license rows.
-- Behavior:
-  - Find customer by `--email` (or interactive prompt).
-  - List licenses and allow selecting specific license(s) by index, `all`, or license key.
-  - By default performs a soft-delete (sets `is_active=False`). Use `--hard` to remove the DB row.
-  - Requires typing `yes` to confirm destructive changes.
-- Usage examples:
+<!-- end list -->
+
+  - Amaç: Lisans satırlarını soft-delete (yazılımsal silme, `is_active=False` yapma) veya hard-delete (tamamen silme) işlemi yapar.
+  - Davranış:
+      - Müşteriyi `--email` ile (veya etkileşimli istemle) bulur.
+      - Lisansları listeler ve belirli lisans(lar)ı dizin, `all` (tümü) veya lisans anahtarı ile seçmenize izin verir.
+      - Varsayılan olarak soft-delete gerçekleştirir (`is_active=False` ayarlar). Veritabanı satırını tamamen kaldırmak için `--hard` kullanın.
+      - Yıkıcı değişiklikleri onaylamak için `yes` yazılmasını gerektirir.
+  - Kullanım örnekleri:
+
+<!-- end list -->
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
 python license_server/scripts/delete_license_cli.py --email contact@fitlife.com --license-key MRN-XXXX --hard
-python license_server/scripts/delete_license_cli.py --email contact@fitlife.com    # interactive choose
+python license_server/scripts/delete_license_cli.py --email contact@fitlife.com    # etkileşimli seçim
 ```
 
-5) `list_customer_licenses.py`
+5)  `list_customer_licenses.py`
 
-- Purpose: Read-only helper to list customers and their licenses.
-- Behavior:
-  - `--all`: list all customers and their licenses.
-  - `--email <address>`: show a single customer's licenses.
-  - `--active-only`: only show active licenses.
-  - Prints `license_key`, `active` status, `expires` timestamp, `hwid`, and `features` JSON.
-- Usage examples:
+<!-- end list -->
+
+  - Amaç: Müşterileri ve lisanslarını listelemek için salt okunur yardımcı araç.
+  - Davranış:
+      - `--all`: tüm müşterileri ve lisanslarını listeler.
+      - `--email <adres>`: tek bir müşterinin lisanslarını gösterir.
+      - `--active-only`: sadece aktif lisansları gösterir.
+      - `license_key`, `active` durumu, `expires` zaman damgası, `hwid` ve `features` JSON'ını yazdırır.
+  - Kullanım örnekleri:
+
+<!-- end list -->
 
 ```powershell
 $env:PYTHONPATH = "E:\NewWork\MyRhythmNexus"
@@ -93,29 +112,30 @@ python license_server/scripts/list_customer_licenses.py --all
 python license_server/scripts/list_customer_licenses.py --email contact@fitlife.com --active-only
 ```
 
-Other utilities
----------------
+## Diğer araçlar
 
-- `license_server/generate_keys.py`: convenience script to generate a new RSA private/public key pair for development. In production you should generate and store keys securely and never commit private keys to source control.
+  - `license_server/generate_keys.py`: Geliştirme için yeni bir RSA özel/genel anahtar çifti oluşturmaya yarayan kolaylık scripti. Üretimde, anahtarları güvenli bir şekilde oluşturmalı ve saklamalı, özel anahtarları asla kaynak kontrolüne (source control) göndermemelisiniz.
 
-Operational recommendations
--------------------------
+## Operasyonel öneriler
 
-- For safety, run destructive scripts (`delete_license_cli.py`, `reset_hwid_cli.py`) against a database backup or in a staging environment first.
-- In automation (CI / admin tooling) prefer using an authenticated admin API rather than connecting directly to the database. If you need automation now, you can wrap these scripts with `--yes` / `--dry-run` flags (we can add those on request).
-- Ensure the `public.pem` used by the desktop client matches the `private.pem` used by the license server for signing. Rotate keys when moving to production and update clients accordingly.
+  - Güvenlik için, yıkıcı scriptleri (`delete_license_cli.py`, `reset_hwid_cli.py`) önce bir veritabanı yedeğine karşı veya bir "staging" ortamında çalıştırın.
+  - Otomasyonda (CI / yönetici araçları), doğrudan veritabanına bağlanmak yerine kimlik doğrulamalı bir yönetici API'si kullanmayı tercih edin. Şu anda otomasyona ihtiyacınız varsa, bu scriptleri `--yes` / `--dry-run` bayraklarıyla sarmalayabilirsiniz (istek üzerine bunları ekleyebiliriz).
+  - Masaüstü istemcisi tarafından kullanılan `public.pem` ile imzalama için lisans sunucusu tarafından kullanılan `private.pem`in eşleştiğinden emin olun. Üretime geçerken anahtarları döndürün (rotate keys) ve istemcileri buna göre güncelleyin.
 
-Troubleshooting
----------------
+## Sorun Giderme
 
-- Module import errors when running scripts? Make sure `PYTHONPATH` is set to the repo root as shown above.
-- Database connection errors? Check `license_server/database.py` and the `LICENSE_DATABASE_URL` environment variable used by the license server.
+  - Scriptleri çalıştırırken modül içe aktarma hataları mı alıyorsunuz? `PYTHONPATH`in yukarıda gösterildiği gibi depo kök dizinine ayarlandığından emin olun.
+  - Veritabanı bağlantı hataları mı var? `license_server/database.py` dosyasını ve lisans sunucusu tarafından kullanılan `LICENSE_DATABASE_URL` ortam değişkenini kontrol edin.
 
-Next improvements (optional)
----------------------------
+## Sonraki iyileştirmeler (isteğe bağlı)
 
-- Add `--dry-run` and `--json` output modes to the scripts for better automation support.
-- Add a small set of unit tests for critical behaviors (create, delete, reset) using a temporary test DB.
-- Provide an authenticated admin HTTP API for all operations so scripts don't need direct DB access.
+  - Daha iyi otomasyon desteği için scriptlere `--dry-run` ve `--json` çıktı modları ekle.
+  - Kritik davranışlar (oluşturma, silme, sıfırlama) için geçici bir test veritabanı kullanan küçük bir birim test seti ekle.
+  - Scriptlerin doğrudan DB erişimine ihtiyaç duymaması için tüm işlemler için kimlik doğrulamalı bir yönetici HTTP API'si sağla.
 
-If you want, I can add `--dry-run` and `--json` to the key scripts next — which would you like first?
+İsterseniz, bir sonraki adımda anahtar scriptlere `--dry-run` ve `--json` özelliklerini ekleyebilirim — ilk olarak hangisini istersiniz?
+
+```
+
+**Sizin için yapabileceğim bir sonraki adım:** Dosyanın son kısmında bahsedilen, scriptlere `--dry-run` veya `--json` özelliği ekleme konusunda yardımcı olmamı ister misiniz?
+```

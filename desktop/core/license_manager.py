@@ -14,7 +14,16 @@ class LicenseManager:
         self.api_client = api_client
         self._cached_features: Dict[str, Any] = {}
         self._license_status: Dict[str, Any] = {}
-        self.LICENSE_SERVER_URL = DesktopConfig.LICENSE_SERVER_URL 
+        # Keep default, but prefer the config value at runtime (allows override via config.json)
+        self.LICENSE_SERVER_URL = DesktopConfig.LICENSE_SERVER_URL
+
+    def _get_license_server_url(self) -> str:
+        """Return the effective license server URL: prefer config override, otherwise default."""
+        try:
+            # DesktopConfig.load_license_server_url reads config and falls back to default
+            return DesktopConfig.load_license_server_url()
+        except Exception:
+            return self.LICENSE_SERVER_URL
 
     def get_machine_id(self) -> str:
         """Generates a unique machine ID based on hardware."""
@@ -50,8 +59,9 @@ class LicenseManager:
         
         # 1. Try Online Validation
         try:
+            url = self._get_license_server_url()
             response = requests.post(
-                f"{self.LICENSE_SERVER_URL}/license/validate",
+                f"{url}/license/validate",
                 json={"license_key": key, "hardware_id": machine_id},
                 timeout=5
             )

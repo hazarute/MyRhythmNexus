@@ -92,8 +92,8 @@ def create_license(db, customer_id: int, license_key: str, expires_at: datetime,
 
 def main():
     parser = argparse.ArgumentParser(description="Create customer & license in license_server DB")
-    parser.add_argument("--name", required=True, help="Customer / Studio name")
-    parser.add_argument("--email", required=True, help="Contact email (used to dedupe customers)")
+    parser.add_argument("--name", help="Customer / Studio name")
+    parser.add_argument("--email", help="Contact email (used to dedupe customers)")
     parser.add_argument("--contact", default=None, help="Contact person")
     parser.add_argument("--phone", default=None, help="Phone number")
 
@@ -107,23 +107,60 @@ def main():
 
     args = parser.parse_args()
 
+    # If required pieces not provided as args, prompt interactively.
+    name = args.name or input("Customer / Studio name: ").strip()
+    while not name:
+        name = input("Customer / Studio name (required): ").strip()
+
+    email = args.email or input("Contact email: ").strip()
+    while not email:
+        email = input("Contact email (required): ").strip()
+
+    contact_person = args.contact
+    if not contact_person:
+        contact_person = input("Contact person (optional): ").strip() or None
+
+    phone = args.phone
+    if not phone:
+        phone = input("Phone (optional): ").strip() or None
+
+    # Expiration: prefer explicit --expires, then --days, else ask
     if args.expires:
         try:
             expires_at = datetime.fromisoformat(args.expires)
         except Exception as e:
             parser.error(f"Invalid --expires date: {e}")
+    elif args.days:
+        expires_at = datetime.utcnow() + timedelta(days=args.days)
     else:
-        days = args.days or 365
-        expires_at = datetime.utcnow() + timedelta(days=days)
+        # interactive prompt for days or date
+        ed = input("License validity in days (default 365) or enter date YYYY-MM-DD (leave blank for 365): ").strip()
+        if not ed:
+            expires_at = datetime.utcnow() + timedelta(days=365)
+        else:
+            # try parse int days first
+            try:
+                d = int(ed)
+                expires_at = datetime.utcnow() + timedelta(days=d)
+            except ValueError:
+                try:
+                    expires_at = datetime.fromisoformat(ed)
+                except Exception:
+                    print("Invalid input for expiration; using 365 days")
+                    expires_at = datetime.utcnow() + timedelta(days=365)
 
-    features = parse_features(args.features)
+    # features are optional and not asked interactively; default to empty if not provided
+    if args.features:
+        features = parse_features(args.features)
+    else:
+        features = {}
 
     license_key = args.license_key or generate_license_key(prefix=args.prefix)
 
     # Connect to DB
     db_gen = SessionLocal()
     try:
-        customer = create_customer_if_missing(db_gen, args.name, args.email, args.contact, args.phone)
+        customer = create_customer_if_missing(db_gen, name, email, contact_person, phone)
         lic = create_license(db_gen, customer.id, license_key, expires_at, features)
         print("\nLicense created:\n")
         print(f" id: {lic.id}")

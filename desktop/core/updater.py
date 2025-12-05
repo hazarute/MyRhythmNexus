@@ -4,6 +4,9 @@ import requests
 import subprocess
 import tempfile
 import zipfile
+import sys
+import shutil
+import time
 from pathlib import Path
 from typing import Optional, Dict, Any
 import customtkinter as ctk
@@ -12,31 +15,120 @@ from tkinter import messagebox
 class AutoUpdater:
     """Automatic updater for MyRhythmNexus Desktop application"""
 
-    GITHUB_REPO = "your-username/MyRhythmNexus"  # Replace with your actual GitHub username/repo
+    # Use the project's GitHub repository so the updater checks your releases
+    GITHUB_REPO = "hazarute/MyRhythmNexus"
     GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
     CURRENT_VERSION_FILE = "version.json"
+    CONFIG_FILE = "config.json"
 
     def __init__(self, current_version: str = "1.0.0"):
         self.current_version = current_version
         self.app_data_dir = Path.home() / ".rhythm-nexus"
         self.app_data_dir.mkdir(exist_ok=True)
 
+        # Ensure a persistent config file exists in the application data directory.
+        # This file is where we store per-installation settings such as backend DB URLs.
+        cfg_path = self.app_data_dir / self.CONFIG_FILE
+        if not cfg_path.exists():
+            default_cfg = {"backend_urls": [], "settings": {}}
+            try:
+                with open(cfg_path, 'w', encoding='utf-8') as f:
+                    json.dump(default_cfg, f, indent=2)
+            except Exception:
+                # ignore write errors here; callers can handle later
+                pass
+
     def get_current_version_info(self) -> Dict[str, Any]:
         """Get current version information"""
         version_file = self.app_data_dir / self.CURRENT_VERSION_FILE
         if version_file.exists():
             try:
-                with open(version_file, 'r') as f:
-                    return json.load(f)
+                with open(version_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # ensure structure contains expected keys
+                    if 'version' not in data:
+                        data['version'] = self.current_version
+                    if 'installed' not in data:
+                        data['installed'] = False
+                    # keep last_check if present
+                    return data
             except:
                 pass
-        return {"version": self.current_version, "installed": False}
+        # No persisted version info found — try to detect from local files
+        detected_version = self.current_version
+        # If running as frozen executable, try to read version.txt next to executable
+        try:
+            if getattr(sys, 'frozen', False):
+                exe_path = Path(sys.executable)
+                possible = exe_path.parent / 'version.txt'
+                if possible.exists():
+                    try:
+                        with open(possible, 'r', encoding='utf-8') as vf:
+                            first = vf.readline().strip()
+                            if first:
+                                detected_version = first.split()[-1].lstrip('v')
+                    except Exception:
+                        pass
+                else:
+                    # try to infer from executable name: MyRhythmNexus_v1.0.exe
+                    name = exe_path.name
+                    import re
+                    m = re.search(r"v?(\d+\.\d+(?:\.\d+)*)", name)
+                    if m:
+                        detected_version = m.group(1)
+            else:
+                # When running from source, try to read desktop/version.txt in repo
+                repo_version = Path(__file__).resolve().parents[2] / 'desktop' / 'version.txt'
+                if repo_version.exists():
+                    try:
+                        with open(repo_version, 'r', encoding='utf-8') as vf:
+                            first = vf.readline().strip()
+                            if first:
+                                detected_version = first.split()[-1].lstrip('v')
+                    except Exception:
+                        pass
+        except Exception:
+            detected_version = self.current_version
+
+        return {"version": detected_version, "installed": False}
 
     def save_version_info(self, version_info: Dict[str, Any]):
         """Save version information"""
         version_file = self.app_data_dir / self.CURRENT_VERSION_FILE
-        with open(version_file, 'w') as f:
-            json.dump(version_info, f)
+        try:
+            with open(version_file, 'w', encoding='utf-8') as f:
+                json.dump(version_info, f, indent=2)
+        except Exception:
+            pass
+
+    # --- Config helpers ---
+    def get_config(self) -> Dict[str, Any]:
+        cfg_path = self.app_data_dir / self.CONFIG_FILE
+        try:
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {"backend_urls": [], "settings": {}}
+
+    def save_config(self, cfg: Dict[str, Any]):
+        cfg_path = self.app_data_dir / self.CONFIG_FILE
+        try:
+            with open(cfg_path, 'w', encoding='utf-8') as f:
+                json.dump(cfg, f, indent=2)
+        except Exception:
+            pass
+
+    def add_backend_url(self, url: str):
+        cfg = self.get_config()
+        urls = cfg.get('backend_urls', [])
+        if url not in urls:
+            urls.append(url)
+            cfg['backend_urls'] = urls
+            self.save_config(cfg)
+
+    def get_backend_urls(self):
+        cfg = self.get_config()
+        return cfg.get('backend_urls', [])
 
     def check_for_updates(self) -> Optional[Dict[str, Any]]:
         """Check GitHub for latest release"""
@@ -114,21 +206,42 @@ class AutoUpdater:
             if not current_exe:
                 return False
 
-            # Create backup
-            backup_path = str(current_exe) + '.backup'
-            if os.path.exists(backup_path):
-                os.remove(backup_path)
-            os.rename(current_exe, backup_path)
+            # NOTE: Replacing a running executable on Windows can fail because the file is locked.
+            # Here we attempt a backup/replace, but for robust behavior consider using a
+            # separate updater helper process or installer (Squirrel/WinSparkle/winget) that
+            # runs after the app exits. This implementation will try a rename, and if it fails
+            # will leave the downloaded file next to the executable for manual replacement.
 
-            # Replace executable
-            os.rename(temp_path, current_exe)
+            backup_path = str(current_exe) + '.backup'
+            try:
+                if os.path.exists(backup_path):
+                    os.remove(backup_path)
+                # Try to move the running exe to backup and put new exe in place
+                shutil.move(str(current_exe), backup_path)
+                shutil.move(temp_path, str(current_exe))
+            except Exception as move_err:
+                # If moving failed (likely on Windows while running), keep the downloaded
+                # file in the app directory and inform caller. Do not delete app_data_dir.
+                try:
+                    fallback_path = str(current_exe) + '.new'
+                    if os.path.exists(fallback_path):
+                        os.remove(fallback_path)
+                    shutil.move(temp_path, fallback_path)
+                except Exception:
+                    pass
+                return False
 
             # Update version info
-            self.save_version_info({
+            vi = {
                 'version': update_info['version'],
                 'installed': True,
                 'updated_at': str(Path(__file__).stat().st_mtime)
-            })
+            }
+            # Preserve/ensure last_check if present
+            prev = self.get_current_version_info()
+            if 'last_check' in prev:
+                vi['last_check'] = prev['last_check']
+            self.save_version_info(vi)
 
             return True
 

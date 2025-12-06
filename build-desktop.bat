@@ -13,9 +13,13 @@ set "RED=[ERROR]"
 echo %GREEN% Starting desktop app build process...
 
 REM Check if PyInstaller is installed
+REM Ensure required Python packages are installed (reads requirements.txt)
+echo %GREEN% Installing Python requirements (this may take a while)...
+python -m pip install -r requirements.txt
+
 python -c "import PyInstaller" >nul 2>&1
 if errorlevel 1 (
-    echo %RED% PyInstaller not found. Install with: pip install pyinstaller
+    echo %RED% PyInstaller not found even after installing requirements. Install with: pip install pyinstaller
     exit /b 1
 )
 
@@ -39,6 +43,7 @@ REM Build desktop app
 echo %GREEN% Building desktop application...
 pyinstaller --clean --onefile ^
     --name MyRhythmNexus-Desktop ^
+        --hidden-import jwt ^
     --hidden-import customtkinter ^
     --hidden-import PIL ^
     --hidden-import PIL.Image ^

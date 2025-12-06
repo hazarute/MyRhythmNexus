@@ -746,7 +746,7 @@ msgstr "👤  Profil"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:117
 #, fuzzy
 msgid "📦  Paketler"
-msgstr "Satış & Paketler"
+msgstr "📦  Paketler"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:69
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:70
@@ -754,7 +754,7 @@ msgstr "Satış & Paketler"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:119
 #, fuzzy
 msgid "💳  Ödemeler"
-msgstr "💳 Ödeme Şekli:"
+msgstr "💳  Ödemeler"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:70
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:71
@@ -762,7 +762,7 @@ msgstr "💳 Ödeme Şekli:"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:121
 #, fuzzy
 msgid "✅  Katılım"
-msgstr "Katılımcılar"
+msgstr "✅  Katılım"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:71
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:72

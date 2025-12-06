@@ -71,7 +71,10 @@ class LicenseManager:
                 if data.get("valid") and data.get("token"):
                     # Save token
                     self.save_license_token(data["token"])
-                    return self._verify_token(data["token"], machine_id)
+                    result = self._verify_token(data["token"], machine_id)
+                    # Include raw token in the result so callers can use it immediately
+                    result["token"] = data["token"]
+                    return result
                 else:
                     return {"valid": False, "message": data.get("message", "Validation failed")}
         except Exception as e:

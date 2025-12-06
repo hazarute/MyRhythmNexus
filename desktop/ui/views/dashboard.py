@@ -88,7 +88,8 @@ class DashboardView(ctk.CTkFrame):
         qr_token = dialog.get_input()
         if qr_token:
             from desktop.ui.views.checkin_dialog import CheckInDialog
-            CheckInDialog(self.winfo_toplevel(), self.api_client, qr_token)
+            # Provide `on_refresh` so the dashboard reloads when the dialog closes
+            CheckInDialog(self.winfo_toplevel(), self.api_client, qr_token, on_refresh=self.load_data)
 
 
     def create_stat_card(self, parent, title, icon, color, col_idx):

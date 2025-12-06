@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 import customtkinter as ctk
 from tkinter import messagebox
+from desktop.core.config import DesktopConfig
 
 class AutoUpdater:
     """Automatic updater for MyRhythmNexus Desktop application"""
@@ -359,22 +360,29 @@ class AutoUpdater:
 def check_and_update_on_startup():
     """Check for updates on application startup"""
     updater = AutoUpdater()
+    # Perform update check on every startup (user requested behavior).
+    # Note: this will call GitHub API on every start; keep rate limits in mind.
+    try:
+        # Respect configured check interval (minutes) to avoid hitting rate limits.
+        interval_minutes = getattr(DesktopConfig, 'CHECK_UPDATE_INTERVAL_MINUTES', 60)
+        interval_seconds = int(interval_minutes) * 60
 
-    # Only check once per day
-    current_info = updater.get_current_version_info()
-    last_check = current_info.get('last_check')
+        current_info = updater.get_current_version_info()
+        last_check = current_info.get('last_check')
+        current_time = time.time()
 
-    import time
-    current_time = time.time()
+        if last_check and (current_time - last_check) < interval_seconds:
+            # Skip checking — within configured interval
+            return
 
-    if last_check and (current_time - last_check) < 86400:  # 24 hours
-        return
+        # Update last check time for record-keeping
+        current_info['last_check'] = current_time
+        updater.save_version_info(current_info)
 
-    # Update last check time
-    current_info['last_check'] = current_time
-    updater.save_version_info(current_info)
-
-    # Check for updates
-    update_info = updater.check_for_updates()
-    if update_info:
-        updater.show_update_dialog(update_info)
+        # Perform the update check
+        update_info = updater.check_for_updates()
+        if update_info:
+            updater.show_update_dialog(update_info)
+    except Exception as e:
+        # Do not propagate errors on startup; log to stdout for debugging
+        print(f"Update check failed on startup: {e}")

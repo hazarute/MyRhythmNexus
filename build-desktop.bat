@@ -35,6 +35,26 @@ if defined VERSION (
 ) else (
     echo MyRhythmNexus Desktop v1.0.0> desktop\version.txt
 )
+REM Prepare executable name to include version when available
+set "EXE_NAME=MyRhythmNexus-Desktop"
+REM Try to read VERSION from Python DesktopConfig first
+set "PY_VER="
+for /f "usebackq delims=" %%V in (`python -c "import sys; sys.path.insert(0, r'%CD%'); from desktop.core.config import DesktopConfig; print(getattr(DesktopConfig,'VERSION',''))"`) do set "PY_VER=%%V"
+
+if defined PY_VER (
+    if not "%PY_VER%"=="" (
+        set "EXE_NAME=MyRhythmNexus_v%PY_VER%"
+    )
+)
+
+REM Fallback to env var VERSION if Python read failed
+if "%EXE_NAME%"=="MyRhythmNexus-Desktop" (
+    if defined VERSION (
+        set "EXE_NAME=MyRhythmNexus_v%VERSION%"
+    ) else (
+        set "EXE_NAME=MyRhythmNexus_v1.0.0"
+    )
+)
 echo Built: %date% %time%>> desktop\version.txt
 echo Git: N/A>> desktop\version.txt
 echo %GREEN% Version info created: desktop\version.txt
@@ -42,7 +62,7 @@ echo %GREEN% Version info created: desktop\version.txt
 REM Build desktop app
 echo %GREEN% Building desktop application...
 pyinstaller --clean --onefile ^
-    --name MyRhythmNexus-Desktop ^
+    --name %EXE_NAME% ^
         --hidden-import jwt ^
     --hidden-import customtkinter ^
     --hidden-import PIL ^
@@ -55,16 +75,16 @@ pyinstaller --clean --onefile ^
     --hidden-import fastapi ^
     --hidden-import uvicorn ^
     --hidden-import pydantic_core ^
-    --hidden-import cv2 ^
+    
     --add-data "backend;backend" ^
     --add-data "desktop;desktop" ^
     desktop/main.py
 
-if exist "dist\MyRhythmNexus-Desktop.exe" (
-    for %%A in ("dist\MyRhythmNexus-Desktop.exe") do set FILE_SIZE=%%~zA
+if exist "dist\%EXE_NAME%.exe" (
+    for %%A in ("dist\%EXE_NAME%.exe") do set FILE_SIZE=%%~zA
     set /a FILE_SIZE_MB=%FILE_SIZE%/1024/1024
     echo %GREEN% ✅ Desktop app built successfully!
-    echo %GREEN% 📁 Executable: dist\MyRhythmNexus-Desktop.exe
+    echo %GREEN% 📁 Executable: dist\%EXE_NAME%.exe
     echo %GREEN% 📏 Size: %FILE_SIZE_MB% MB
     echo %GREEN% 📅 Built: %date% %time%
 ) else (
@@ -75,7 +95,7 @@ if exist "dist\MyRhythmNexus-Desktop.exe" (
 REM Test note
 echo.
 echo %GREEN% 🎉 Build complete!
-echo %GREEN% 📦 Ready for distribution: dist\MyRhythmNexus-Desktop.exe
+echo %GREEN% 📦 Ready for distribution: dist\%EXE_NAME%.exe
 echo.
 echo %YELLOW% Remember to test the executable thoroughly before distribution!
 echo %YELLOW% Run: dist/MyRhythmNexus-Desktop.exe

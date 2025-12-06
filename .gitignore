@@ -6,3 +6,7 @@ __pycache__/
 *.py[cod]
 venv/
 .venv/
+
+# Build artifacts (ignore built executables to avoid large binary commits)
+dist/*.exe
+release/*.exe

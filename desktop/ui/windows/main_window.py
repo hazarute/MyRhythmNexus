@@ -48,6 +48,10 @@ class MainWindow(ctk.CTkFrame):
         self.btn_settings = ctk.CTkButton(self.sidebar, text=_("⚙️ Dil Seçimi"), command=self.show_language_dialog, fg_color="#555555", hover_color="#444444")
         self.btn_settings.pack(pady=10, padx=10)
 
+        # License info button
+        self.btn_license = ctk.CTkButton(self.sidebar, text=_("Lisans Bilgileri"), command=self.show_license_dialog, fg_color="#555555", hover_color="#444444")
+        self.btn_license.pack(pady=10, padx=10)
+
         self.btn_logout = ctk.CTkButton(self.sidebar, text=_("Çıkış Yap"), fg_color="red", hover_color="darkred", command=self.on_logout)
         self.btn_logout.pack(side="bottom", pady=20, padx=10)
 
@@ -153,3 +157,17 @@ class MainWindow(ctk.CTkFrame):
                                  height=35,
                                  fg_color="#555555", hover_color="#333333")
         btn_close.pack(pady=15, padx=20, fill="x")
+
+    def show_license_dialog(self):
+        """Show a dialog with license information and quick actions"""
+        try:
+            from desktop.ui.views.dialogs.license_info_dialog import LicenseInfoDialog
+        except Exception:
+            # If dialog import fails, show a simple messagebox
+            from tkinter import messagebox
+            messagebox.showerror("Hata", "Lisans diyaloğu yüklenemedi.")
+            return
+
+        # Create and show dialog
+        dialog = LicenseInfoDialog(self.master, self.api_client)
+        dialog.grab_set()

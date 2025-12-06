@@ -10,3 +10,4 @@ venv/
 # Build artifacts (ignore built executables to avoid large binary commits)
 dist/*.exe
 release/*.exe
+build/

@@ -39,6 +39,27 @@ def read_version_from_config() -> Optional[str]:
     m = re.search(r"DesktopConfig\.VERSION\s*=\s*['\"]([^'\"]+)['\"]", text)
     if m:
         return m.group(1).strip()
+    # Try importing the module to read DesktopConfig.VERSION if regex didn't find it
+    try:
+        # Ensure repo root is on sys.path
+        repo_root = Path.cwd()
+        if str(repo_root) not in sys.path:
+            sys.path.insert(0, str(repo_root))
+        from desktop.core.config import DesktopConfig  # type: ignore
+        v = getattr(DesktopConfig, 'VERSION', None)
+        if v:
+            return str(v)
+    except Exception:
+        pass
+
+    # Fallback: check for a desktop/version.txt file written by build scripts
+    ver_file = Path('desktop') / 'version.txt'
+    if ver_file.exists():
+        try:
+            return ver_file.read_text(encoding='utf-8').strip()
+        except Exception:
+            pass
+
     return None
 
 
@@ -68,17 +89,29 @@ def run_build_script() -> bool:
 
 
 def find_built_exe() -> Optional[Path]:
+    # First prefer looking in dist/ (typical PyInstaller output)
     d = Path('dist')
-    if not d.exists():
-        return None
-    exes = list(d.glob('*.exe'))
-    if not exes:
-        return None
-    # prefer files that contain MyRhythmNexus in name
-    for e in exes:
-        if 'MyRhythmNexus' in e.name:
-            return e
-    return exes[0]
+    if d.exists():
+        exes = list(d.glob('*.exe'))
+        if exes:
+            # prefer files that contain MyRhythmNexus in name
+            for e in exes:
+                if 'MyRhythmNexus' in e.name:
+                    return e
+            return exes[0]
+
+    # Fallback: maybe an already packaged release exists in release/
+    r = Path('release')
+    if r.exists():
+        exes = list(r.glob('*.exe'))
+        if exes:
+            # prefer versioned file pattern
+            for e in exes:
+                if 'MyRhythmNexus' in e.name:
+                    return e
+            return exes[0]
+
+    return None
 
 
 def create_release_and_upload(repo: str, token: str, version: str, asset_path: Path, dry_run: bool = False) -> bool:
@@ -182,6 +215,22 @@ def main(argv: Optional[list[str]] = None) -> int:
             print('Unable to determine version. Provide --version or ensure DesktopConfig.VERSION in desktop/core/config.py, or use --interactive', file=sys.stderr)
             return 2
 
+    # If token not provided, prompt the user (hidden input). If left blank, we will skip GitHub upload.
+    if not token:
+        try:
+            import getpass
+            # Only prompt if running in a TTY; otherwise remain None and skip upload
+            if sys.stdin.isatty():
+                tok = getpass.getpass('GitHub token (leave blank to skip release upload): ').strip()
+                if tok:
+                    token = tok
+                else:
+                    token = None
+            else:
+                token = None
+        except Exception:
+            token = None
+
     print('Repo:', repo)
     print('Version:', version)
     print('No-build:', no_build)
@@ -196,7 +245,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     # find exe
     exe = find_built_exe()
     if not exe:
-        print('Built exe not found in dist/.', file=sys.stderr)
+        print('Built exe not found in dist/ or release/.', file=sys.stderr)
         return 4
     print('Found exe:', exe)
 

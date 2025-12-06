@@ -105,6 +105,12 @@ create_version_info() {
 main() {
     print_status "Starting desktop app build process..."
 
+    # Install Python dependencies from requirements.txt to ensure PyJWT and others are available
+    if [ -f "requirements.txt" ]; then
+        print_status "Installing Python requirements from requirements.txt..."
+        python -m pip install -r requirements.txt
+    fi
+
     check_pyinstaller
     clean_build
     create_version_info

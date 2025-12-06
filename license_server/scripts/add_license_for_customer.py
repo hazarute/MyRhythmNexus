@@ -11,6 +11,14 @@ If the customer does not exist, the script optionally offers to create it.
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
+
+# Ensure repo root is on sys.path so this script can be run directly from this folder
+repo_root = Path(__file__).resolve().parents[1]
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
+
 import json
 import random
 import string

@@ -13,6 +13,14 @@ The script will prompt for missing values and ask for confirmation before making
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
+
+# Ensure repo root is on sys.path so this script can be run directly from this folder
+repo_root = Path(__file__).resolve().parents[1]
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
+
 from typing import List
 
 from license_server import models

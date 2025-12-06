@@ -238,6 +238,10 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # run build unless requested not to
     if not no_build:
+        # Export VERSION so build script can name the exe accordingly
+        if version:
+            os.environ['VERSION'] = str(version)
+            print('Exported VERSION for build script:', os.environ['VERSION'])
         ok = run_build_script()
         if not ok:
             return 3

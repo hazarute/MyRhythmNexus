@@ -15,7 +15,8 @@ import sys
 from pathlib import Path
 
 # Ensure repo root is on sys.path so this script can be run directly from this folder
-repo_root = Path(__file__).resolve().parents[1]
+# Use parents[2] to point to repository root (one level above `license_server`)
+repo_root = Path(__file__).resolve().parents[2]
 if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 
@@ -78,15 +79,38 @@ def main():
 
     args = parser.parse_args()
 
+    # If no args provided, enter interactive step-by-step mode
     if not args.all and not args.email:
-        parser.error("Specify --all or --email <address>")
+        print("Interaktif mod: Lütfen aşağıdaki seçeneklerden birini seçin.")
+        print("  [a] Tüm müşterileri listele")
+        print("  [e] E-posta ile sorgula")
+        print("  [q] Çıkış")
+        choice = input("Seçiminiz [a/e/q] (varsayılan a): ").strip().lower()
+        if choice in ("q", "quit"):
+            print("Çıkış.")
+            return
+
+        if choice in ("e", "email"):
+            email = input("Müşteri e-posta adresi: ").strip()
+            while not email:
+                email = input("E-posta (zorunlu): ").strip()
+            all_flag = False
+        else:
+            email = None
+            all_flag = True
+
+        active_only = input("Sadece aktif lisansları göster? (y/N): ").strip().lower() in ("y", "yes")
+    else:
+        all_flag = args.all
+        email = args.email
+        active_only = args.active_only
 
     db = SessionLocal()
     try:
-        if args.all:
-            list_all(db, active_only=args.active_only)
+        if all_flag:
+            list_all(db, active_only=active_only)
         else:
-            list_by_email(db, args.email, active_only=args.active_only)
+            list_by_email(db, email, active_only=active_only)
     finally:
         db.close()
 

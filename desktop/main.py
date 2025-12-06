@@ -65,9 +65,11 @@ class App(ctk.CTk):
         self.current_window = MainWindow(self, self.api_client, on_logout=self.show_login)
 
 if __name__ == "__main__":
-    # Check for updates on startup (only in compiled version)
-    if getattr(sys, 'frozen', False):
-        check_and_update_on_startup()
+    # Check for updates on startup.
+    # By default this runs only in the frozen executable to avoid spamming GitHub
+    # during development. To force the check in dev, set env var `FORCE_UPDATE_CHECK=1`.
+    # Always check for updates on startup (developer requested behavior)
+    check_and_update_on_startup()
 
     app = App()
     app.mainloop()

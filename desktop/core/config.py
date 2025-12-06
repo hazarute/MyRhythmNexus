@@ -98,7 +98,9 @@ class DesktopConfig:
 
     # App settings
     APP_NAME = "MyRhythmNexus Desktop"
-    VERSION = "1.0.0"
+    VERSION = "1.0.1"
+    # Update check interval in minutes (default 60 = hourly)
+    CHECK_UPDATE_INTERVAL_MINUTES = 60
 
     # UI Settings
     WINDOW_SIZE = "1200x800"

@@ -20,7 +20,8 @@ import sys
 from pathlib import Path
 
 # Ensure repo root is on sys.path so this script can be run directly from this folder
-repo_root = Path(__file__).resolve().parents[1]
+# Use parents[2] to point to repository root (one level above `license_server`)
+repo_root = Path(__file__).resolve().parents[2]
 if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 

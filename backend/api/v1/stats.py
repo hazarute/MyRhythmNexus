@@ -156,7 +156,7 @@ async def get_dashboard_stats(
                     subscription_info = f"{ci.subscription.package.name} (sınırsız)"
                 else:
                     remaining_sessions = ci.subscription.used_sessions - ci.subscription.attendance_count
-                    subscription_info = f"{ci.subscription.package.name} - {remaining_sessions} oturum kaldı"
+                    subscription_info = f"{ci.subscription.package.name} - {remaining_sessions} seansa katıldı."
             else:
                 subscription_info = "Abonelik bilgisi bulunamadı"
             

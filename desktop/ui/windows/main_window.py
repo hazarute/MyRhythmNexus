@@ -65,7 +65,18 @@ class MainWindow(ctk.CTkFrame):
     def on_qr_scan(self, qr_token):
         print(f"QR Scanned: {qr_token}")
         # Ensure we are in the main thread (Tkinter callbacks are usually main thread)
-        CheckInDialog(self, self.api_client, qr_token)
+        # Define a safe refresh that updates the current view if it provides `load_data`
+        def _refresh_current_view():
+            try:
+                if getattr(self, 'current_view', None) and hasattr(self.current_view, 'load_data'):
+                    try:
+                        self.current_view.load_data()
+                    except Exception as e:
+                        print(f"Error refreshing current view after checkin: {e}")
+            except Exception as e:
+                print(f"Error in refresh callback: {e}")
+
+        CheckInDialog(self, self.api_client, qr_token, on_refresh=_refresh_current_view)
 
     def show_view(self, view_name, **kwargs):
         if self.current_view:

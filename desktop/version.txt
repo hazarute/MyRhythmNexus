@@ -1,0 +1,3 @@
+MyRhythmNexus Desktop v1.0.1
+Built: Cmt 06.12.2025 15:23:31,64
+Git: N/A

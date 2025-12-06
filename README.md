@@ -1,6 +1,6 @@
 # MyRhythmNexus - Studio Management Core System
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: BSL 1.1](https://img.shields.io/badge/License-BSL_1.1-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
@@ -356,7 +356,12 @@ This project uses a unique AI-human collaboration model:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is published under the Business Source License 1.1 (BSL 1.1). The source is
+available for inspection and non-production use under the BSL. Commercial / production use
+requires a commercial license — see [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) or
+contact Hazar Üte at `hazarute@gmail.com` for licensing inquiries.
+
+See the full license text in the [LICENSE](LICENSE) file.
 
 ---
 

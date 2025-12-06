@@ -75,7 +75,6 @@ pyinstaller --clean --onefile ^
     --hidden-import fastapi ^
     --hidden-import uvicorn ^
     --hidden-import pydantic_core ^
-    
     --add-data "backend;backend" ^
     --add-data "desktop;desktop" ^
     desktop/main.py

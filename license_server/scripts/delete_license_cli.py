@@ -16,11 +16,47 @@ import argparse
 import sys
 from pathlib import Path
 
-# Ensure repo root is on sys.path so this script can be run directly from this folder
-# Use parents[2] to point to repository root (one level above `license_server`)
-repo_root = Path(__file__).resolve().parents[2]
-if str(repo_root) not in sys.path:
-    sys.path.insert(0, str(repo_root))
+
+# Robustly ensure repository root is on sys.path and provide a fallback mapping
+def _ensure_repo_root():
+    import importlib, types
+
+    p = Path(__file__).resolve().parent
+    repo_root = None
+    for _ in range(6):
+        if (p / "models.py").exists() and (p / "database.py").exists():
+            repo_root = p
+            break
+        if (p / "license_server").is_dir():
+            repo_root = p
+            break
+        if p.parent == p:
+            break
+        p = p.parent
+    if repo_root is None:
+        repo_root = Path(__file__).resolve().parents[2]
+
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    try:
+        top_models = importlib.import_module("models")
+        top_database = importlib.import_module("database")
+        top_schemas = importlib.import_module("schemas")
+        pkg = types.ModuleType("license_server")
+        pkg.models = top_models
+        pkg.database = top_database
+        pkg.schemas = top_schemas
+        pkg.__path__ = [str(repo_root)]
+        sys.modules["license_server"] = pkg
+        sys.modules["license_server.models"] = top_models
+        sys.modules["license_server.database"] = top_database
+        sys.modules["license_server.schemas"] = top_schemas
+    except Exception:
+        pass
+
+
+_ensure_repo_root()
 
 from typing import List
 

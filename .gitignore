@@ -11,6 +11,9 @@ venv/
 dist/*.exe
 release/*.exe
 build/
+<<<<<<< HEAD
 
 # Do NOT commit private keys
 license_server/private.pem
+=======
+>>>>>>> e4fab4fd669429a8657ad9bad273584201312c16

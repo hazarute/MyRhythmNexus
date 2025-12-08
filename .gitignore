@@ -11,3 +11,6 @@ venv/
 dist/*.exe
 release/*.exe
 build/
+
+# Do NOT commit private keys
+license_server/private.pem

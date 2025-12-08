@@ -34,7 +34,8 @@ class License(Base):
     
     # Features (JSON)
     # Example: {"qr_checkin": true, "finance": true, "max_members": 100}
-    features = Column(JSON, default={})
+    # Use a callable default to avoid mutable default pitfalls
+    features = Column(JSON, default=dict)
     
     last_checkin = Column(DateTime, nullable=True)
     

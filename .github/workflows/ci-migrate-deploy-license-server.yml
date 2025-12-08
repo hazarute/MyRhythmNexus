@@ -1,0 +1,55 @@
+name: CI / Migrate / Deploy license_server
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r license_server/requirements.txt
+      - name: Run tests (placeholder)
+        run: |
+          echo "Run your test command here, e.g. pytest -q"
+
+  migrate:
+    name: Run Alembic migrations
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r license_server/requirements.txt alembic psycopg2-binary
+      - name: Run Alembic upgrade
+        env:
+          LICENSE_DATABASE_URL: ${{ secrets.LICENSE_DATABASE_URL }}
+        run: |
+          cd license_server
+          alembic -c alembic.ini upgrade head
+
+  deploy:
+    name: Deploy (placeholder)
+    needs: migrate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment instructions
+        run: |
+          echo "Migration completed. To enable automatic deploy, either:"
+          echo "  - Enable Railway's GitHub integration for this repo (recommended), or"
+          echo "  - Add RAILWAY_TOKEN secret and modify this job to call Railway CLI/API to deploy."

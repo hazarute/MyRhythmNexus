@@ -8,7 +8,4 @@ cryptography>=41.0.0
 sqlalchemy>=2.0.0
 python-dotenv>=1.0.0
 slowapi>=0.1.8
-<<<<<<< HEAD
 psycopg[binary]>=3.1
-=======
->>>>>>> e4fab4fd669429a8657ad9bad273584201312c16

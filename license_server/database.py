@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .core.config import settings
+from core.config import settings
 
 # Support both SQLite (development) and PostgreSQL (production via DATABASE_URL)
 database_url = settings.LICENSE_DATABASE_URL

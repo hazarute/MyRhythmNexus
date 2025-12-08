@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends, HTTPException, status, Request
+from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 import jwt
 from typing import List
@@ -8,8 +10,10 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from .core.config import settings
-from . import models, schemas, database
+from core.config import settings
+import models
+import schemas
+import database
 
 # Create tables
 models.Base.metadata.create_all(bind=database.engine)

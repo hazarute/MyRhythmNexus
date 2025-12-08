@@ -50,3 +50,4 @@ class LicenseValidateResponse(BaseModel):
     valid: bool
     token: Optional[str] = None # JWT Signed Token
     message: Optional[str] = None
+

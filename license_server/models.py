@@ -40,3 +40,4 @@ class License(Base):
     last_checkin = Column(DateTime, nullable=True)
     
     customer = relationship("Customer", back_populates="licenses")
+

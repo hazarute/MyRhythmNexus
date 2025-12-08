@@ -1,1 +1,5 @@
-"""License server package marker."""
+
+"""License server package marker.
+
+This file intentionally small — bumped to trigger rebuilds when needed.
+"""

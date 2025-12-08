@@ -1,6 +1,19 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from .core.config import settings
+
+# Import settings in a robust way so the module works when the package is
+# installed (`license_server.core.config`) and when the files are copied
+# directly into the image root (e.g. `core.config`).
+try:
+    from license_server.core.config import settings
+except Exception:
+    try:
+        from core.config import settings
+    except Exception:
+        # Last resort: relative import (works when imported as a package)
+        from .core.config import settings
+
+
 # Support both SQLite (development) and PostgreSQL (production via DATABASE_URL)
 database_url = settings.LICENSE_DATABASE_URL
 

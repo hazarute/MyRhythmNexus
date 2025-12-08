@@ -8,8 +8,14 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from license_server.core.config import settings
-from license_server import models, schemas, database
+try:
+    # Preferred when the project is installed/packaged
+    from license_server.core.config import settings
+    from license_server import models, schemas, database
+except ModuleNotFoundError:
+    # Fallback when Railway/ Docker copies package contents to the image root
+    from core.config import settings
+    import models, schemas, database
 
 # Create tables
 models.Base.metadata.create_all(bind=database.engine)

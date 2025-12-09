@@ -28,16 +28,65 @@ print_error() {
 
 # Check if PyInstaller is installed
 check_pyinstaller() {
-    if ! python -c "import PyInstaller" &> /dev/null; then
-        print_error "PyInstaller not found. Install with: pip install pyinstaller"
-        exit 1
+    # Diagnostic info to help CI environments where pip/python mismatch may occur
+    print_status "Checking python executable and PyInstaller availability..."
+    echo "Python: $(which python 2>/dev/null || echo 'which python not found')"
+    python --version || true
+    echo "pip-installed PyInstaller info:";
+    python -m pip show pyinstaller || true
+
+    # Prefer invoking PyInstaller via the python -m PyInstaller entrypoint.
+    # Try a couple of methods to detect the installed module/version because
+    # different PyInstaller releases and environments expose the entrypoint
+    # slightly differently.
+    if python -m PyInstaller --version &> /dev/null; then
+        : # found
+    else
+        # fallback: try importing the module and printing attribute
+        if python -c "import PyInstaller as m; print(getattr(m, '__version__', ''))" &> /dev/null; then
+            :
+        else
+            print_error "PyInstaller not found. Install with: python -m pip install pyinstaller"
+            exit 1
+        fi
     fi
 }
 
 # Clean previous builds
 clean_build() {
     print_status "Cleaning previous builds..."
-    rm -rf build dist *.spec
+    # Avoid removing the dist directory itself when running inside containers
+    # where dist may be a mounted volume. Remove build and spec files and
+    # try to empty dist contents if possible.
+    rm -rf build *.spec || true
+    if [ -d "dist" ]; then
+        # Preserve any existing MyRhythmNexus* artifacts in dist/ (do not remove
+        # customer or previous build artifacts). Remove other files to keep the
+        # directory tidy while avoiding deleting versioned outputs.
+        # Attempt to enable nullglob when running under bash; when running under
+        # a POSIX shell (dash/sh) `shopt` is not available so fall back to a
+        # safe loop that checks file existence.
+        NULLGLOB_SET=0
+        if [ -n "$BASH_VERSION" ]; then
+            shopt -s nullglob
+            NULLGLOB_SET=1
+        fi
+        for item in dist/*; do
+            # If no matches and glob was not expanded (e.g. literal 'dist/*'),
+            # ensure we don't try to remove that literal string.
+            [ ! -e "$item" ] && break
+            base=$(basename "$item")
+            case "$base" in
+                MyRhythmNexus*)
+                        echo "[INFO] Preserving $item" ;;
+                *)
+                        rm -rf "$item" || echo "[WARNING] Failed to remove $item" ;;
+            esac
+        done
+        if [ "$NULLGLOB_SET" = "1" ]; then
+            shopt -u nullglob
+        fi
+    fi
 }
 
 # Build desktop app
@@ -45,8 +94,13 @@ build_desktop() {
     print_status "Building desktop application..."
 
     # Create executable with all dependencies
-    pyinstaller --clean --onefile \
-        --name MyRhythmNexus-Desktop \
+    # Name the produced binary using the VERSION env if present so dist contains
+    # a versioned filename (e.g. MyRhythmNexus_v1.0.3). This avoids ambiguous
+    # generic names and makes CI/packaging deterministic.
+    OUT_BASENAME="MyRhythmNexus_v${VERSION:-1.0.0}"
+    # Use the module invocation to avoid relying on the console script name
+    python -m PyInstaller --clean --onefile \
+        --name "$OUT_BASENAME" \
         --hidden-import customtkinter \
         --hidden-import PIL \
         --hidden-import PIL.Image \
@@ -64,7 +118,7 @@ build_desktop() {
         desktop/main.py
 
     # Determine expected output name (PyInstaller on Linux produces a binary without .exe)
-    OUT_NAME="dist/MyRhythmNexus-Desktop"
+    OUT_NAME="dist/${OUT_BASENAME}"
     if [ -f "$OUT_NAME" ]; then
         FILE_SIZE=$(stat -c%s "$OUT_NAME" 2>/dev/null || stat -f%z "$OUT_NAME" 2>/dev/null || echo 0)
         print_status "✅ Desktop app built successfully!"
@@ -80,10 +134,12 @@ build_desktop() {
 # Test the built executable
 test_executable() {
     print_status "Testing executable..."
-    if [ -f "dist/MyRhythmNexus-Desktop.exe" ]; then
+    # If a Windows .exe exists, offer instructions; otherwise for Linux the
+    # binary will be named using the version (handled above).
+    if [ -f "dist/MyRhythmNexus-Desktop.exe" ] || ls dist/*.exe &> /dev/null; then
         print_warning "Note: Executable test requires GUI environment"
         print_status "Manual testing recommended:"
-        print_status "1. Run: ./dist/MyRhythmNexus-Desktop.exe"
+        print_status "1. Run: ./dist/<executable>"
         print_status "2. Check if app starts and connects to backend"
         print_status "3. Test login and basic functionality"
     fi
@@ -121,7 +177,7 @@ main() {
 
     print_status ""
     print_status "🎉 Build complete!"
-    print_status "📦 Ready for distribution: dist/MyRhythmNexus-Desktop.exe"
+    print_status "📦 Ready for distribution: $OUT_NAME"
     print_status ""
     print_warning "Remember to test the executable thoroughly before distribution!"
 }

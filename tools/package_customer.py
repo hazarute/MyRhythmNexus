@@ -176,10 +176,18 @@ def main(argv: list[str] | None = None) -> int:
         # If build was requested and no exe path provided, try to auto-detect exe in dist/
         exe_initial = args.exe_path
         if args.build and not exe_initial:
-            candidates = list(Path("dist").glob("*.exe")) if Path("dist").exists() else []
+            candidates = []
+            d = Path("dist")
+            if d.exists():
+                for p in sorted(d.iterdir()):
+                    if p.is_file() and p.name.startswith("MyRhythmNexus"):
+                        candidates.append(p)
+                # Fallback: include any file in dist if none matched the naming
+                if not candidates:
+                    candidates = [p for p in sorted(d.iterdir()) if p.is_file()]
             if candidates:
                 exe_initial = str(candidates[0])
-                print(f"Auto-detected built exe: {exe_initial}")
+                print(f"Auto-detected built artifact: {exe_initial}")
 
         exe = prompt_exe_path(exe_initial)
         backend = prompt_nonempty("Backend URL (e.g. https://acme.example.com/api/v1)", args.backend_url)
@@ -212,10 +220,17 @@ def main(argv: list[str] | None = None) -> int:
         # If build requested and no exe path given, try to find built exe in dist/
         exe_path_arg = args.exe_path
         if args.build and not exe_path_arg:
-            candidates = list(Path("dist").glob("*.exe")) if Path("dist").exists() else []
+            candidates = []
+            d = Path("dist")
+            if d.exists():
+                for p in sorted(d.iterdir()):
+                    if p.is_file() and p.name.startswith("MyRhythmNexus"):
+                        candidates.append(p)
+                if not candidates:
+                    candidates = [p for p in sorted(d.iterdir()) if p.is_file()]
             if candidates:
                 exe_path_arg = str(candidates[0])
-                print(f"Auto-detected built exe: {exe_path_arg}")
+                print(f"Auto-detected built artifact: {exe_path_arg}")
 
         exe = Path(exe_path_arg)
         out = Path(args.output_dir)

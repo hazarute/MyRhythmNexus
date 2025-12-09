@@ -26,7 +26,13 @@ if errorlevel 1 (
 REM Clean previous builds
 echo %GREEN% Cleaning previous builds...
 if exist build rmdir /s /q build
-if exist dist rmdir /s /q dist
+REM Clean dist/, but preserve any MyRhythmNexus* artifacts (do not delete customer builds)
+if exist dist (
+    echo %GREEN% Preserving MyRhythmNexus artifacts in dist/ and removing others...
+    for /f "delims=" %%F in ('dir /b "dist"') do (
+        call :maybe_remove "%%F"
+    )
+) 
 if exist *.spec del *.spec
 
 REM Create version info (use VERSION env if provided)
@@ -102,3 +108,20 @@ echo %YELLOW% Run: dist/MyRhythmNexus-Desktop.exe
 REM If CI environment variable is set, skip pause so automated runners won't hang
 if defined CI goto :EOF
 pause
+
+goto :EOF
+
+:maybe_remove
+REM %~1 is the name of the item inside dist
+set "_item=%~1"
+echo %_item% | findstr /b /i "MyRhythmNexus" >nul
+if errorlevel 1 (
+    REM not a MyRhythmNexus* file/dir -> remove
+    if exist "dist\%_item%\*" (
+        rmdir /s /q "dist\%_item%"
+    ) else (
+        del /q "dist\%_item%"
+    )
+)
+set "_item="
+goto :eof

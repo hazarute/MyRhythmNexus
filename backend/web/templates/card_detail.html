@@ -22,10 +22,15 @@
     <div class="min-h-screen bg-gradient-to-b from-[#12082a] via-[#0a0716] to-[#030008] flex items-center justify-center px-4 py-12">
         <div class="w-full max-w-md bg-gradient-to-br from-[#1d1442] to-[#0b0819] border border-white/5 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.6)] p-6 relative overflow-hidden">
             <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_rgba(168,85,247,0.3),_transparent_60%)]"></div>
-            <a href="/web" class="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white z-10">
-                <span aria-hidden="true">&larr;</span>
-                Geri dön
-            </a>
+            <div class="flex items-center justify-between z-10">
+                <a href="/web" class="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
+                    <span aria-hidden="true">&larr;</span>
+                    Geri dön
+                </a>
+                <a href="/web/logout" class="inline-flex items-center gap-2 text-sm text-white/80 bg-white/5 hover:bg-white/10 px-3 py-2 rounded-full border border-white/5">
+                    Çıkış Yap
+                </a>
+            </div>
 
             <div class="relative z-10 text-center mt-4">
                 <p class="text-xs uppercase tracking-[0.4em] text-white/60">Kartın</p>

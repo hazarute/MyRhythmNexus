@@ -23,10 +23,22 @@ def hash_password(password: str) -> str:
     if len(b) > 72:
         logger.warning("Password longer than 72 bytes; truncating for bcrypt compatibility.")
         truncated = b[:72].decode("utf-8", "ignore")
-        return pwd_context.hash(truncated)
+        try:
+            return pwd_context.hash(truncated)
+        except Exception as e:
+            logger.warning("bcrypt hashing failed after truncation: %s. Falling back to pbkdf2_sha256.", e)
+            from passlib.context import CryptContext as _CryptContext
+            fallback_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+            return fallback_ctx.hash(truncated)
 
     # Safe to hash the original string form
-    return pwd_context.hash(str(password))
+    try:
+        return pwd_context.hash(str(password))
+    except Exception as e:
+        logger.warning("bcrypt hashing failed: %s. Falling back to pbkdf2_sha256.", e)
+        from passlib.context import CryptContext as _CryptContext
+        fallback_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+        return fallback_ctx.hash(str(password))
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

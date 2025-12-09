@@ -47,13 +47,22 @@ scheduler = UserActivityScheduler()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    await init_db()
-    scheduler.start()
+    try:
+        await init_db()
+        scheduler.start()
+    except Exception as exc:
+        # Log full traceback so we can see exact startup failure in production logs
+        logging.exception("Unhandled exception during application startup:")
+        # Re-raise so process exit / restart behavior remains unchanged
+        raise
 
     yield
 
     # Shutdown
-    scheduler.stop()
+    try:
+        scheduler.stop()
+    except Exception:
+        logging.exception("Exception during scheduler shutdown:")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

@@ -33,10 +33,27 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('license_key')
     )
-    op.drop_column('class_events', 'created_at')
-    op.drop_column('class_events', 'updated_at')
-    op.drop_column('subscriptions', 'created_at')
-    op.drop_column('subscriptions', 'updated_at')
+    # Drop legacy timestamp columns if they exist (safe-guard for idempotent migrations)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    try:
+        class_event_cols = {c['name'] for c in inspector.get_columns('class_events')}
+    except Exception:
+        class_event_cols = set()
+    try:
+        subscription_cols = {c['name'] for c in inspector.get_columns('subscriptions')}
+    except Exception:
+        subscription_cols = set()
+
+    if 'created_at' in class_event_cols:
+        op.drop_column('class_events', 'created_at')
+    if 'updated_at' in class_event_cols:
+        op.drop_column('class_events', 'updated_at')
+
+    if 'created_at' in subscription_cols:
+        op.drop_column('subscriptions', 'created_at')
+    if 'updated_at' in subscription_cols:
+        op.drop_column('subscriptions', 'updated_at')
     # ### end Alembic commands ###
 
 

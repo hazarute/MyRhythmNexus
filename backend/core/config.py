@@ -41,5 +41,21 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-
-settings = Settings()
+# Normalize DATABASE_URL coming from environment providers (e.g. Railway) which
+# may provide a plain `postgres://` or `postgresql://` URL. SQLAlchemy async
+# engine expects an async driver (asyncpg) when using `create_async_engine`.
+# If the URL doesn't explicitly specify the asyncpg driver, convert it to
+# `postgresql+asyncpg://...` so the already-installed `asyncpg` package is used
+# and we avoid importing `psycopg2`.
+try:
+    raw_db = settings.DATABASE_URL
+    if isinstance(raw_db, str):
+        if raw_db.startswith("postgres://"):
+            raw_db = raw_db.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif raw_db.startswith("postgresql://") and "+asyncpg" not in raw_db:
+            raw_db = raw_db.replace("postgresql://", "postgresql+asyncpg://", 1)
+        settings.DATABASE_URL = raw_db
+except Exception:
+    # If anything goes wrong, leave settings as-is and let the application fail
+    # with a clear error later. We don't want to mask configuration problems.
+    pass

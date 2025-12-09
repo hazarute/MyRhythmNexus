@@ -163,7 +163,16 @@ class DesktopConfig:
     @classmethod
     def load_license_server_url(cls) -> str:
         """Load license server URL from config file or fallback to default."""
-        return cls.get_value("license_server_url", cls.LICENSE_SERVER_URL)
+        # Prefer explicit config value (lowercase key), then support legacy
+        # uppercase ENV-style key written by packagers, then fall back to
+        # the class-level default which itself reads the RHYTHM_NEXUS_LICENSE_SERVER_URL env var.
+        cfg_val = cls.get_value("license_server_url")
+        if cfg_val:
+            return cfg_val
+        cfg_val_upper = cls.get_value("LICENSE_SERVER_URL")
+        if cfg_val_upper:
+            return cfg_val_upper
+        return cls.LICENSE_SERVER_URL
 
     @classmethod
     def get_language(cls) -> str:

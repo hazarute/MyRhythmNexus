@@ -2,6 +2,9 @@ from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
 from backend.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -9,6 +12,19 @@ ALGORITHM = "HS256"
 
 
 def hash_password(password: str) -> str:
+    # bcrypt has a 72-byte input limit. If a password (utf-8) is longer,
+    # truncate to 72 bytes to avoid ValueError from the bcrypt backend.
+    try:
+        b = password.encode("utf-8")
+    except Exception:
+        # Fallback: ensure we always pass a str to passlib
+        return pwd_context.hash(password)
+
+    if len(b) > 72:
+        logger.warning("Password longer than 72 bytes; truncating for bcrypt compatibility.")
+        truncated = b[:72].decode("utf-8", "ignore")
+        return pwd_context.hash(truncated)
+
     return pwd_context.hash(password)
 
 

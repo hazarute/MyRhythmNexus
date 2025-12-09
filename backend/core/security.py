@@ -14,18 +14,19 @@ ALGORITHM = "HS256"
 def hash_password(password: str) -> str:
     # bcrypt has a 72-byte input limit. If a password (utf-8) is longer,
     # truncate to 72 bytes to avoid ValueError from the bcrypt backend.
-    try:
-        b = password.encode("utf-8")
-    except Exception:
-        # Fallback: ensure we always pass a str to passlib
-        return pwd_context.hash(password)
+    # Ensure we have bytes to measure length reliably
+    if isinstance(password, bytes):
+        b = password
+    else:
+        b = str(password).encode("utf-8")
 
     if len(b) > 72:
         logger.warning("Password longer than 72 bytes; truncating for bcrypt compatibility.")
         truncated = b[:72].decode("utf-8", "ignore")
         return pwd_context.hash(truncated)
 
-    return pwd_context.hash(password)
+    # Safe to hash the original string form
+    return pwd_context.hash(str(password))
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

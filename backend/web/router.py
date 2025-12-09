@@ -7,6 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from jose import jwt, JWTError
+import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 from backend.core.config import settings
 from backend.core.database import get_db
@@ -120,13 +124,36 @@ async def web_login(
     password: str = Form(...),
     db: AsyncSession = Depends(get_db)
 ):
-    # Authenticate
-    result = await db.execute(select(User).where(User.phone_number == phone_number))
+    # Normalize phone number for tolerant lookup
+    clean = re.sub(r'\D', '', phone_number or '')
+    if len(clean) == 10:
+        phone_lookup = f"{clean[:3]}-{clean[3:6]}-{clean[6:]}"
+    else:
+        phone_lookup = clean
+
+    logger.info("Web login attempt: raw=%s lookup=%s", phone_number, phone_lookup)
+
+    # Try exact match with normalized form first
+    result = await db.execute(select(User).where(User.phone_number == phone_lookup))
     user = result.scalar_one_or_none()
-    
+
+    # Fallbacks: try digits-only, then a suffix/contains match
+    if not user and clean:
+        result = await db.execute(select(User).where(User.phone_number == clean))
+        user = result.scalar_one_or_none()
+
+    if not user and clean:
+        # try contains (e.g. stored as +90555... or with country code)
+        try:
+            result = await db.execute(select(User).where(User.phone_number.ilike(f"%{clean}")))
+            user = result.scalar_one_or_none()
+        except Exception:
+            # If dialect doesn't support ilike for this column type, ignore
+            pass
+
     if not user or not verify_password(password, str(user.password_hash)):
         return templates.TemplateResponse(
-            "login.html", 
+            "login.html",
             {"request": request, "error": "Invalid credentials"}
         )
     

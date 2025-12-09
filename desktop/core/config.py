@@ -98,7 +98,7 @@ class DesktopConfig:
 
     # App settings
     APP_NAME = "MyRhythmNexus Desktop"
-    VERSION = "1.0.2"
+    VERSION = "1.0.3"
     # Update check interval in minutes (default 60 = hourly)
     CHECK_UPDATE_INTERVAL_MINUTES = 60
 
@@ -158,7 +158,19 @@ class DesktopConfig:
     @classmethod
     def load_backend_url(cls) -> str:
         """Load backend URL from config file"""
-        return cls.get_value("backend_url", cls.BACKEND_URL)
+        # Support packaged config which writes a `backend_urls` list
+        try:
+            cfg = cls._load_config()
+            urls = cfg.get('backend_urls') or []
+            if isinstance(urls, list) and urls:
+                return urls[0]
+            # fallback to single-key `backend_url` for backward compatibility
+            val = cfg.get('backend_url')
+            if val:
+                return val
+        except Exception:
+            pass
+        return cls.BACKEND_URL
 
     @classmethod
     def load_license_server_url(cls) -> str:

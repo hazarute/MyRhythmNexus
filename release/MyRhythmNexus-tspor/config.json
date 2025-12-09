@@ -1,0 +1,10 @@
+{
+  "backend_urls": [
+    "https://tugbadansvespor-production.up.railway.app"
+  ],
+  "settings": {
+    "theme": "dark"
+  },
+  "license_server_url": "https://licenseserver-production-0ceb.up.railway.app/api/v1",
+  "LICENSE_SERVER_URL": "https://licenseserver-production-0ceb.up.railway.app/api/v1"
+}

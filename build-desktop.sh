@@ -59,14 +59,16 @@ build_desktop() {
         --hidden-import uvicorn \
         --hidden-import pydantic_core \
         --hidden-import cv2 \
-        --add-data "backend;backend" \
-        --add-data "desktop;desktop" \
+        --add-data "backend:backend" \
+        --add-data "desktop:desktop" \
         desktop/main.py
 
-    if [ -f "dist/MyRhythmNexus-Desktop.exe" ]; then
-        FILE_SIZE=$(stat -f%z dist/MyRhythmNexus-Desktop.exe 2>/dev/null || stat -c%s dist/MyRhythmNexus-Desktop.exe)
+    # Determine expected output name (PyInstaller on Linux produces a binary without .exe)
+    OUT_NAME="dist/MyRhythmNexus-Desktop"
+    if [ -f "$OUT_NAME" ]; then
+        FILE_SIZE=$(stat -c%s "$OUT_NAME" 2>/dev/null || stat -f%z "$OUT_NAME" 2>/dev/null || echo 0)
         print_status "✅ Desktop app built successfully!"
-        print_status "📁 Executable: dist/MyRhythmNexus-Desktop.exe"
+        print_status "📁 Executable: $OUT_NAME"
         print_status "📏 Size: $((FILE_SIZE/1024/1024)) MB"
         print_status "📅 Built: $(date)"
     else

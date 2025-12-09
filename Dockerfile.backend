@@ -29,5 +29,9 @@ USER app
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "backend/main.py"]
+# Ensure top-level package path is available inside container
+ENV PYTHONPATH=/app
+
+# Run the application using uvicorn as a module so package imports work
+# Uses the module invocation to avoid "executing a module as a script" import issues.
+CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

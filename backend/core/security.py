@@ -1,4 +1,5 @@
 from passlib.context import CryptContext
+from passlib.exc import UnknownHashError
 from jose import jwt
 from datetime import datetime, timedelta
 from backend.core.config import settings
@@ -42,7 +43,30 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plaintext password against stored hash.
+
+    Tries the configured `pwd_context` (bcrypt) first. If the stored hash
+    cannot be identified (legacy or different scheme), fall back to
+    `pbkdf2_sha256` verification so older hashes still work.
+    """
+    if not hashed_password:
+        return False
+
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except UnknownHashError:
+        # Try a fallback verifier for older hashes
+        try:
+            fallback_ctx = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+            if fallback_ctx.verify(plain_password, hashed_password):
+                logger.info("Password verified using pbkdf2_sha256 fallback; consider re-hashing to bcrypt.")
+                return True
+        except Exception as e:
+            logger.warning("Fallback password verify failed: %s", e)
+        return False
+    except Exception as e:
+        logger.exception("Error verifying password: %s", e)
+        return False
 
 
 def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=60)) -> str:

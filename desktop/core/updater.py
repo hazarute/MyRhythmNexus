@@ -171,9 +171,49 @@ class AutoUpdater:
     def _get_download_url(self, release_data: Dict) -> Optional[str]:
         """Extract download URL from release data"""
         assets = release_data.get('assets', [])
+        # Determine platform preference
+        import platform as _platform
+        system = _platform.system().lower()
+        # Prefer Windows .exe on Windows; on Linux prefer common linux formats
+        preferred = []
+        if system.startswith('win'):
+            preferred = ['.exe']
+        elif system.startswith('linux'):
+            # common Linux packaging: AppImage, tar.gz, zip, or plain executable
+            preferred = ['.AppImage', '.tar.gz', '.zip', '']
+        elif system.startswith('darwin') or system.startswith('mac'):
+            preferred = ['.dmg', '.tar.gz', '.zip', '']
+        else:
+            preferred = ['']
+
+        # First try to find an asset whose name indicates the preferred platform
+        # Also prefer assets that start with the project name/version pattern.
+        def score_asset(a: Dict) -> int:
+            name = a.get('name', '').lower()
+            score = 0
+            # prefer asset names that contain MyRhythmNexus
+            if 'myrhythmnexus' in name:
+                score += 10
+            # prefer platform hints
+            for idx, suf in enumerate(preferred):
+                if suf and name.endswith(suf.lower()):
+                    score += 100 - idx
+                    break
+            # prefer linux/x86_64 tags
+            if system.startswith('linux') and ('linux' in name or 'x86_64' in name or 'amd64' in name):
+                score += 5
+            return score
+
+        best = None
+        best_score = -1
         for asset in assets:
-            if asset.get('name', '').endswith('.exe'):
-                return asset.get('browser_download_url')
+            s = score_asset(asset)
+            if s > best_score:
+                best_score = s
+                best = asset
+
+        if best:
+            return best.get('browser_download_url')
         return None
 
     def download_and_install_update(self, update_info: Dict[str, Any], progress_callback=None) -> bool:
@@ -183,8 +223,23 @@ class AutoUpdater:
             if not download_url:
                 return False
 
+            # Derive filename from URL (best-effort)
+            import urllib.parse
+            parsed = urllib.parse.urlparse(download_url)
+            base_name = Path(parsed.path).name
+            # Choose temporary suffix based on asset name
+            suffix = ''
+            if base_name.endswith('.exe'):
+                suffix = '.exe'
+            elif base_name.endswith('.zip'):
+                suffix = '.zip'
+            elif base_name.endswith('.tar.gz') or base_name.endswith('.tgz'):
+                suffix = '.tar.gz'
+            elif base_name.endswith('.AppImage'):
+                suffix = '.AppImage'
+
             # Download to temp file
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.exe') as temp_file:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix or '') as temp_file:
                 temp_path = temp_file.name
 
             response = requests.get(download_url, stream=True)
@@ -202,27 +257,80 @@ class AutoUpdater:
                             progress = int((downloaded / total_size) * 100)
                             progress_callback(progress)
 
-            # Get current executable path
+            # Determine current executable path (only when running frozen)
             current_exe = self._get_current_executable_path()
             if not current_exe:
-                return False
+                # Not running from a frozen executable; cannot auto-install in-place
+                # but we can leave the downloaded artifact in app_data_dir for manual install
+                fallback_dir = self.app_data_dir
+                dest = fallback_dir / base_name
+                try:
+                    shutil.move(temp_path, str(dest))
+                    return True
+                except Exception:
+                    return False
 
-            # NOTE: Replacing a running executable on Windows can fail because the file is locked.
-            # Here we attempt a backup/replace, but for robust behavior consider using a
-            # separate updater helper process or installer (Squirrel/WinSparkle/winget) that
-            # runs after the app exits. This implementation will try a rename, and if it fails
-            # will leave the downloaded file next to the executable for manual replacement.
+            # Platform-specific install behavior
+            import platform as _platform
+            system = _platform.system().lower()
 
             backup_path = str(current_exe) + '.backup'
             try:
+                # Ensure previous backup removed
                 if os.path.exists(backup_path):
                     os.remove(backup_path)
-                # Try to move the running exe to backup and put new exe in place
-                shutil.move(str(current_exe), backup_path)
-                shutil.move(temp_path, str(current_exe))
+
+                # If asset is an archive, extract and find the binary
+                if suffix in ('.zip', '.tar.gz'):
+                    tmpdir = tempfile.mkdtemp()
+                    try:
+                        if suffix == '.zip':
+                            with zipfile.ZipFile(temp_path, 'r') as zf:
+                                zf.extractall(tmpdir)
+                        else:
+                            import tarfile
+                            with tarfile.open(temp_path, 'r:gz') as tf:
+                                tf.extractall(tmpdir)
+                        # Find candidate binary inside extracted tree
+                        candidate = None
+                        for p in Path(tmpdir).rglob('*'):
+                            if p.is_file() and p.name.startswith('MyRhythmNexus'):
+                                candidate = p
+                                break
+                        if not candidate:
+                            # nothing useful found
+                            raise Exception('No suitable binary found inside archive')
+                        # move current exe to backup then move new in place
+                        shutil.move(str(current_exe), backup_path)
+                        shutil.move(str(candidate), str(current_exe))
+                        # set exec bit
+                        try:
+                            os.chmod(str(current_exe), 0o755)
+                        except Exception:
+                            pass
+                    finally:
+                        try:
+                            shutil.rmtree(tmpdir)
+                        except Exception:
+                            pass
+                    # cleanup downloaded archive
+                    try:
+                        os.remove(temp_path)
+                    except Exception:
+                        pass
+                else:
+                    # Treat as a single binary (Windows .exe or Linux plain binary or AppImage)
+                    # Move current exe to backup and place downloaded file in its place
+                    shutil.move(str(current_exe), backup_path)
+                    # Ensure downloaded file is executable on POSIX
+                    try:
+                        os.chmod(temp_path, 0o755)
+                    except Exception:
+                        pass
+                    shutil.move(temp_path, str(current_exe))
             except Exception as move_err:
                 # If moving failed (likely on Windows while running), keep the downloaded
-                # file in the app directory and inform caller. Do not delete app_data_dir.
+                # file in the app directory next to the executable for manual replacement.
                 try:
                     fallback_path = str(current_exe) + '.new'
                     if os.path.exists(fallback_path):

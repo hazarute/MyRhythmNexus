@@ -2,6 +2,7 @@ from datetime import timedelta, datetime, timezone
 import zoneinfo
 from typing import List, Optional, cast
 import secrets
+import string
 import math
 from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -99,7 +100,7 @@ async def create_subscription(
         db.add(payment)
     
     # 5. Generate QR Code
-    qr_token = secrets.token_urlsafe(32)
+    qr_token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
     qr_code = SubscriptionQrCode(
         subscription_id=subscription.id,
         qr_token=qr_token,
@@ -382,7 +383,7 @@ async def create_subscription_with_events(
         db.add(payment)
     
     # 5. Generate QR Code
-    qr_token = secrets.token_urlsafe(32)
+    qr_token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
     qr_code = SubscriptionQrCode(
         subscription_id=subscription.id,
         qr_token=qr_token,

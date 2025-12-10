@@ -157,18 +157,19 @@ async def web_login(
             {"request": request, "error": "Invalid credentials"}
         )
     
-    # Create token
-    access_token_expires = timedelta(minutes=60 * 24 * 7) # 1 week for web
+    # Create token (use centralized setting so web and API behave consistently)
+    access_token_expires = timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24 * 7))
     access_token = create_access_token(
         data={"sub": user.id}, expires_delta=access_token_expires
     )
-    
+
     response = RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
+    # Use the same lifetime for the cookie (in seconds) as the token expiry
     response.set_cookie(
-        key="access_token", 
-        value=f"{access_token}", 
+        key="access_token",
+        value=f"{access_token}",
         httponly=True,
-        max_age=60 * 60 * 24 * 7
+        max_age=int(access_token_expires.total_seconds())
     )
     return response
 

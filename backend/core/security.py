@@ -10,6 +10,7 @@ if not hasattr(bcrypt, "__about__"):
 
 from jose import jwt
 from datetime import datetime, timedelta
+from typing import Optional
 from backend.core.config import settings
 import logging
 
@@ -65,8 +66,15 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         return False
 
 
-def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=60)) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    """Create a JWT access token.
+
+    If `expires_delta` is not provided, use the configured
+    `settings.ACCESS_TOKEN_EXPIRE_MINUTES` value.
+    """
     to_encode = data.copy()
+    if expires_delta is None:
+        expires_delta = timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60))
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)

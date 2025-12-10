@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from datetime import timedelta
+
+from backend.core.config import settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -64,7 +67,10 @@ async def login_access_token(
             status_code=400,
             detail="Incorrect email or password",
         )
-    access_token = create_access_token(data={"sub": user.id})
+    access_token = create_access_token(
+        data={"sub": user.id},
+        expires_delta=timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60)),
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 

@@ -29,15 +29,15 @@ def hash_password(password: str) -> str:
     else:
         b = str(password).encode("utf-8")
 
-    if len(b) > 71:
-        logger.warning("Password longer than 71 bytes; truncating for bcrypt compatibility.")
-        truncated = b[:71].decode("utf-8", "ignore")
-        # To avoid passlib trying to load/inspect the bcrypt backend (which
-        # can emit warnings or fail on certain bcrypt versions), skip calling
-        # the bcrypt context here and hash using pbkdf2_sha256 directly.
+    # Lower limit to 50 to be absolutely safe from bcrypt off-by-one or null-terminator issues
+    if len(b) > 50:
+        logger.info("Password length %d > 50; using pbkdf2_sha256 fallback to avoid bcrypt limits.", len(b))
+        # Use the original string (or decoded bytes) for pbkdf2, no need to truncate strictly to 72
+        # unless we want to enforce a limit. But pbkdf2 handles long passwords fine.
+        # We'll use the string form to be consistent.
         from passlib.context import CryptContext as _CryptContext
         fallback_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-        return fallback_ctx.hash(truncated)
+        return fallback_ctx.hash(str(password))
 
     # Safe to hash the original string form
     try:

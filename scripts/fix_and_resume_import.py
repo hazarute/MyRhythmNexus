@@ -24,7 +24,7 @@ def login(client: httpx.Client, backend: str, username: str, password: str) -> s
     return resp.json()["access_token"]
 
 
-def truncate_password(pw: str, max_bytes: int = 71) -> str:
+def truncate_password(pw: str, max_bytes: int = 50) -> str:
     if pw is None:
         return pw
     b = pw.encode("utf-8")

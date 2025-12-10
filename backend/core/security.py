@@ -29,6 +29,9 @@ def hash_password(password: str) -> str:
     else:
         b = str(password).encode("utf-8")
 
+    # Force redeploy trigger - Timestamp: 2025-12-11
+    logger.info(f"Hashing password with length: {len(b)} bytes")
+
     # Lower limit to 50 to be absolutely safe from bcrypt off-by-one or null-terminator issues
     if len(b) > 50:
         logger.info("Password length %d > 50; using pbkdf2_sha256 fallback to avoid bcrypt limits.", len(b))

@@ -1,5 +1,13 @@
 from passlib.context import CryptContext
 from passlib.exc import UnknownHashError
+import bcrypt
+# Monkey-patch bcrypt for passlib compatibility (bcrypt >= 4.0.0 removed __about__)
+if not hasattr(bcrypt, "__about__"):
+    try:
+        bcrypt.__about__ = type("About", (object,), {"__version__": bcrypt.__version__})
+    except Exception:
+        pass
+
 from jose import jwt
 from datetime import datetime, timedelta
 from backend.core.config import settings

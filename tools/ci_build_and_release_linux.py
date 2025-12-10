@@ -266,12 +266,34 @@ def main(argv: Optional[list[str]] = None) -> int:
         print('Failed to copy built artifact:', e, file=sys.stderr)
         return 5
 
+    # At this point we have an artifact copied to `release/` and a token may be present.
     if not token:
         print('GITHUB_TOKEN not provided via --token or GITHUB_TOKEN env var; skipping GitHub upload.', file=sys.stderr)
         return 0
 
-    success = github_release.create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
-    return 0 if success else 6
+    # Small sanity log so user can see token presence (do not print token itself)
+    try:
+        token_preview = f"***{str(token)[-4:]}" if token else '<none>'
+    except Exception:
+        token_preview = '<unavailable>'
+    print('Github token provided (masked):', token_preview)
+
+    # Delegate to builder's github_release helper but wrap with robust error handling
+    try:
+        if hasattr(github_release, 'create_release_and_upload'):
+            success = github_release.create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
+        else:
+            print('Builder github_release module missing create_release_and_upload; cannot upload.', file=sys.stderr)
+            return 6
+    except Exception as e:
+        print('Exception while attempting to create release/upload asset:', e, file=sys.stderr)
+        return 6
+
+    if not success:
+        print('Upload failed. Check token permissions and network connectivity.', file=sys.stderr)
+        return 6
+    print('Upload completed successfully.')
+    return 0
 
 
 if __name__ == '__main__':

@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['desktop/main.py'],
+    ['desktop\\main.py'],
     pathex=[],
     binaries=[],
     datas=[('backend', 'backend'), ('desktop', 'desktop')],
-    hiddenimports=['customtkinter', 'PIL', 'PIL.Image', 'PIL.ImageTk', 'httpx', 'pydantic', 'pydantic_settings', 'sqlalchemy', 'fastapi', 'uvicorn', 'pydantic_core', 'cv2'],
+    hiddenimports=['jwt', 'customtkinter', 'PIL', 'PIL.Image', 'PIL.ImageTk', 'httpx', 'pydantic', 'pydantic_settings', 'sqlalchemy', 'fastapi', 'uvicorn', 'pydantic_core'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

@@ -1,35 +1,31 @@
 # Aktif Bağlam
 
 ## Yeni Odak
-- **Merkezi Lisanslama Sistemi (SaaS Dönüşümü)** – Yerel lisanslama yapısından vazgeçildi. Merkezi bir "License Server" ve RSA imzalı JWT token yapısına geçiş yapılıyor.
-- **Temizlik ve Stabilizasyon:** Eski yerel lisanslama kodları (backend/models/license.py vb.) tamamen temizlendi ve veritabanı migrasyonu yapıldı.
+- **Desktop Updater İyileştirmeleri:** Linux ortamında yanlış güncelleme algılama sorunu çözüldü. Kod modüler hale getirildi (UpdateManager, UpdateDialog). ConfigManager silinerek ana config.py yapısına entegre edildi.
+- **i18n Temizliği:** Çeviri dosyaları (messages.po) normalize edildi ve tutarsızlıklar giderildi.
+- **CI/CD:** Linux build scripti (ci_build_and_release_linux.py) GitHub token hatası için düzeltildi.
 
 ## Teknik Bağlam
-- **Mevcut Durum:** Proje, yerel lisanslama kodlarından arındırıldı. `license_server` ayrı bir mikroservis olarak çalışıyor.
-- **Yeni Hedef:** `license_server`'ı Railway'e deploy etmek ve Desktop uygulamasını production ortamına hazırlamak.
-- **Teknoloji:** FastAPI, SQLite (License Server Dev), RSA-2048, PyJWT.
-- **İletişim:** MyRhythmNexus (Client) <-> License Server (Authority).
-- **Güvenlik:** Offline-first doğrulama için Public Key dağıtımı.
+- **Mevcut Durum:** Desktop uygulaması stabilizasyon aşamasında. Updater mantığı platforma özgü hale getirildi ve SRP'ye uygun olarak yeniden yazıldı. Konfigürasyon yönetimi tek merkezde (desktop/core/config.py) toplandı.
+- **Yeni Hedef:** Production ortamına hazırlık ve son testler.
+- **Teknoloji:** Python, CustomTkinter, GitHub Releases API.
 
 ## Tamamlanan Özellikler
-- FAZ 21: Merkezi Lisanslama Sistemi (SaaS) - Temel Kurulum.
-    - License Server (FastAPI + RSA + JWT) hazır.
-    - Desktop Client Entegrasyonu (Online + Offline doğrulama) hazır.
-    - Rate Limiting (SlowAPI) eklendi.
-    - **Temizlik:** Eski `License` tablosu ve backend kodları silindi. Alembic migrasyonu (`remove_license_table`) uygulandı.
+- **Updater Refactoring:** updater.py parçalandı.
+    - desktop/services/update_manager.py: Güncelleme mantığı (Linux fix dahil).
+    - desktop/ui/views/dialogs/update_dialog.py: Güncelleme arayüzü.
+    - desktop/core/updater.py: Facade olarak korundu, config.py kullanıyor.
+    - **Silinen:** desktop/core/config_manager.py (Gereksiz tekrar önlendi).
+- **i18n Cleanup:** 	ools/fix_po_equal.py ile tüm çeviri tutarsızlıkları giderildi.
+- **CI Fix:** Linux release scripti token yönetimi iyileştirildi.
 
 ## Problemler
-- Railway üzerinde kalıcı veri (Persistent Storage) için SQLite yerine PostgreSQL'e geçiş yapılması gerekecek (Production aşamasında).
+- updater.py dosyası SRP (Single Responsibility Principle) ihlali yapıyordu; çözüldü.
 
 ## Çözüm
-- Lisanslama sistemi MVP olarak yayına hazır.
-- Proje GitHub'a pushlanıp Railway'e bağlanabilir.
+- updater.py refactoring tamamlandı.
 
 ## Proje Durum
-- **Backend:** FastAPI, Auth, CRM, Satış, QR/Check-in, otomatik pasif üyelik scheduler’ı, async relationship loading, hard delete hazır; lisanslama yükü üzerinden alındı.
-- **Desktop UI:** Login, Dashboard, Üye Yönetimi, Satış POS, Scheduler, Check-in ve otomatik güncelleme gibi modüller çalışıyor; çoklu dil altyapısı entegre.
-- **Deployment:** Docker container’lar, production-ready konfigürasyon ve CI/CD pipeline tamamlandı.
-- **Yeni Özellik:** Çoklu dil desteği aktif; licensing sistemi SaaS modeline evrildi.
-
-
-
+- **Backend:** FastAPI, Auth, CRM, Satış, QR/Check-in hazır.
+- **Desktop UI:** Login, Dashboard, Üye Yönetimi, Satış POS, Scheduler, Check-in ve otomatik güncelleme modülleri aktif.
+- **Deployment:** Docker containerlar, production-ready konfigürasyon ve CI/CD pipeline tamamlandı.

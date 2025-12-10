@@ -29,9 +29,9 @@ def hash_password(password: str) -> str:
     else:
         b = str(password).encode("utf-8")
 
-    if len(b) > 72:
-        logger.warning("Password longer than 72 bytes; truncating for bcrypt compatibility.")
-        truncated = b[:72].decode("utf-8", "ignore")
+    if len(b) > 71:
+        logger.warning("Password longer than 71 bytes; truncating for bcrypt compatibility.")
+        truncated = b[:71].decode("utf-8", "ignore")
         # To avoid passlib trying to load/inspect the bcrypt backend (which
         # can emit warnings or fail on certain bcrypt versions), skip calling
         # the bcrypt context here and hash using pbkdf2_sha256 directly.

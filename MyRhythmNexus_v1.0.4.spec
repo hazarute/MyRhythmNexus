@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['desktop\\main.py'],
+    ['desktop/main.py'],
     pathex=[],
     binaries=[],
     datas=[('backend', 'backend'), ('desktop', 'desktop')],
-    hiddenimports=['jwt', 'customtkinter', 'PIL', 'PIL.Image', 'PIL.ImageTk', 'httpx', 'pydantic', 'pydantic_settings', 'sqlalchemy', 'fastapi', 'uvicorn', 'pydantic_core'],
+    hiddenimports=['customtkinter', 'PIL', 'PIL.Image', 'PIL.ImageTk', 'httpx', 'pydantic', 'pydantic_settings', 'sqlalchemy', 'fastapi', 'uvicorn', 'pydantic_core', 'cv2'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='MyRhythmNexus_v1.0.3',
+    name='MyRhythmNexus_v1.0.4',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

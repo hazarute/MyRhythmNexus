@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
+from desktop.core.ui_utils import safe_grab
 
 
 class AddOfferingDialog(ctk.CTkToplevel):
@@ -17,7 +18,7 @@ class AddOfferingDialog(ctk.CTkToplevel):
         
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)

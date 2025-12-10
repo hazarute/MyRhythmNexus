@@ -376,6 +376,43 @@ def main(argv: Optional[list[str]] = None) -> int:
         if not ok:
             return 3
 
+    # When building for Linux (Docker builder) ensure any text artifacts in
+    # `dist/` use LF line endings. A common cross-platform issue is that
+    # Windows machines produce files with CRLF which break shebang lines on
+    # Linux ("bad interpreter: No such file or directory"). Convert CRLF -> LF
+    # for non-binary files in dist/ to avoid requiring `dos2unix` on the target.
+    try:
+        if getattr(args, 'docker', False):
+            d = Path('dist')
+            if d.exists():
+                def _is_binary(p: Path, blocksize: int = 1024) -> bool:
+                    try:
+                        with p.open('rb') as fh:
+                            chunk = fh.read(blocksize)
+                        return b'\x00' in chunk
+                    except Exception:
+                        return True
+
+                def _normalize_crlf(p: Path) -> None:
+                    try:
+                        data = p.read_bytes()
+                        # quick check: only touch files that contain CRLF and
+                        # are not binary
+                        if b'\r\n' in data and b'\x00' not in data:
+                            data = data.replace(b'\r\n', b'\n')
+                            p.write_bytes(data)
+                            print('Normalized line endings to LF for', p)
+                    except Exception as e:
+                        print('Warning: failed to normalize', p, e)
+
+                for f in d.iterdir():
+                    if f.is_file():
+                        if not _is_binary(f):
+                            _normalize_crlf(f)
+    except Exception:
+        # Best-effort: if normalization fails do not abort the build flow.
+        pass
+
     # find exe
     exe = find_built_exe(version, prefer_linux=getattr(args, 'docker', False))
     if not exe:

@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.locale import _
+from desktop.core.ui_utils import safe_grab
 from tkinter import messagebox
 from typing import Callable, Optional
 
@@ -17,7 +18,7 @@ class DebtMembersDialog(ctk.CTkToplevel):
         self.geometry("640x640")
         self.resizable(False, False)
         self.attributes("-topmost", True)
-        self.grab_set()
+        safe_grab(self)
 
         container = ctk.CTkFrame(self, corner_radius=18)
         container.pack(fill="both", expand=True, padx=16, pady=16)

@@ -3,6 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 import re
+from desktop.core.ui_utils import safe_grab
 
 
 class UpdateMemberDialog(ctk.CTkToplevel):
@@ -19,7 +20,7 @@ class UpdateMemberDialog(ctk.CTkToplevel):
         
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)

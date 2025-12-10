@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
+from desktop.core.ui_utils import safe_grab
 
 
 class AddMeasurementDialog(ctk.CTkToplevel):
@@ -18,7 +19,7 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Measurement Types and Entries
         self.measurement_entries = {}

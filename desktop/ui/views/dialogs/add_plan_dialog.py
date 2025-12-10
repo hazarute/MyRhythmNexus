@@ -4,6 +4,7 @@ from tkinter import messagebox
 from typing import Callable, Optional
 
 from desktop.core.api_client import ApiClient
+from desktop.core.ui_utils import safe_grab
 
 
 class AddPlanDialog(ctk.CTkToplevel):
@@ -19,7 +20,7 @@ class AddPlanDialog(ctk.CTkToplevel):
         
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)

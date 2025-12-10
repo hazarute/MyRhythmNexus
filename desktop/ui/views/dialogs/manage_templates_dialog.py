@@ -3,6 +3,7 @@ from desktop.core.locale import _
 import httpx
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
+from desktop.core.ui_utils import safe_grab
 
 
 class ManageTemplatesDialog(ctk.CTkToplevel):
@@ -17,7 +18,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         self.geometry("600x550")
 
         self.transient(parent)
-        self.grab_set()
+        safe_grab(self)
         self.lift()
         self.focus_force()
 
@@ -163,7 +164,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         edit_dialog.title(_("Şablonu Düzenle"))
         edit_dialog.geometry("400x180")
         edit_dialog.transient(self)
-        edit_dialog.grab_set()
+        safe_grab(edit_dialog)
 
         ctk.CTkLabel(edit_dialog, text=_("Yeni Ad"), font=("Roboto", 14), padx=10, pady=10).pack(anchor="w")
 

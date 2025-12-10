@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from desktop.core.api_client import ApiClient
 from desktop.core.locale import _
+from desktop.core.ui_utils import safe_grab
 
 # Ensure only one check-in dialog is active at a time
 _active_checkin_dialog = None
@@ -47,7 +48,7 @@ class CheckInDialog(ctk.CTkToplevel):
         # Make dialog modal: keep on top and prevent interaction with parent
         try:
             self.transient(parent)
-            self.grab_set()
+            safe_grab(self)
         except Exception:
             pass
         try:

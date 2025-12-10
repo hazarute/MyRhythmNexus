@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.locale import _
+from desktop.core.ui_utils import safe_grab
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 
@@ -223,7 +224,7 @@ class MeasurementsTab:
         
         dialog.lift()
         dialog.focus_force()
-        dialog.grab_set()
+        safe_grab(dialog)
         
         main_frame = ctk.CTkFrame(dialog, corner_radius=15, fg_color="#2B2B2B")
         main_frame.pack(fill="both", expand=True, padx=20, pady=20)

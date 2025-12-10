@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from datetime import datetime
 from typing import Any, Callable, Optional
+from desktop.core.ui_utils import safe_grab
 
 
 class PaymentDetailDialog(ctk.CTkToplevel):
@@ -17,7 +18,7 @@ class PaymentDetailDialog(ctk.CTkToplevel):
 
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         self.protocol("WM_DELETE_WINDOW", self._close)
 
         self._build_ui()

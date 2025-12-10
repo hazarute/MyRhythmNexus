@@ -3,6 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from datetime import datetime
 from desktop.ui.views.checkin_dialog import CheckInDialog
+from desktop.core.ui_utils import safe_grab
 
 
 class PackageDetailDialog(ctk.CTkToplevel):
@@ -18,7 +19,7 @@ class PackageDetailDialog(ctk.CTkToplevel):
         self.geometry("600x700")
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         main_frame = ctk.CTkFrame(self, corner_radius=15)
@@ -264,7 +265,7 @@ class PackageDetailDialog(ctk.CTkToplevel):
         error_window = ctk.CTkToplevel(self)
         error_window.title(_("Hata"))
         error_window.geometry("350x200")
-        error_window.grab_set()
+        safe_grab(error_window)
         
         ctk.CTkLabel(error_window, text=_("❌ Hata\n\n{message}").format(message=message), 
                     font=("Roboto", 14),
@@ -280,7 +281,7 @@ class PackageDetailDialog(ctk.CTkToplevel):
         success_window = ctk.CTkToplevel(self)
         success_window.title(title)
         success_window.geometry("350x200")
-        success_window.grab_set()
+        safe_grab(success_window)
         
         ctk.CTkLabel(success_window, text=f"{title}\n\n{message}", 
                     font=("Roboto", 14),

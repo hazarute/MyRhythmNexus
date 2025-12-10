@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
+from desktop.core.ui_utils import safe_grab
 
 
 class UpdatePasswordDialog(ctk.CTkToplevel):
@@ -17,7 +18,7 @@ class UpdatePasswordDialog(ctk.CTkToplevel):
         
         self.lift()
         self.focus_force()
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         main_frame = ctk.CTkFrame(self, corner_radius=15)

@@ -12,6 +12,7 @@ from typing import Optional, Dict, Any
 import customtkinter as ctk
 from tkinter import messagebox
 from desktop.core.config import DesktopConfig
+from desktop.core.ui_utils import safe_grab
 
 class AutoUpdater:
     """Automatic updater for MyRhythmNexus Desktop application"""
@@ -381,7 +382,7 @@ class AutoUpdater:
 
         # Center the dialog
         dialog.transient()
-        dialog.grab_set()
+        safe_grab(dialog)
 
         # Title
         title_label = ctk.CTkLabel(

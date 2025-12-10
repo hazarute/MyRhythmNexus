@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.locale import _
+from desktop.core.ui_utils import safe_grab
 from datetime import datetime, date
 import calendar
 
@@ -29,7 +30,8 @@ class DatePickerDialog(ctk.CTkToplevel):
         
         # Center on parent
         self.transient(parent)
-        self.grab_set()
+        # Use centralized safe_grab helper to avoid "grab failed: window not viewable".
+        safe_grab(self)
         
         # Initialize date
         if initial_date is None:

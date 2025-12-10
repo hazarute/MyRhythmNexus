@@ -3,6 +3,7 @@ import httpx
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
+from desktop.core.ui_utils import safe_grab
 
 
 class AddPackageDialog(ctk.CTkToplevel):
@@ -18,7 +19,7 @@ class AddPackageDialog(ctk.CTkToplevel):
         self.geometry("480x520")
 
         self.transient(parent)
-        self.grab_set()
+        safe_grab(self)
         self.lift()
         self.focus_force()
 

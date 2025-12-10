@@ -3,6 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 from datetime import datetime
+from desktop.core.ui_utils import safe_grab
 
 
 class DebtPaymentDialog(ctk.CTkToplevel):
@@ -17,12 +18,28 @@ class DebtPaymentDialog(ctk.CTkToplevel):
         self.on_success = on_success
         self.packages_with_debt = []
         
+        # Ensure this toplevel is transient to its parent so the window
+        # manager treats it as a dialog for stacking/focus purposes.
+        try:
+            self.transient(parent)
+        except Exception:
+            # Some widget types or tests may not support transient; ignore safely
+            pass
+
         self.title(_("Borç Ödeme"))
         self.geometry("700x700")
+        # Try to ensure the dialog is raised and receives focus
         self.lift()
-        self.focus_force()
+        try:
+            self.focus_set()
+        except Exception:
+            pass
+        try:
+            self.focus_force()
+        except Exception:
+            pass
         self.attributes("-topmost", True)
-        self.grab_set()
+        safe_grab(self)
         
         # Main Container
         main_frame = ctk.CTkFrame(self, corner_radius=15)

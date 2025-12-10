@@ -7,7 +7,7 @@
 *   **ORM:** SQLAlchemy 2.0+ (Async)
 *   **Şema Yönetimi:** Prisma (Schema definition only), Alembic (Migrations)
 *   **GUI Framework:** CustomTkinter (Python)
-*   **Frontend (Lite Web):** Jinja2 Templates + HTMX
+*   **Frontend (Lite Web):** Jinja2 Templates + HTMX + Tailwind CSS + DaisyUI
 *   **Auth:** OAuth2 / JWT
 *   **Background Jobs:** APScheduler (Otomatik görevler için)
 *   **Timezone Management:** zoneinfo (Python 3.9+, Türkiye saati desteği)

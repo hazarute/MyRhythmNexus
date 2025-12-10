@@ -6,6 +6,7 @@ from tkinter import messagebox
 from desktop.core.api_client import ApiClient
 from desktop.ui.components.date_picker import DatePickerDialog
 from desktop.ui.components.time_spinner import TimeSpinner
+from desktop.core.ui_utils import safe_grab
 
 
 class AddEventDialog(ctk.CTkToplevel):
@@ -20,7 +21,7 @@ class AddEventDialog(ctk.CTkToplevel):
         self.geometry("480x620")
 
         self.transient(parent)
-        self.grab_set()
+        safe_grab(self)
         self.lift()
         self.focus_force()
 

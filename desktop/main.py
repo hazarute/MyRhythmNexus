@@ -20,9 +20,9 @@ class App(ctk.CTk):
         initialize_locale(language)
 
         self.title(_("MyRhythmNexus - Admin Panel"))
-        self.geometry("1000x700")
+        # Start the app at the minimum allowed size instead of fullscreen
+        self.geometry("1280x720")
         self.minsize(1280, 720)  # Minimum window size
-        self.after(0, lambda: self.state('zoomed'))
         
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")

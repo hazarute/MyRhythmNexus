@@ -4,6 +4,7 @@ from desktop.core.locale import _
 from desktop.ui.views import DashboardView, MembersView, StaffView, SalesView, DefinitionsView, SchedulerView, FinanceView
 from desktop.services.qr_reader import QrReaderService
 from desktop.ui.views.checkin_dialog import CheckInDialog
+from desktop.core.ui_utils import safe_grab
 
 class MainWindow(ctk.CTkFrame):
     def __init__(self, master, api_client: ApiClient, on_logout: callable):
@@ -111,7 +112,7 @@ class MainWindow(ctk.CTkFrame):
         dialog.resizable(False, False)
         
         # Center and grab
-        dialog.grab_set()
+        safe_grab(dialog)
         
         # Title
         title = ctk.CTkLabel(dialog, text=_("Dil Seçimi / Language Selection"), 
@@ -181,4 +182,4 @@ class MainWindow(ctk.CTkFrame):
 
         # Create and show dialog
         dialog = LicenseInfoDialog(self.master, self.api_client)
-        dialog.grab_set()
+        safe_grab(dialog)

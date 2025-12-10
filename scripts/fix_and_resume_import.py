@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Detect created users, truncate passwords to 72 bytes and (dry-run) show actions.
+"""Detect created users, send passwords as-is (no truncation), and (dry-run) show actions.
 Also creates missing users if requested.
+
+Backend now uses pbkdf2_sha256 for all passwords, so no 72-byte limit.
 
 Usage:
   python scripts/fix_and_resume_import.py --in oldCustomerData/customers_cleaned.json --dry-run
@@ -24,15 +26,9 @@ def login(client: httpx.Client, backend: str, username: str, password: str) -> s
     return resp.json()["access_token"]
 
 
-def truncate_password(pw: str, max_bytes: int = 50) -> str:
-    if pw is None:
-        return pw
-    b = pw.encode("utf-8")
-    if len(b) <= max_bytes:
-        return pw
-    bt = b[:max_bytes]
-    # decode safely, dropping partial char if any
-    return bt.decode("utf-8", errors="ignore")
+def truncate_password(pw: str, max_bytes: int = 999999) -> str:
+    """Pass through: no truncation needed since backend uses pbkdf2_sha256."""
+    return pw if pw else pw
 
 
 def format_phone_for_search(phone: Optional[str]) -> Optional[str]:

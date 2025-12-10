@@ -21,35 +21,21 @@ ALGORITHM = "HS256"
 
 
 def hash_password(password: str) -> str:
-    # bcrypt has a 72-byte input limit. If a password (utf-8) is longer,
-    # truncate to 72 bytes to avoid ValueError from the bcrypt backend.
-    # Ensure we have bytes to measure length reliably
+    """Hash a password using pbkdf2_sha256 (ignore bcrypt complexity).
+    
+    bcrypt theoretically supports up to 72 bytes, but due to version issues
+    we bypass it entirely and use pbkdf2_sha256 which handles any length.
+    """
     if isinstance(password, bytes):
-        b = password
+        pwd_str = password.decode("utf-8", "ignore")
     else:
-        b = str(password).encode("utf-8")
+        pwd_str = str(password)
 
-    # Force redeploy trigger - Timestamp: 2025-12-11
-    logger.info(f"Hashing password with length: {len(b)} bytes")
-
-    # Lower limit to 50 to be absolutely safe from bcrypt off-by-one or null-terminator issues
-    if len(b) > 50:
-        logger.info("Password length %d > 50; using pbkdf2_sha256 fallback to avoid bcrypt limits.", len(b))
-        # Use the original string (or decoded bytes) for pbkdf2, no need to truncate strictly to 72
-        # unless we want to enforce a limit. But pbkdf2 handles long passwords fine.
-        # We'll use the string form to be consistent.
-        from passlib.context import CryptContext as _CryptContext
-        fallback_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-        return fallback_ctx.hash(str(password))
-
-    # Safe to hash the original string form
-    try:
-        return pwd_context.hash(str(password))
-    except Exception as e:
-        logger.warning("bcrypt hashing failed: %s. Falling back to pbkdf2_sha256.", e)
-        from passlib.context import CryptContext as _CryptContext
-        fallback_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-        return fallback_ctx.hash(str(password))
+    # Use pbkdf2_sha256 directly to avoid bcrypt complexity altogether
+    from passlib.context import CryptContext as _CryptContext
+    pbkdf2_ctx = _CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+    logger.info(f"Hashing password with pbkdf2_sha256 (length: {len(pwd_str)} chars, {len(pwd_str.encode('utf-8'))} bytes)")
+    return pbkdf2_ctx.hash(pwd_str)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

@@ -5,6 +5,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+import logging
+
+logger = logging.getLogger(__name__)
 
 from backend.core.database import get_db
 from backend.models.user import User

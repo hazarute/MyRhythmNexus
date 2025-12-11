@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError, OperationalError
 from backend.core.database import SessionLocal
 from backend.core.config import settings
 from backend.core.security import hash_password
@@ -15,8 +15,10 @@ async def init_db():
         # If DB tables are missing, run alembic migrations automatically
         try:
             result = await db.execute(select(Role).where(Role.role_name == "ADMIN"))
-        except ProgrammingError:
-            alembic_cfg = Config(os.path.join(os.getcwd(), "alembic.ini"))
+        except (ProgrammingError, OperationalError):
+            # Find alembic config in the project root
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            alembic_cfg = Config(os.path.join(project_root, "alembic.ini"))
             await asyncio.to_thread(command.upgrade, alembic_cfg, "head")
             # re-run the query after migrations
             result = await db.execute(select(Role).where(Role.role_name == "ADMIN"))

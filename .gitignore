@@ -1,4 +1,5 @@
 # Ignore local env files
+.env
 license_server/.env
 
 # Python
@@ -13,6 +14,11 @@ dist/*.exe
 release/
 release/*.exe
 build/
+
+# Database files (local development only)
+*.db
+dev.db
+license_server.db
 
 # Do NOT commit private keys
 license_server/private.pem

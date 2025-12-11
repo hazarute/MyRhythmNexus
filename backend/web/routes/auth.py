@@ -58,7 +58,7 @@ async def web_login(
     else:
         phone_lookup = clean
 
-    logger.info("Web login attempt: raw=%s lookup=%s", phone_number, phone_lookup)
+    logger.info("Web login attempt: raw=%s clean=%s lookup=%s", phone_number, clean, phone_lookup)
 
     # Try exact match with normalized form first
     result = await db.execute(select(User).where(User.phone_number == phone_lookup))
@@ -84,21 +84,34 @@ async def web_login(
             {"request": request, "error": "Invalid credentials"}
         )
     
+    logger.info(f"DEBUG: Login successful for user: {user.email}")
     # Create token (use centralized setting so web and API behave consistently)
     access_token_expires = timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24 * 7))
     access_token = create_access_token(
         data={"sub": user.id}, expires_delta=access_token_expires
     )
 
-    response = RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
-    # Use the same lifetime for the cookie (in seconds) as the token expiry
-    response.set_cookie(
-        key="access_token",
-        value=f"{access_token}",
-        httponly=True,
-        max_age=int(access_token_expires.total_seconds())
-    )
-    return response
+    # For HTMX requests, return HTML with HX-Redirect header
+    if request.headers.get("HX-Request"):
+        response = HTMLResponse(content="", status_code=status.HTTP_200_OK)
+        response.headers["HX-Redirect"] = "/web"
+        response.set_cookie(
+            key="access_token",
+            value=f"{access_token}",
+            httponly=True,
+            max_age=int(access_token_expires.total_seconds())
+        )
+        return response
+    else:
+        # For regular requests, use redirect
+        response = RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
+        response.set_cookie(
+            key="access_token",
+            value=f"{access_token}",
+            httponly=True,
+            max_age=int(access_token_expires.total_seconds())
+        )
+        return response
 
 @router.get("/logout")
 async def web_logout():

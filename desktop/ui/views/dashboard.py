@@ -13,6 +13,7 @@ class DashboardView(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1) # Content area expands
+        self.grid_rowconfigure(3, weight=1) # New row for pending approvals
 
         # --- Header Section ---
         self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -56,9 +57,17 @@ class DashboardView(ctk.CTkFrame):
         self.schedule_list = ctk.CTkScrollableFrame(self.schedule_frame, fg_color="transparent")
         self.schedule_list.pack(fill="both", expand=True, padx=5, pady=5)
 
+        # Left: Pending Member Approvals
+        self.pending_frame = ctk.CTkFrame(self)
+        self.pending_frame.grid(row=3, column=0, sticky="nsew", padx=(20, 10), pady=20)
+        
+        ctk.CTkLabel(self.pending_frame, text=_("Yeni Üye Onayları"), font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
+        self.pending_list = ctk.CTkScrollableFrame(self.pending_frame, fg_color="transparent")
+        self.pending_list.pack(fill="both", expand=True, padx=5, pady=5)
+
         # Right: Activity Feed
         self.activity_frame = ctk.CTkFrame(self)
-        self.activity_frame.grid(row=2, column=1, sticky="nsew", padx=(10, 20), pady=20)
+        self.activity_frame.grid(row=2, column=1, rowspan=2, sticky="nsew", padx=(10, 20), pady=20)
         
         ctk.CTkLabel(self.activity_frame, text=_("Son Hareketler"), font=("Roboto", 16, "bold")).pack(pady=10, padx=10, anchor="w")
         self.activity_list = ctk.CTkScrollableFrame(self.activity_frame, fg_color=("gray90", "gray20"))
@@ -136,6 +145,21 @@ class DashboardView(ctk.CTkFrame):
             else:
                 for item in schedule:
                     self.create_schedule_item(item)
+
+            # Update Pending Approvals List
+            for widget in self.pending_list.winfo_children():
+                widget.destroy()
+
+            try:
+                pending_members = self.api_client.get("/api/v1/members/pending")
+                if not pending_members:
+                    ctk.CTkLabel(self.pending_list, text=_("Onay bekleyen üye yok."), text_color="gray").pack(pady=10)
+                else:
+                    for member in pending_members:
+                        self.create_pending_member_card(member)
+            except Exception as e:
+                print(f"Error loading pending members: {e}")
+                ctk.CTkLabel(self.pending_list, text=_("Onay listesi yüklenemedi."), text_color="red").pack(pady=10)
 
             # Update Activity Feed (Only Check-ins)
             for widget in self.activity_list.winfo_children():
@@ -256,3 +280,90 @@ class DashboardView(ctk.CTkFrame):
         else:
             time_display = ""
         ctk.CTkLabel(time_frame, text=time_display, font=("Roboto", 11, "bold"), text_color="#8F8F8F", justify="right").pack()
+
+    def create_pending_member_card(self, member):
+        """Create a pending member approval card"""
+        card = ctk.CTkFrame(self.pending_list, corner_radius=12, 
+                           fg_color=("#F5F5F5", "#2B2B2B"), 
+                           border_width=2,
+                           border_color=("#DDDDDD", "#3A3A3A"))
+        card.pack(fill="x", pady=8, padx=5)
+        
+        # Left section - Member info
+        left_frame = ctk.CTkFrame(card, fg_color="transparent")
+        left_frame.pack(side="left", fill="both", expand=True, padx=20, pady=15)
+        
+        # Name and status
+        name_row = ctk.CTkFrame(left_frame, fg_color="transparent")
+        name_row.pack(anchor="w")
+        
+        name = f"{member.get('first_name')} {member.get('last_name')}"
+        lbl_name = ctk.CTkLabel(name_row, text=f"👤 {name}", 
+                               font=("Roboto", 18, "bold"), 
+                               anchor="w")
+        lbl_name.pack(side="left", padx=(0, 15))
+        
+        # Status badge (pending)
+        status_text = _("⏳ Onay Bekliyor")
+        status_color = ("#F39C12", "#F39C12")  # Orange
+        
+        lbl_status = ctk.CTkLabel(name_row, text=status_text,
+                                 font=("Roboto", 12, "bold"),
+                                 text_color=status_color)
+        lbl_status.pack(side="left")
+        
+        # Contact info
+        info_frame = ctk.CTkFrame(left_frame, fg_color="transparent")
+        info_frame.pack(anchor="w", pady=(6, 0))
+        
+        email = member.get('email')
+        lbl_email = ctk.CTkLabel(info_frame, text=f"📧 {email}", 
+                                font=("Roboto", 13),
+                                text_color=("#555555", "#AAAAAA"),
+                                anchor="w")
+        lbl_email.pack(side="left", padx=(0, 20))
+        
+        phone = member.get('phone_number') or "-"
+        lbl_phone = ctk.CTkLabel(info_frame, text=f"📞 {phone}", 
+                                font=("Roboto", 13),
+                                text_color=("#555555", "#AAAAAA"),
+                                anchor="w")
+        lbl_phone.pack(side="left")
+        
+        # Right section - Action buttons
+        right_frame = ctk.CTkFrame(card, fg_color="transparent")
+        right_frame.pack(side="right", padx=20, pady=15)
+        
+        # Approve button
+        btn_approve = ctk.CTkButton(right_frame, text=_("✅ Onayla"), 
+                                  width=100, height=40,
+                                  fg_color="#2CC985", 
+                                  hover_color="#229966",
+                                  font=("Roboto", 14, "bold"),
+                                  command=lambda m=member: self.approve_member(m))
+        btn_approve.pack(side="left", padx=(0, 5))
+        
+        # Reject button
+        btn_reject = ctk.CTkButton(right_frame, text=_("❌ Reddet"), 
+                                  width=100, height=40,
+                                  fg_color="#E04F5F", 
+                                  hover_color="#C0392B",
+                                  font=("Roboto", 14, "bold"),
+                                  command=lambda m=member: self.reject_member(m))
+        btn_reject.pack(side="left")
+
+    def approve_member(self, member):
+        """Approve pending member"""
+        try:
+            self.api_client.put(f"/api/v1/members/{member['id']}", json={"is_active": True})
+            self.load_data()  # Refresh the dashboard
+        except Exception as e:
+            print(f"Error approving member: {e}")
+
+    def reject_member(self, member):
+        """Reject pending member"""
+        try:
+            self.api_client.delete(f"/api/v1/members/{member['id']}")
+            self.load_data()  # Refresh the dashboard
+        except Exception as e:
+            print(f"Error rejecting member: {e}")

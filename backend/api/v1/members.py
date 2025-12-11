@@ -3,14 +3,36 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
+from datetime import datetime, timedelta
 from backend.core.time_utils import get_turkey_time
 
-from backend.api.deps import get_db
+from backend.api.deps import get_db, get_current_active_admin
 from backend.core.security import hash_password
 from backend.models.user import User, Role
 from backend.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
+
+@router.get("/pending", response_model=List[UserRead])
+async def list_pending_members(
+    db: AsyncSession = Depends(get_db),
+    current_admin: User = Depends(get_current_active_admin)
+):
+    """List pending member approvals (inactive users created within last 18 hours)"""
+    # Calculate 18 hours ago using Turkey time
+    turkey_now = get_turkey_time()
+    eighteen_hours_ago = turkey_now - timedelta(hours=18)
+    
+    query = (
+        select(User)
+        .where(User.is_active == False, User.created_at >= eighteen_hours_ago)
+        .order_by(User.created_at.desc())
+        .options(selectinload(User.roles))  # Add this back for proper serialization
+    )
+    
+    result = await db.execute(query)
+    users = result.scalars().all()
+    return users
 
 @router.get("/", response_model=List[UserRead])
 async def list_members(

@@ -72,9 +72,22 @@ MyRhythmNexus/
 │   │   │   ├── members.py
 │   │   │   └── operations.py
 │   └── web/               # "Lite Web" arayüzü için
-│       ├── router.py      # Web sayfası rotaları
-│       ├── templates/     # Jinja2 HTML dosyaları
-│       └── static/        # CSS/JS/Images
+│   │   ├── static/              # CSS, JS, Resimler
+│   │   │   ├── css/
+│   │   │   │   └── style.css (Tailwind build buraya gelebilir)
+│   │   │   └── img/
+│   │   ├── templates/           # HTML Dosyaları (Jinja2)
+│   │   │   ├── base.html        # Ana iskelet (header/footer)
+│   │   │   ├── login.html
+│   │   │   ├── card_detail.html # Kart detay sayfası
+│   │   │   ├── register.html    # YENİ
+│   │   │   ├── my_cards.html
+│   │   │   └── ...
+│   │   ├── routes/              # Python Rotaları (UYGULANDI)
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py          # Login, Logout, Register işlemleri
+│   │   │   └── dashboard.py     # Kartlarım, Profil görüntüleme
+│   │   └── router.py            # Alt rotaları toplayan dosya
 │
 └── desktop/               # --- PROJE 1: MASAÜSTÜ ADMIN PANELİ ---
     ├── main.py            # Uygulama başlatıcı

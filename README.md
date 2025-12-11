@@ -331,6 +331,9 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
+# Reset local database (WARNING: deletes all data!)
+python scripts\reset_db.py
+
 # Run tests
 pytest
 

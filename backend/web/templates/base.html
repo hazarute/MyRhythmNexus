@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MyRhythmNexus{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" type="text/css" />
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@latest"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#a855f7',
+                        accent: '#1f3c92',
+                    },
+                    boxShadow: {
+                        focus: '0 20px 50px rgba(163,87,255,0.35)',
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glass {
+            backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* HTMX loading indicator */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
+
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-[#05030d] text-white min-h-screen">
+    {% block content %}{% endblock %}
+
+    <!-- Toast Container -->
+    <div class="toast toast-top toast-end z-50" id="toast-container"></div>
+
+    {% block scripts %}
+    <script>
+        // HTMX Boost for all links
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hx-boost to all internal links
+            document.querySelectorAll('a[href^="/web"]').forEach(link => {
+                link.setAttribute('hx-boost', 'true');
+            });
+        });
+
+        // HTMX events for feedback
+        document.addEventListener('htmx:afterRequest', function(evt) {
+            const xhr = evt.detail.xhr;
+            if (xhr.status >= 400) {
+                showToast('Hata oluştu. Lütfen tekrar deneyin.', 'error');
+            }
+        });
+
+        // Toast function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `alert ${type === 'error' ? 'alert-error' : 'alert-success'}`;
+            toast.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'error' ? 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'}"></path>
+                </svg>
+                <span>${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+    </script>
+    {% endblock %}
+</body>
+</html></content>
+<parameter name="filePath">e:\NewWork\MyRhythmNexus\backend\web\templates\base.html

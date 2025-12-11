@@ -1,78 +1,48 @@
 # İlerleme Durumu
 
-## Tamamlanan Görevler
-- **Faz 2-3: Backend & QR Sistemi** - Temel backend altyapısı kuruldu: Pydantic şemaları, güvenlik, FastAPI entegrasyonu, üye/hizmet/satış/operasyon API'leri, QR kod üretimi ve check-in sistemi geliştirildi.
-- **Faz 4: Masaüstü Admin Paneli** - Masaüstü uygulaması geliştirildi: API client, login, dashboard, personel/üye yönetimi, satış POS, finansal geçmiş, ders scheduler ve QR giriş kontrolü.
-- **Faz 8: TIME_BASED Katılım Takibi** - TIME_BASED abonelik sistemi eklendi: Database migration, check-in logic ayrımı, manuel testler.
-- **Faz 11: API Client Standardizasyonu** - API client return type düzeltmesi, desktop entegrasyonu, testler.
-- **Faz 12: Otomatik Pasif Üye Yönetimi** - APScheduler ile 60+ gün inaktif üyelerin otomatik deaktif edilmesi, FastAPI lifespan entegrasyonu.
-- **Faz 13: Üye Seçimi Filtreleme** - Members API'ye aktif üye filtresi, performans optimizasyonları.
-- **Faz 14: Async API Stability** - DELETE endpoint hataları düzeltildi, eager loading eklendi, test coverage artırıldı.
-- **Faz 15: Hard Delete Implementation** - Hard delete implementasyonu, cascade delete, foreign key sorunları çözüldü.
-- **Faz 16: Otomatik Masaüstü Güncelleme Sistemi** - GitHub Releases entegrasyonu, otomatik güncelleme modülü, deploy script genişletildi.
-- **Faz 19: Satış Formunda Manuel Fiyat Override** - Backend şemalarına override alanı, validasyon, UI güncellemeleri, testler.
-- **Faz 20A: Finance Modülerleştirme (UI Refactor)** - Finance tab modüler bileşenlere dönüştürüldü: formatters, styles, StatCard, PaymentList, vb. oluşturuldu, testler ve dokümantasyon eklendi.
+## Durum
+🔵 Faz 22 Başlıyor — Üye Vitrini (Web) Modernizasyonu ve UI/UX İyileştirmeleri.
 
-## Yapılacaklar Özeti
-### Faz 20: Uluslararasılaştırma (i18n) - Çoklu Dil Desteği ✅ TAMAMLANDI
-- [X] Gettext altyapısını kurmak (locale klasörü ve temel yapılar)
-- [X] Çeviri wrapper fonksiyonu oluşturmak (_() fonksiyonu)
-- [X] Tüm desktop UI metinlerini _() ile sarmak (login, main window, views, components)
-  - [X] desktop/ui/windows/ (2 dosya, %100 sarılı)
-  - [X] desktop/ui/views/ (9 dosya, %100 sarılı)
-  - [X] desktop/ui/views/tabs/ (13 dosya, %100 sarılı)
-  - [X] desktop/ui/views/dialogs/ (12 dosya, %100 sarılı)
-  - [X] desktop/ui/components/ (19 dosya, %100 sarılı)
-- [X] .po dosyaları oluşturmak (tr.po ve en.po) - 575+ mesaj
-- [X] Türkçe çevirileri yapmak (mevcut metinler)
-- [X] İngilizce çevirileri yapmak
-- [X] .mo dosyalarına derlemek
-- [X] Uygulamada locale yönetimi (config ve başlatma)
-- [X] Dil seçimi UI'si eklemek (ayarlar menüsü)
-- [X] Tüm dosyaları detaylı kontrol ve doğrulama
-- [X] Final Extract/Fill/Compile workflow
+## Tamamlanan Kilometre Taşları (Özet)
+- **Faz 1-3: Çekirdek Sistem:** Backend API, Veritabanı, QR/Check-in motoru tamamlandı.
+- **Faz 4: Admin Paneli:** CustomTkinter masaüstü uygulaması (CRM, POS, Scheduler) tamamlandı.
+- **Faz 16: Deployment:** Docker altyapısı ve Otomatik Güncelleme sistemi kuruldu.
+- **Faz 20: i18n:** Türkçe/İngilizce çoklu dil desteği sisteme entegre edildi.
+- **Faz 21: Lisanslama:** SaaS dönüşümü için merkezi lisans sunucusu ve donanım kilidi tamamlandı.
 
-### 📦 i18n Yardımcı Scriptler (tamamlandı)
-- [X] `i18n_manager.py` - workflow script (extract/update/compile)
-- [X] `fill_translations.py` - Turkçe -> English fill helper
-- [X] `scan_ui_strings.py` - UI string tarayıcı
-- [X] `wrap_ui_strings.py` - Otomatik wrapper aracı
+## Yapılacaklar
 
-## Devam Eden Geliştirmeler
-### Faz 21: Merkezi Lisanslama Sistemi (SaaS Dönüşümü) 🚀
-- [x] **License Server Projesi:**
-    - [x] `license_server/` klasör yapısının oluşturulması
-    - [x] Bağımsız FastAPI projesi ve veritabanı (SQLite/Postgres) kurulumu
-    - [x] RSA Key Pair (Private/Public) üretimi ve yönetimi
-    - [x] Admin API: Lisans oluşturma, süresini uzatma, iptal etme
-    - [x] Client API: `/validate` endpoint (Machine ID alır, İmzalı JWT döner)
-    - [x] Rate Limiting (SlowAPI) entegrasyonu
-- [x] **MyRhythmNexus Client Entegrasyonu:**
-    - [x] `backend/services/license.py` refactor: Yerel DB kontrolü yerine JWT doğrulama (Desktop tarafında yapıldı)
-    - [x] Offline-First: Public Key ile yerel doğrulama
-    - [x] Hardware ID (Machine ID) kontrolü
-- [x] **Temizlik ve Geçiş:**
-    - [x] Eski `License` modelinin ve API'lerinin silinmesi
-    - [x] `alembic` migrasyonu ile `licenses` tablosunun düşürülmesi
-    - [x] `backend` konfigürasyonunun temizlenmesi
+### Faz 22: Üye Vitrini (Web UI) Modernizasyonu (backend\web)
+Mevcut ham HTML arayüzün, Tailwind CSS ve DaisyUI kullanılarak "Premium Mobil Uygulama" hissiyatına kavuşturulması.
 
-🔄 **Admin Arayüz Deneyimi**
-- Kullanıcı deneyimi iyileştirmeleri (UX/UI optimizasyonları)
-- Dashboard görselleştirmelerinin geliştirilmesi
-- Form validasyonlarının ve hata mesajlarının iyileştirilmesi
-- Responsive tasarım düzenlemeleri
+#### 22.1. Altyapı ve Konfigürasyon
+- [X] **Base Layout:** Tüm sayfaların türeyeceği, CDN linklerini (Tailwind, DaisyUI, HTMX, Alpine.js) ve ortak meta etiketlerini içeren ana şablonun (`base.html`) oluşturulması.
+- [X] **Statik Dosyalar:** `backend/web/static/` altında CSS/JS yapılandırması (Gerekirse custom fontlar).
 
-🔄 **Backend Optimizasyonu**
-- API performans iyileştirmeleri ve caching mekanizmaları
-- Database query optimizasyonları
-- Async/await pattern'lerinin genişletilmesi
-- Memory usage ve resource management optimizasyonları
+#### 22.2. Sayfa Tasarımları (Redesign) - "backend\web\oldTemplates" klasöründe bulunan görsel yapı referans alınacaktır. 
+- [X] **Login Ekranı (`login.html`):**
+    - [X] Cyberpunk/Dark tema uygulanması.
+    - [X] Glassmorphism (buzlu cam) efektli form yapısı.
+    - [X] Input ve butonların DaisyUI bileşenlerine dönüştürülmesi.
+- [X] **Dashboard / Cüzdan (`my_cards.html`):**
+    - [X] "Digital Wallet" konseptine geçiş.
+    - [X] Aktif kartların "Kredi Kartı" görselinde, gradient ve gölgeli tasarımı.
+    - [X] Kalan hakların "Progress Bar" ile görselleştirilmesi.
+    - [X] Expired kartların sönük (grayscale) hale getirilmesi.
+- [X] **QR Bilet Sayfası (`card_detail.html` & `qr_display.html`):**
+    - [X] "Event Ticket" (Bilet) konseptine geçiş.
+    - [X] QR kodun kontrastlı (beyaz) zemin üzerinde vurgulanması (Okuma kolaylığı için).
+    - [X] Animasyonlu "Scan Me" efektleri.
 
-🔄 **Sistem Genişletmeleri**
-- Raporlama ve analitik özelliklerinin geliştirilmesi
-- Bildirim sistemi entegrasyonu
-- Backup ve recovery prosedürlerinin otomasyonu
-- Multi-tenant mimari hazırlıkları
+#### 22.3. UX İyileştirmeleri (Interactivity)
+- [X] **HTMX Entegrasyonu:** Sayfa geçişlerinin `hx-boost` ile SPA (Tek Sayfa Uygulama) gibi akıcı hale getirilmesi.
+- [X] **Feedback:** Form gönderimlerinde ve hatalarda (Toast/Alert) DaisyUI bildirimlerinin kullanılması.
+
+#### 22.4. Self-Service Kayıt (Yeni Özellik)
+- [X] **Web:** `register.html` sayfasının tasarlanması (Login ile aynı temada).
+- [X] **Backend:** `backend\web\routes\register` endpoint'inin yazılması.
+- [X] **Desktop:** Dashboard'a "Onay Bekleyen Üyeler" widget'ının eklenmesi.
 
 ## Bilinen Hatalar / Notlar
-- `desktop/ui` altında modüler bir klasörleme (views/members, views/sales vb.) yapılarak ilerlenecek.
+- Web arayüzü şu an sadece CDN üzerinden stil alıyor, production ortamında offline kullanım gerekirse statik dosyalar indirilmeli.
+- Tasarım dili: **Dark Mode** odaklı, Neon Mor (#a855f7) ve Mavi vurgular.

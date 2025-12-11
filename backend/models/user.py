@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.core.database import Base
+from backend.models.operation import Subscription
 
 
 class User(Base):

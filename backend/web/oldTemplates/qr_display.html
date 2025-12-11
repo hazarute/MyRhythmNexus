@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRhythmNexus - Member Pass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md p-6 bg-gray-800 rounded-lg shadow-xl">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-purple-500">MyRhythmNexus</h1>
+            <p class="text-gray-400">Member Access Pass</p>
+        </div>
+
+        {% if user %}
+            <div class="flex flex-col items-center space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
+                    <p class="text-sm text-gray-400">{{ user.email }}</p>
+                </div>
+
+                {% if qr_token %}
+                    <div class="bg-white p-4 rounded-lg">
+                        <div id="qrcode"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Scan this code at the entrance</p>
+                    <script type="text/javascript">
+                        new QRCode(document.getElementById("qrcode"), {
+                            text: "{{ qr_token }}",
+                            width: 200,
+                            height: 200,
+                            colorDark : "#000000",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
+                    </script>
+                {% else %}
+                    <div class="bg-red-900/50 p-4 rounded text-center text-red-200">
+                        <p>No active subscription found.</p>
+                        <p class="text-sm mt-1">Please purchase a package to get access.</p>
+                    </div>
+                {% endif %}
+
+                <div class="w-full pt-4 border-t border-gray-700">
+                    <div class="flex justify-between text-sm text-gray-400">
+                        <span>Status</span>
+                        <span class="text-green-400">Active</span>
+                    </div>
+                </div>
+                
+                <a href="/web/logout" class="text-sm text-red-400 hover:text-red-300">Logout</a>
+            </div>
+        {% else %}
+            <form action="/web/login" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400">Email</label>
+                    <input type="email" name="username" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400">Password</label>
+                    <input type="password" name="password" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button type="submit" class="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md text-white font-medium transition-colors">
+                    Sign In
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+</body>
+</html>

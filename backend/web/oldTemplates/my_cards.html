@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRhythmNexus - My Cards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#a855f7',
+                        accent: '#1f3c92',
+                    },
+                    boxShadow: {
+                        glow: '0 20px 45px rgba(23, 2, 60, 0.65)',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-[#05030d] text-white min-h-screen font-sans">
+    <div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(168,85,247,0.25),_transparent_45%),_#05030d]">
+        <div class="max-w-5xl mx-auto px-4 py-10">
+            <header class="flex flex-col gap-1 mb-10">
+                <p class="text-xs uppercase tracking-[0.4em] text-white/40">MyRhythmNexus</p>
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">My Cards</h1>
+                        <p class="text-sm text-white/60">{{ user.first_name }} {{ user.last_name }}</p>
+                    </div>
+                    <a href="/web/logout" class="px-4 py-2 rounded-full border border-white/20 text-sm text-white/80 hover:text-white/100 hover:bg-white/5 transition">Logout</a>
+                </div>
+                <p class="text-sm text-white/50">Aktif kartlarını ve geçmiş abonelik özetlerini buradan görüntüle.</p>
+            </header>
+
+            {% if subscriptions_active %}
+                <section class="mb-12">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-white">Aktif Abonelikler</h2>
+                            <p class="text-sm text-white/60">Geçerli kartına hızlıca göz at</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 space-y-6">
+                        {% for sub in subscriptions_active %}
+                            {% set plan = sub.package.plan if sub.package.plan else None %}
+                            {% set sessions_total = plan.sessions_granted if plan and plan.sessions_granted and plan.sessions_granted > 0 else None %}
+                            {% if sessions_total %}
+                                {% set remaining = sessions_total - sub.used_sessions if sub.used_sessions <= sessions_total else 0 %}
+                                {% set used_percentage = (sub.used_sessions / sessions_total) * 100 %}
+                                {% set bar_width = used_percentage if used_percentage <= 100 else 100 %}
+                            {% endif %}
+                            <a href="/web/cards/{{ sub.id }}" class="group relative block rounded-3xl p-6 border border-white/0 bg-gradient-to-br from-[#1f1339] to-[#0e0a1e] shadow-glow transition-all duration-200 hover:translate-y-[-4px] hover:border-white/30">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.5em] text-white/40">{{ sub.package.offering.name }}</p>
+                                        <h3 class="text-2xl font-bold text-white mt-1">{{ sub.package.name }}</h3>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/80 border border-white/10">{{ sub.status.value }}</span>
+                                </div>
+                                <div class="mt-6 space-y-4">
+                                    <div class="flex items-center justify-between text-sm text-white/60">
+                                        <div>
+                                            <p class="text-xs text-white/40">Kalan Hak</p>
+                                            {% if sessions_total %}
+                                                <p class="text-lg font-semibold text-white">{{ remaining }}</p>
+                                            {% else %}
+                                                <p class="text-lg font-semibold text-white">Sınırsız</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-xs text-white/40">Bitiş Tarihi</p>
+                                            <p class="text-lg font-semibold text-white">{{ sub.end_date.strftime('%Y-%m-%d') }}</p>
+                                        </div>
+                                    </div>
+                                    {% if sessions_total %}
+                                        <div class="h-1.5 rounded-full bg-white/10 overflow-hidden" data-progress="{{ bar_width }}">
+                                            <div class="progress-fill h-full rounded-full bg-primary w-0"></div>
+                                        </div>
+                                        <p class="text-xs text-white/40">{{ sessions_total - sub.used_sessions if remaining >= 0 else 0 }} / {{ sessions_total }} oturum kullanıldı</p>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% else %}
+                <div class="mb-12 rounded-3xl border border-white/10 bg-white/5 p-6 text-center text-white/70">
+                    <p class="text-lg font-semibold text-white">Aktif aboneliğiniz bulunamadı.</p>
+                    <p class="text-sm">resepsiyon ile iletişime geçip destek alın.</p>
+                </div>
+            {% endif %}
+
+            {% if subscriptions_expired %}
+                <section>
+                    <div class="mb-4">
+                        <h2 class="text-2xl font-semibold text-white">Geçmiş Abonelikler</h2>
+                        <p class="text-sm text-white/50">Önceki kartlarının kısa özeti</p>
+                    </div>
+                    <div class="space-y-5">
+                        {% for sub in subscriptions_expired %}
+                            <div class="block rounded-3xl border border-white/5 bg-white/5 p-5 backdrop-blur-sm">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-[0.4em] text-white/40">{{ sub.package.offering.name }}</p>
+                                        <h4 class="text-xl font-semibold text-white mt-1">{{ sub.package.name }}</h4>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs bg-white/10 text-white/80 border border-white/10">{{ sub.status.value }}</span>
+                                </div>
+                                <div class="mt-3 flex items-center justify-between text-sm text-white/60">
+                                    <div>
+                                        <p class="text-xs text-white/40">Kullanım</p>
+                                        {% if sub.package.plan and sub.package.plan.sessions_granted %}
+                                            <p>{{ sub.used_sessions }} / {{ sub.package.plan.sessions_granted }}</p>
+                                        {% else %}
+                                            <p>Sınırsız</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-white/40">Bitiş Tarihi</p>
+                                        <p>{{ sub.end_date.strftime('%Y-%m-%d') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-progress]').forEach((bar) => {
+                const fill = bar.querySelector('.progress-fill');
+                if (!fill) {
+                    return;
+                }
+                const width = parseFloat(bar.dataset.progress);
+                if (!Number.isFinite(width)) {
+                    return;
+                }
+                fill.style.width = Math.min(Math.max(width, 0), 100) + '%';
+            });
+        });
+    </script>
+</body>
+</html>
+</body>
+</html>

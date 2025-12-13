@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from desktop.core.locale import _
+from tkinter import messagebox
 from datetime import date, timedelta, datetime
 from typing import Callable, Optional
 from desktop.ui.components.date_picker import DatePickerDialog, get_weekday_name
@@ -81,6 +82,14 @@ class DateSelector(ctk.CTkFrame):
         selected = dialog.get_date()
         
         if selected:
+            # If a past date is chosen, reset to today and inform the user
+            if selected < date.today():
+                messagebox.showwarning(
+                    _("Uyarı"),
+                    _("Geçmiş tarih seçilemez; tarih bugüne sıfırlandı.")
+                )
+                selected = date.today()
+
             self.start_date = selected
             self.btn_start_date.configure(text=self._format_start_button_text())
             

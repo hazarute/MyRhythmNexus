@@ -29,6 +29,12 @@ class App(ctk.CTk):
 
         # Load backend URL from config
         backend_url = DesktopConfig.load_backend_url()
+        
+        # For local development, prefer localhost if available
+        if os.getenv("DESKTOP_LOCAL_DEV", "").lower() in ("1", "true", "yes"):
+            backend_url = "http://localhost:8000"
+            print(f"🔧 Local development mode: Using {backend_url}")
+        
         self.api_client = ApiClient(base_url=backend_url)
         self.license_manager = LicenseManager(self.api_client)
         

@@ -62,6 +62,16 @@ async def create_subscription(
     repeat_weeks = cast(int, plan.repeat_weeks) or 1
     end_date = calculate_end_date(sub_in.start_date, str(plan.cycle_period), repeat_weeks)
 
+    # 2.1 Normalize status based on dates: prevent creating an "active" subscription
+    # for periods that are already expired or otherwise outside current time window.
+    now = get_turkey_time()
+    # If end_date is before now -> expired
+    if end_date < now:
+        enforced_status = SubscriptionStatus.expired
+    else:
+        # start_date <= now <= end_date -> active
+        enforced_status = SubscriptionStatus.active
+
     # 3. Create Subscription
     # Determine purchase price: use override if provided, otherwise package price
     purchase_price = sub_in.purchase_price_override if sub_in.purchase_price_override is not None else package.price
@@ -74,13 +84,14 @@ async def create_subscription(
         if float(sub_in.purchase_price_override) > package_price * 2:
             raise HTTPException(status_code=400, detail="Purchase price cannot be more than double the package price")
     
+    # Use enforced status regardless of client-supplied status to keep business rules consistent
     subscription = Subscription(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
         purchase_price=purchase_price,
         start_date=sub_in.start_date,
         end_date=end_date,
-        status=sub_in.status,
+        status=enforced_status,
         access_type=plan.access_type or "SESSION_BASED",
         used_sessions=0,
     )
@@ -357,13 +368,20 @@ async def create_subscription_with_events(
         if float(sub_in.purchase_price_override) > package_price * 2:
             raise HTTPException(status_code=400, detail="Purchase price cannot be more than double the package price")
     
+    # Determine effective status for new subscription (override client value when necessary)
+    now = get_turkey_time()
+    if end_date < now:
+        enforced_status = SubscriptionStatus.expired
+    else:
+        enforced_status = SubscriptionStatus.active
+
     subscription = Subscription(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
         purchase_price=purchase_price,
         start_date=sub_in.start_date,
         end_date=end_date,
-        status=sub_in.status,
+        status=enforced_status,
         access_type=plan.access_type or "SESSION_BASED",
         used_sessions=0,
     )

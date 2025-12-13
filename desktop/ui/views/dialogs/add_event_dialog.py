@@ -6,7 +6,7 @@ from tkinter import messagebox
 from desktop.core.api_client import ApiClient
 from desktop.ui.components.date_picker import DatePickerDialog
 from desktop.ui.components.time_spinner import TimeSpinner
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class AddEventDialog(ctk.CTkToplevel):
@@ -20,10 +20,8 @@ class AddEventDialog(ctk.CTkToplevel):
         self.title(_("Yeni Seans Ekle"))
         self.geometry("480x620")
 
-        self.transient(parent)
-        safe_grab(self)
-        self.lift()
-        self.focus_force()
+        # Ensure dialog is brought to front and made modal
+        bring_to_front_and_modal(self, parent)
 
         self.templates = []
         self.instructors = []

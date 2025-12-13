@@ -3,7 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 from datetime import datetime
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class DebtPaymentDialog(ctk.CTkToplevel):
@@ -38,8 +38,8 @@ class DebtPaymentDialog(ctk.CTkToplevel):
             self.focus_force()
         except Exception:
             pass
-        self.attributes("-topmost", True)
-        safe_grab(self)
+        # Ensure dialog is brought to front and made modal
+        bring_to_front_and_modal(self, parent)
         
         # Main Container
         main_frame = ctk.CTkFrame(self, corner_radius=15)

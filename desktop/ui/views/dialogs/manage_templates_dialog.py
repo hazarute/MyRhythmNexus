@@ -3,7 +3,7 @@ from desktop.core.locale import _
 import httpx
 from tkinter import messagebox
 from desktop.core.api_client import ApiClient
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class ManageTemplatesDialog(ctk.CTkToplevel):
@@ -17,10 +17,8 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         self.title(_("Seans Şablonları Yönetimi"))
         self.geometry("600x550")
 
-        self.transient(parent)
-        safe_grab(self)
-        self.lift()
-        self.focus_force()
+        # Bring dialog to front and make it modal in a platform-robust way
+        bring_to_front_and_modal(self, parent)
 
         self.templates = []
 
@@ -164,7 +162,7 @@ class ManageTemplatesDialog(ctk.CTkToplevel):
         edit_dialog.title(_("Şablonu Düzenle"))
         edit_dialog.geometry("400x180")
         edit_dialog.transient(self)
-        safe_grab(edit_dialog)
+        bring_to_front_and_modal(edit_dialog, self)
 
         ctk.CTkLabel(edit_dialog, text=_("Yeni Ad"), font=("Roboto", 14), padx=10, pady=10).pack(anchor="w")
 

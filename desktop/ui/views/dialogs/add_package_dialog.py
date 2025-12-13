@@ -3,7 +3,7 @@ import httpx
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class AddPackageDialog(ctk.CTkToplevel):
@@ -18,10 +18,8 @@ class AddPackageDialog(ctk.CTkToplevel):
         self.title("Paket Düzenle" if package_to_edit else "Yeni Paket Oluştur")
         self.geometry("480x520")
 
-        self.transient(parent)
-        safe_grab(self)
-        self.lift()
-        self.focus_force()
+        # Ensure dialog is brought to front and made modal
+        bring_to_front_and_modal(self, parent)
 
         self.categories = []
         self.offerings = []

@@ -2,7 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from datetime import datetime
 from typing import Any, Callable, Optional
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class PaymentDetailDialog(ctk.CTkToplevel):
@@ -16,9 +16,8 @@ class PaymentDetailDialog(ctk.CTkToplevel):
         self.geometry("720x740")
         self.configure(fg_color="#1A1A1A")
 
-        self.lift()
-        self.focus_force()
-        safe_grab(self)
+        # Bring dialog to front and make it modal in a platform-robust way
+        bring_to_front_and_modal(self, master)
         self.protocol("WM_DELETE_WINDOW", self._close)
 
         self._build_ui()

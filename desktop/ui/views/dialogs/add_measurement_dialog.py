@@ -2,7 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class AddMeasurementDialog(ctk.CTkToplevel):
@@ -17,9 +17,8 @@ class AddMeasurementDialog(ctk.CTkToplevel):
         self.title(_("Yeni Vücut Ölçümü"))
         self.geometry("700x750")
         
-        self.lift()
-        self.focus_force()
-        safe_grab(self)
+        # Ensure dialog is brought to front and made modal in a cross-platform way
+        bring_to_front_and_modal(self, parent)
         
         # Measurement Types and Entries
         self.measurement_entries = {}

@@ -3,7 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from datetime import datetime
 from desktop.ui.views.checkin_dialog import CheckInDialog
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class PackageDetailDialog(ctk.CTkToplevel):
@@ -17,9 +17,8 @@ class PackageDetailDialog(ctk.CTkToplevel):
         
         self.title(_("Paket Detayları"))
         self.geometry("600x700")
-        self.lift()
-        self.focus_force()
-        safe_grab(self)
+        # Ensure dialog is brought to front and made modal in a cross-platform way
+        bring_to_front_and_modal(self, parent)
         
         # Main Container
         main_frame = ctk.CTkFrame(self, corner_radius=15)
@@ -265,7 +264,7 @@ class PackageDetailDialog(ctk.CTkToplevel):
         error_window = ctk.CTkToplevel(self)
         error_window.title(_("Hata"))
         error_window.geometry("350x200")
-        safe_grab(error_window)
+        bring_to_front_and_modal(error_window, self)
         
         ctk.CTkLabel(error_window, text=_("❌ Hata\n\n{message}").format(message=message), 
                     font=("Roboto", 14),
@@ -281,7 +280,7 @@ class PackageDetailDialog(ctk.CTkToplevel):
         success_window = ctk.CTkToplevel(self)
         success_window.title(title)
         success_window.geometry("350x200")
-        safe_grab(success_window)
+        bring_to_front_and_modal(success_window, self)
         
         ctk.CTkLabel(success_window, text=f"{title}\n\n{message}", 
                     font=("Roboto", 14),

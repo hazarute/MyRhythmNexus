@@ -3,7 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 import re
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class UpdateMemberDialog(ctk.CTkToplevel):
@@ -18,9 +18,8 @@ class UpdateMemberDialog(ctk.CTkToplevel):
         self.title(_("Üye Bilgilerini Güncelle"))
         self.geometry("450x500")
         
-        self.lift()
-        self.focus_force()
-        safe_grab(self)
+        # Bring dialog to front and make it modal reliably
+        bring_to_front_and_modal(self, parent)
         
         # Main Container
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)

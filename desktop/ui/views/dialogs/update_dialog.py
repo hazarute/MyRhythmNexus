@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from typing import Dict, Any, Callable
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 class UpdateDialog:
     """Dialog to show update information and handle user action."""
@@ -18,8 +18,8 @@ class UpdateDialog:
         dialog.geometry("500x400")
         dialog.resizable(False, False)
 
-        dialog.transient()
-        safe_grab(dialog)
+        # Make dialog transient and modal / focused using central helper
+        bring_to_front_and_modal(dialog, None)
 
         title_label = ctk.CTkLabel(
             dialog,

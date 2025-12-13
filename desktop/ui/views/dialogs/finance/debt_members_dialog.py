@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from desktop.core.locale import _
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 from tkinter import messagebox
 from typing import Callable, Optional
 
@@ -17,8 +17,8 @@ class DebtMembersDialog(ctk.CTkToplevel):
         self.title(_("Borçlu Üyeler"))
         self.geometry("640x640")
         self.resizable(False, False)
-        self.attributes("-topmost", True)
-        safe_grab(self)
+        # Ensure dialog is brought to front and made modal
+        bring_to_front_and_modal(self, parent)
 
         container = ctk.CTkFrame(self, corner_radius=18)
         container.pack(fill="both", expand=True, padx=16, pady=16)

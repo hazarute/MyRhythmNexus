@@ -3,7 +3,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from tkinter import messagebox
 import re
-from desktop.core.ui_utils import safe_grab
+from desktop.core.ui_utils import safe_grab, bring_to_front_and_modal
 
 
 class AddMemberDialog(ctk.CTkToplevel):
@@ -17,9 +17,8 @@ class AddMemberDialog(ctk.CTkToplevel):
         self.title(_("Yeni Üye Kaydı"))
         self.geometry("450x550")
         
-        self.lift()
-        self.focus_force()
-        safe_grab(self)
+        # Ensure dialog is brought to front and made modal
+        bring_to_front_and_modal(self, parent)
         
         # Main Container
         self.main_frame = ctk.CTkFrame(self, corner_radius=15)

@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from datetime import datetime
+from desktop.ui.components.date_utils import format_ddmmyyyy
 
 class ProfileTab:
     def __init__(self, parent_frame, api_client: ApiClient, member: dict, on_update_callback):
@@ -128,7 +129,7 @@ class ProfileTab:
                     font=("Roboto", 18, "bold"), 
                     text_color="white").pack(anchor="w")
         
-        end_date = sub.get('end_date', '')[:10]
+        end_date = format_ddmmyyyy(sub.get('end_date'))
         plan = sub.get('package', {}).get('plan', {})
         access_type = plan.get('access_type', 'SESSION_BASED')
         used = sub.get('used_sessions', 0)

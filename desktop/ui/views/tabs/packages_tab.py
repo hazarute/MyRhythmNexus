@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from datetime import datetime
+from desktop.ui.components.date_utils import format_ddmmyyyy
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.components.date_picker import get_weekday_name
@@ -95,9 +96,8 @@ class PackagesTab:
             pkg_label.bind("<Button-1>", lambda e, s=sub: self.show_package_detail(s))
             pkg_label.configure(cursor="hand2")
         
-        dates = f"{sub.get('start_date', '')[:10]}  ➔  {sub.get('end_date', '')[:10]}"
-        ctk.CTkLabel(content, text=dates, font=("Roboto", 12), 
-                    text_color="gray70").pack(anchor="w", pady=(2, 5))
+        dates = f"{format_ddmmyyyy(sub.get('start_date'))}  ➔  {format_ddmmyyyy(sub.get('end_date'))}"
+        ctk.CTkLabel(content, text=dates, font=("Roboto", 12), text_color="gray70").pack(anchor="w", pady=(2, 5))
         
         bottom_row = ctk.CTkFrame(content, fg_color="transparent")
         bottom_row.pack(fill="x", pady=(5, 0))

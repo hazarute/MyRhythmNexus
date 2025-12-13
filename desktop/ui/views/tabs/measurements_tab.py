@@ -2,6 +2,7 @@ import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.ui_utils import safe_grab
 from desktop.core.api_client import ApiClient
+from desktop.ui.components.date_utils import format_ddmmyyyy
 from tkinter import messagebox
 
 class MeasurementsTab:
@@ -71,11 +72,11 @@ class MeasurementsTab:
                     font=("Roboto", 18, "bold"), 
                     text_color=accent_color).pack(side="left")
         
-        latest_date = latest_session.get('session_date', '')[:10]
-        previous_date = previous_session.get('session_date', '')[:10]
+        latest_date = format_ddmmyyyy(latest_session.get('session_date'))
+        previous_date = format_ddmmyyyy(previous_session.get('session_date'))
         ctk.CTkLabel(header_frame, text=_("  •  {} ➔ {}").format(previous_date, latest_date), 
-                    font=("Roboto", 14), 
-                    text_color="gray70").pack(side="left", padx=10)
+                font=("Roboto", 14), 
+                text_color="gray70").pack(side="left", padx=10)
         
         # Comparison grid
         grid_frame = ctk.CTkFrame(content, fg_color="transparent")
@@ -181,7 +182,7 @@ class MeasurementsTab:
         content.pack(side="left", fill="both", expand=True, padx=12, pady=8)
         content.bind("<Button-1>", lambda e, s=session: self.show_detail_dialog(s))
         
-        date = session.get('session_date', '')[:10]
+        date = format_ddmmyyyy(session.get('session_date'))
         date_label = ctk.CTkLabel(content, text=_("📅 {}").format(date), 
                     font=("Roboto", 14, "bold"), 
                     text_color="white", cursor="hand2")
@@ -233,7 +234,7 @@ class MeasurementsTab:
         header_frame = ctk.CTkFrame(main_frame, fg_color="#3B8ED0", corner_radius=10)
         header_frame.pack(fill="x", padx=15, pady=15)
         
-        date = session.get('session_date', '')[:10]
+        date = format_ddmmyyyy(session.get('session_date'))
         ctk.CTkLabel(header_frame, text=_("📅  {}").format(date), 
                     font=("Roboto", 22, "bold"), 
                     text_color="white").pack(pady=15)

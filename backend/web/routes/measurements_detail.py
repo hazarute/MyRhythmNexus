@@ -47,51 +47,76 @@ async def measurement_detail(
             })
 
         values = []
-        weight = None
-        height_cm = None
+        # build a small lookup map similar to measurements route to compute BMI reliably
+        def _norm(s: str) -> str:
+            if not s:
+                return ""
+            nk = __import__('unicodedata').normalize('NFKD', s)
+            ascii_k = ''.join([c for c in nk if not __import__('unicodedata').combining(c)])
+            compact = __import__('re').sub(r'[^0-9a-zA-Z]+', '', ascii_k).lower()
+            return compact
+
+        latest_map = {}
         for mv in session.measurement_values:
-            tname = mv.measurement_type.type_name if mv.measurement_type else mv.type_name if hasattr(mv, 'type_name') else 'Ölçüm'
-            unit = mv.measurement_type.unit if mv.measurement_type else ''
-            # keep original value as-is (string or numeric)
+            tname = mv.measurement_type.type_name if getattr(mv, 'measurement_type', None) else getattr(mv, 'type_name', '')
+            unit = mv.measurement_type.unit if getattr(mv, 'measurement_type', None) else ''
             try:
                 val = float(mv.value)
             except Exception:
                 val = mv.value
             values.append({"type_name": tname, "unit": unit, "value": val})
-            # detect weight/height keys heuristically
-            lk = (tname or '').lower()
-            if 'kilo' in lk or 'kg' in lk or 'weight' in lk:
-                try:
-                    weight = float(mv.value)
-                except Exception:
-                    pass
-            if 'boy' in lk or 'height' in lk or 'cm' in lk:
-                try:
-                    height_cm = float(mv.value)
-                except Exception:
-                    pass
+            key_orig = (tname or '').lower()
+            latest_map[key_orig] = val
+            latest_map[_norm(tname or '')] = val
 
-        bmi = None
-        if weight is not None and height_cm is not None and height_cm > 0:
-            try:
+        # compute BMI using the same logic as measurements route
+        bmi_value = None
+        bmi_category = None
+        bmi_color = None
+        try:
+            weight = None
+            for k in ('kilo', 'kg', 'weight'):
+                if k in latest_map:
+                    try:
+                        weight = float(latest_map[k])
+                        break
+                    except Exception:
+                        weight = None
+            height_cm = None
+            for k in ('boy', 'height', 'heightcm'):
+                if k in latest_map:
+                    try:
+                        height_cm = float(latest_map[k])
+                        break
+                    except Exception:
+                        height_cm = None
+
+            if weight is not None and height_cm is not None and height_cm > 0:
                 height_m = height_cm / 100.0
-                bmi_val = weight / (height_m * height_m)
-                bmi_value = round(bmi_val, 1)
+                bmi = weight / (height_m * height_m)
+                bmi_value = round(bmi, 1)
                 if bmi_value <= 18.5:
                     bmi_category = 'Zayıf'
+                    bmi_color = '#facc15'
                 elif 18.5 < bmi_value <= 24.9:
                     bmi_category = 'Normal'
+                    bmi_color = '#16a34a'
                 elif 25.0 <= bmi_value <= 29.9:
                     bmi_category = 'Fazla kilolu'
+                    bmi_color = '#f59e0b'
                 elif 30.0 <= bmi_value <= 34.9:
                     bmi_category = 'Obez (1. derece)'
+                    bmi_color = '#dc2626'
                 elif 35.0 <= bmi_value <= 39.9:
                     bmi_category = 'Obez (2. derece)'
+                    bmi_color = '#b91c1c'
                 else:
                     bmi_category = 'Obez (3. derece)'
-                bmi = {"value": bmi_value, "category": bmi_category}
-            except Exception:
-                bmi = None
+                    bmi_color = '#991b1b'
+        except Exception:
+            bmi_value = None
+            bmi_category = None
+            bmi_color = None
 
         context = {
             "request": request,
@@ -101,8 +126,12 @@ async def measurement_detail(
             "session": session,
             "values": values,
         }
-        if bmi is not None:
-            context['bmi'] = bmi
+        if bmi_value is not None:
+            context['bmi_value'] = bmi_value
+            context['bmi_category'] = bmi_category
+            context['bmi_color_hex'] = bmi_color
+            # keep older 'bmi' key for backward compatibility
+            context['bmi'] = {"value": bmi_value, "category": bmi_category}
 
         return templates.TemplateResponse("measurements_detail.html", context)
 

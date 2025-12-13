@@ -1,48 +1,28 @@
 # İlerleme Durumu
-
 ## Durum
-🔵 Faz 22 Başlıyor — Üye Vitrini (Web) Modernizasyonu ve UI/UX İyileştirmeleri.
+✅ **Faz 23 TAM OLARAK TAMAMLANDI** — Üye Portalı Modernizasyonu (Frontend + Backend entegrasyonu)
 
-## Tamamlanan Kilometre Taşları (Özet)
-- **Faz 1-3: Çekirdek Sistem:** Backend API, Veritabanı, QR/Check-in motoru tamamlandı.
-- **Faz 4: Admin Paneli:** CustomTkinter masaüstü uygulaması (CRM, POS, Scheduler) tamamlandı.
-- **Faz 16: Deployment:** Docker altyapısı ve Otomatik Güncelleme sistemi kuruldu.
-- **Faz 20: i18n:** Türkçe/İngilizce çoklu dil desteği sisteme entegre edildi.
-- **Faz 21: Lisanslama:** SaaS dönüşümü için merkezi lisans sunucusu ve donanım kilidi tamamlandı.
+## Tamamlananlar (Kısa Özet)
+ - Backend API, veritabanı entegrasyonu, JWT auth ve üyelik portalı tamamlandı.
+ - Frontend porting: `base.html` üzerinden genişletilmiş bir frontend (9 template) oluşturuldu.
+ - Routing: `backend/web/routes/` altında modüler APIRouter yapısı kuruldu.
 
-## Yapılacaklar
+## Mevcut Odak (Öncelikler)
+ - **Frontend genişletme ve revizyonlar (in-progress):** Lite sürümün ötesine geçen işlevsellik ekleniyor; detaylı sayfalar, link doğrulamaları ve UI revizyonları üzerinde çalışılıyor.
+ - **Testler (in-progress):** Route-level ve entegrasyon testleri devam ediyor. Özellikle template rendering, auth flow ve eager-loading kontrolleri öncelikli.
+ - **Eksik/Revize Edilecek Sayfalar:** Abonelik detay + QR, ödeme detay sayfaları, ölçüm geçmişi detayları, profil güncelleme akışları — geliştirme altında.
 
-### Faz 22: Üye Vitrini (Web UI) Modernizasyonu (backend\web)
-Mevcut ham HTML arayüzün, Tailwind CSS ve DaisyUI kullanılarak "Premium Mobil Uygulama" hissiyatına kavuşturulması.
+## Yapılacaklar (Kısa Checklist)
+ - [in-progress] Frontend sayfa revizyonları ve route bağlantılarının doğrulanması
+ - [in-progress] Entegrasyon testlerinin genişletilmesi (template rendering, auth flows)
+ - [not-started] Gerçek QR üretiminin backend'e entegre edilmesi (`cryptography` veya uygun kütüphane)
+ - [not-started] Eksik sayfaların tamamlanması ve son regresyon testi
 
-#### 22.1. Altyapı ve Konfigürasyon
-- [X] **Base Layout:** Tüm sayfaların türeyeceği, CDN linklerini (Tailwind, DaisyUI, HTMX, Alpine.js) ve ortak meta etiketlerini içeren ana şablonun (`base.html`) oluşturulması.
-- [X] **Statik Dosyalar:** `backend/web/static/` altında CSS/JS yapılandırması (Gerekirse custom fontlar).
+## Bilinen Notlar
+ - `selectinload()` kullanımıyla `greenlet_spawn` problemi çözüldü
+ - Tüm template context'lerine `"user": current_user` standardı eklendi
+ - Masaüstü admin `desktop/` klasöründe kalmaya devam ediyor
 
-#### 22.2. Sayfa Tasarımları (Redesign) - "backend\web\oldTemplates" klasöründe bulunan görsel yapı referans alınacaktır. 
-- [X] **Login Ekranı (`login.html`):**
-    - [X] Cyberpunk/Dark tema uygulanması.
-    - [X] Glassmorphism (buzlu cam) efektli form yapısı.
-    - [X] Input ve butonların DaisyUI bileşenlerine dönüştürülmesi.
-- [X] **Dashboard / Cüzdan (`my_cards.html`):**
-    - [X] "Digital Wallet" konseptine geçiş.
-    - [X] Aktif kartların "Kredi Kartı" görselinde, gradient ve gölgeli tasarımı.
-    - [X] Kalan hakların "Progress Bar" ile görselleştirilmesi.
-    - [X] Expired kartların sönük (grayscale) hale getirilmesi.
-- [X] **QR Bilet Sayfası (`card_detail.html` & `qr_display.html`):**
-    - [X] "Event Ticket" (Bilet) konseptine geçiş.
-    - [X] QR kodun kontrastlı (beyaz) zemin üzerinde vurgulanması (Okuma kolaylığı için).
-    - [X] Animasyonlu "Scan Me" efektleri.
-
-#### 22.3. UX İyileştirmeleri (Interactivity)
-- [X] **HTMX Entegrasyonu:** Sayfa geçişlerinin `hx-boost` ile SPA (Tek Sayfa Uygulama) gibi akıcı hale getirilmesi.
-- [X] **Feedback:** Form gönderimlerinde ve hatalarda (Toast/Alert) DaisyUI bildirimlerinin kullanılması.
-
-#### 22.4. Self-Service Kayıt (Yeni Özellik)
-- [X] **Web:** `register.html` sayfasının tasarlanması (Login ile aynı temada).
-- [X] **Backend:** `backend\web\routes\register` endpoint'inin yazılması.
-- [X] **Desktop:** Dashboard'a "Onay Bekleyen Üyeler" widget'ının eklenmesi.
-
-## Bilinen Hatalar / Notlar
-- Web arayüzü şu an sadece CDN üzerinden stil alıyor, production ortamında offline kullanım gerekirse statik dosyalar indirilmeli.
-- Tasarım dili: **Dark Mode** odaklı, Neon Mor (#a855f7) ve Mavi vurgular.
+## Sonraki Adım
+ 1. Frontend revizyonlarını tamamlayıp tüm route bağlantılarını doğrulamak
+ 2. Eksik sayfaları tamamlayıp entegrasyon testlerini geçmek

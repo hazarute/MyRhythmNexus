@@ -1,93 +1,131 @@
-from typing import Optional
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+"""
+Dashboard Route - Anasayfa
+FastAPI + SQLAlchemy AsyncSession
+"""
+
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from datetime import datetime
 import logging
+
+from backend.core.database import get_db
+from backend.models.user import User, Instructor
+from backend.models.operation import Booking, Subscription, ClassEvent
+from backend.models.service import ServicePackage
+from .auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
-from backend.core.database import get_db
-from backend.models.user import User
-from backend.models.operation import Subscription, SubscriptionQrCode, SubscriptionStatus
-from backend.models.service import ServicePackage, ServiceOffering, PlanDefinition
-from .auth import get_current_user_from_cookie
-
-router = APIRouter()
+router = APIRouter(tags=["web"])
 templates = Jinja2Templates(directory="backend/web/templates")
 
-@router.get("/", response_class=HTMLResponse)
-async def web_index(
-    request: Request, 
-    db: AsyncSession = Depends(get_db)
-):
-    user = await get_current_user_from_cookie(request, db)
-    
-    if not user:
-        return templates.TemplateResponse("login.html", {"request": request})
-    
-    # Find all subscriptions for this member and split active/expired in code
-    query = (
-        select(Subscription)
-        .where(
-            Subscription.member_user_id == user.id
-        )
-        .options(
-            selectinload(Subscription.package).selectinload(ServicePackage.offering),
-            selectinload(Subscription.package).selectinload(ServicePackage.plan),
-            selectinload(Subscription.qr_code)
-        )
-        .order_by(Subscription.end_date.desc())
-    )
-    result = await db.execute(query)
-    subscriptions = result.scalars().all()
 
-    # Split into active and expired lists so template can show past subscriptions separately
-    active_subs = [s for s in subscriptions if getattr(s, "status", None) == SubscriptionStatus.active]
-    expired_subs = [s for s in subscriptions if getattr(s, "status", None) == SubscriptionStatus.expired]
-
-    if len(active_subs) == 1 and not expired_subs:
-        # If only one active card and no expired ones, redirect to detail
-        return RedirectResponse(url=f"/web/cards/{active_subs[0].id}", status_code=status.HTTP_302_FOUND)
-
-    return templates.TemplateResponse(
-        "my_cards.html", 
-        {"request": request, "user": user, "subscriptions_active": active_subs, "subscriptions_expired": expired_subs}
-    )
-
-@router.get("/cards/{subscription_id}", response_class=HTMLResponse)
-async def card_detail(
+@router.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(
     request: Request,
-    subscription_id: str,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    user = await get_current_user_from_cookie(request, db)
-    if not user:
-        return RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
-
-    query = (
-        select(Subscription)
-        .where(
-            Subscription.id == subscription_id,
-            Subscription.member_user_id == user.id
+    """Member dashboard'unu göster"""
+    try:
+        # Kullanıcının en fazla 2 aktif subscription'ını al
+        result = await db.execute(
+            select(Subscription).options(
+                selectinload(Subscription.package).selectinload(ServicePackage.plan)
+            ).where(
+                Subscription.member_user_id == current_user.id,
+                Subscription.status.in_(["active", "ongoing"])
+            ).order_by(Subscription.start_date.desc()).limit(2)
         )
-        .options(
-            selectinload(Subscription.package).selectinload(ServicePackage.offering),
-            selectinload(Subscription.package).selectinload(ServicePackage.plan),
-            selectinload(Subscription.qr_code)
-        )
-    )
-    result = await db.execute(query)
-    subscription = result.scalar_one_or_none()
-    
-    if not subscription:
-        return RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
+        subscriptions_rows = result.scalars().all()
+        subscription = subscriptions_rows[0] if subscriptions_rows else None
         
-    qr_token = subscription.qr_code.qr_token if subscription.qr_code else None
+        # Sonraki class booking'ini al
+        next_booking = None
+        if subscription:
+            booking_result = await db.execute(
+                select(Booking).options(
+                    selectinload(Booking.event).selectinload(ClassEvent.template),
+                    selectinload(Booking.event).selectinload(ClassEvent.instructor).selectinload(Instructor.user),
+                ).where(
+                    Booking.subscription_id == subscription.id,
+                    Booking.status == "confirmed"
+                ).order_by(Booking.created_at.desc()).limit(1)
+            )
+            next_booking = booking_result.scalar_one_or_none()
+        
+        # Abonelik bilgilerini hazırlama (en fazla 2)
+        subscriptions = []
+        for sub in subscriptions_rows:
+            used = getattr(sub, 'used_sessions', 0) or 0
+            total = None
+            remaining = None
+            percentage = 0
+            access_type = getattr(sub, 'access_type', 'SESSION_BASED') or 'SESSION_BASED'
+            if sub.package and getattr(sub.package, 'plan', None) and hasattr(sub.package.plan, 'sessions_granted'):
+                sess = sub.package.plan.sessions_granted or 0
+                if access_type == 'SESSION_BASED' and sess > 0:
+                    total = sess
+                    remaining = max(sess - used, 0)
+                    percentage = (used / total) * 100 if total > 0 else 0
+                else:
+                    total = None
+                    remaining = None
+            subscriptions.append({
+                'id': sub.id,
+                'plan_name': sub.package.name if sub.package and getattr(sub.package, 'name', None) else sub.package_id,
+                'end_date': sub.end_date.strftime('%d %B %Y') if sub.end_date else '',
+                'used_sessions': used,
+                'total_sessions': total,
+                'remaining_sessions': remaining,
+                'percentage': percentage,
+                'access_type': access_type,
+            })
+        
+        # Map to template keys expected by dashboard.html
+        next_class = None
+        if next_booking and getattr(next_booking, 'event', None):
+            ev = next_booking.event
+            template_name = ev.template.name if getattr(ev, 'template', None) else ''
+            instructor_name = ev.instructor.user.full_name if getattr(ev, 'instructor', None) and getattr(ev.instructor, 'user', None) else ''
+            next_class = {
+                'name': template_name,
+                'instructor': instructor_name,
+                'date': ev.start_time.strftime('%d %b %Y') if ev.start_time else '',
+                'time': ev.start_time.strftime('%H:%M') if ev.start_time else '',
+            }
 
-    return templates.TemplateResponse(
-        "card_detail.html", 
-        {"request": request, "user": user, "subscription": subscription, "qr_token": qr_token}
-    )
+        context = {
+            "request": request,
+            "page_title": "Dashboard",
+            "user": current_user,
+            "current_user": current_user,
+            "subscription": subscription,
+            "primary_subscription": subscription,
+            # list for template (max 2)
+            "subscriptions": subscriptions,
+            "used_sessions": subscriptions[0]['used_sessions'] if subscriptions else 0,
+            "total_sessions": subscriptions[0]['total_sessions'] if subscriptions and subscriptions[0]['total_sessions'] is not None else 0,
+            "percentage": subscriptions[0]['percentage'] if subscriptions else 0,
+            "next_booking": next_booking,
+            "next_class": next_class,
+        }
+        
+        return templates.TemplateResponse("dashboard.html", context)
+        
+    except Exception as e:
+        logger.error(f"Dashboard error: {e}")
+        return templates.TemplateResponse(
+            "dashboard.html",
+            {
+                "request": request,
+                "user": current_user,
+                "current_user": current_user,
+                "error": "Dashboard yüklenirken hata oluştu",
+                "page_title": "Dashboard"
+            }
+        )

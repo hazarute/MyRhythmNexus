@@ -1,120 +1,253 @@
-from datetime import timedelta
-from typing import Optional
-from fastapi import APIRouter, Depends, Request, Form, Response, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+"""
+Kimlik Doğrulama Route'ları - Login, Register, Logout
+FastAPI + SQLAlchemy AsyncSession
+"""
+
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from jose import jwt, JWTError
-import re
+from sqlalchemy import select
+from datetime import timedelta
 import logging
+
+from backend.core.database import get_db
+from backend.models.user import User
+from backend.core.security import (
+    verify_password,
+    hash_password,
+    create_access_token,
+)
+from backend.core.config import settings
+from jose import jwt, JWTError
 
 logger = logging.getLogger(__name__)
 
-from backend.core.config import settings
-from backend.core.database import get_db
-from backend.core.security import verify_password, create_access_token
-from backend.models.user import User
+# Router tanımla
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-router = APIRouter()
+# Template engine
 templates = Jinja2Templates(directory="backend/web/templates")
 
-@router.get("/login", response_class=HTMLResponse)
-async def web_login_page(request: Request):
-    """Show the login page"""
-    return templates.TemplateResponse("login.html", {"request": request})
+ALGORITHM = "HS256"
 
-async def get_current_user_from_cookie(request: Request, db: AsyncSession) -> Optional[User]:
+def decode_token(token: str):
+    """JWT token'ı decode et"""
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return {}
+
+
+async def get_current_user_optional(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    JWT token'dan user döndür (optional).
+    Token yoksa veya invalid ise None döndür.
+    """
     token = request.cookies.get("access_token")
+    
     if not token:
         return None
     
-    # Remove "Bearer " prefix if present (though cookies usually just have the token)
-    if token.startswith("Bearer "):
-        token = token.split(" ")[1]
-
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        user_id: Optional[str] = payload.get("sub")
-        if user_id is None:
+        payload = decode_token(token)
+        if not payload:
             return None
-    except JWTError:
+        
+        user_id = payload.get("sub")
+        if not user_id:
+            return None
+        
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        return user
+    except Exception as e:
+        logger.debug(f"Token validation error: {e}")
         return None
-    
-    user = await db.get(User, user_id)
-    return user
 
-@router.post("/login", response_class=HTMLResponse)
-async def web_login(
+
+async def get_current_user(
     request: Request,
-    phone_number: str = Form(...),
-    password: str = Form(...),
     db: AsyncSession = Depends(get_db)
 ):
-    # Normalize phone number for tolerant lookup
-    clean = re.sub(r'\D', '', phone_number or '')
-    if len(clean) == 10:
-        phone_lookup = f"{clean[:3]}-{clean[3:6]}-{clean[6:]}"
-    else:
-        phone_lookup = clean
-
-    logger.info("Web login attempt: raw=%s clean=%s lookup=%s", phone_number, clean, phone_lookup)
-
-    # Try exact match with normalized form first
-    result = await db.execute(select(User).where(User.phone_number == phone_lookup))
-    user = result.scalar_one_or_none()
-
-    # Fallbacks: try digits-only, then a suffix/contains match
-    if not user and clean:
-        result = await db.execute(select(User).where(User.phone_number == clean))
-        user = result.scalar_one_or_none()
-
-    if not user and clean:
-        # try contains (e.g. stored as +90555... or with country code)
-        try:
-            result = await db.execute(select(User).where(User.phone_number.ilike(f"%{clean}")))
-            user = result.scalar_one_or_none()
-        except Exception:
-            # If dialect doesn't support ilike for this column type, ignore
-            pass
-
-    if not user or not verify_password(password, str(user.password_hash)):
-        return templates.TemplateResponse(
-            "login.html",
-            {"request": request, "error": "Invalid credentials"}
+    """
+    JWT token'dan user döndür (gerekli).
+    Token yoksa veya invalid ise 401 error döndür.
+    """
+    token = request.cookies.get("access_token")
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Geçersiz kimlik doğrulama"
         )
     
-    logger.info(f"DEBUG: Login successful for user: {user.email}")
-    # Create token (use centralized setting so web and API behave consistently)
-    access_token_expires = timedelta(minutes=getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24 * 7))
-    access_token = create_access_token(
-        data={"sub": user.id}, expires_delta=access_token_expires
-    )
+    try:
+        payload = decode_token(token)
+        if not payload:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Geçersiz token"
+            )
+        
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Geçersiz token"
+            )
+        
+        result = await db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Kullanıcı bulunamadı"
+            )
+        
+        return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Authentication error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Geçersiz token"
+        )
 
-    # For HTMX requests, return HTML with HX-Redirect header
-    if request.headers.get("HX-Request"):
-        response = HTMLResponse(content="", status_code=status.HTTP_200_OK)
-        response.headers["HX-Redirect"] = "/web"
+
+@router.get("/login", response_class=HTMLResponse)
+async def login_get(
+    request: Request,
+    current_user = Depends(get_current_user_optional),
+    db: AsyncSession = Depends(get_db)
+):
+    """Login sayfasını göster"""
+    if current_user:
+        return RedirectResponse(url="/web/dashboard", status_code=302)
+    
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "page_title": "Giriş Yap"
+    })
+
+
+@router.post("/login", response_class=HTMLResponse)
+async def login_post(
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+):
+    """Kullanıcı login'i işle"""
+    try:
+        form_data = await request.form()
+        email = str(form_data.get("email", "")).strip()
+        password = str(form_data.get("password", "")).strip()
+        # Ensure we always emit visible debug output for browser tests
+        print(f"[LOGIN DEBUG] received form keys: {list(form_data.keys())}")
+        print(f"[LOGIN DEBUG] email={email}, password_provided={'yes' if password else 'no'}")
+        logger.info(f"Login attempt received: email={email}, password_provided={'yes' if password else 'no'}")
+        
+        if not email or not password:
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Email ve şifre gereklidir",
+                    "page_title": "Giriş Yap"
+                }
+            )
+        
+        result = await db.execute(
+            select(User).where(User.email == email.lower())
+        )
+        user = result.scalar_one_or_none()
+        print(f"[LOGIN DEBUG] user_lookup: {'found' if user else 'not found'} for {email}")
+        logger.info(f"User lookup result: {'found' if user else 'not found'} for email={email}")
+        
+        password_ok = False
+        if user:
+            try:
+                password_ok = verify_password(password, str(user.password_hash))
+            except Exception as _e:
+                logger.info(f"Password verify error for user {user.id}: {_e}")
+
+        print(f"[LOGIN DEBUG] password_ok={password_ok}")
+
+        if not user or not password_ok:
+            logger.info(f"Login failed for {email}: user_found={bool(user)}, password_ok={password_ok}")
+            # Return template with diagnostic headers so browser network tab shows reason
+            headers = {"X-Login-Status": "failed", "X-Login-UserFound": str(bool(user)), "X-Login-PasswordOK": str(password_ok)}
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Geçersiz email veya şifre",
+                    "email": email,
+                    "page_title": "Giriş Yap"
+                },
+                headers=headers
+            )
+        
+        is_active = bool(user.is_active) if user.is_active is not None else False
+        if not is_active:
+            return templates.TemplateResponse(
+                "login.html",
+                {
+                    "request": request,
+                    "error": "Hesabınız deaktif edilmiştir",
+                    "page_title": "Giriş Yap"
+                }
+            )
+        
+        access_token_expires = timedelta(
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+        access_token = create_access_token(
+            data={"sub": str(user.id)},
+            expires_delta=access_token_expires
+        )
+        
+        print(f"[LOGIN DEBUG] is_active={is_active} - preparing redirect")
+        # Add visible header so browser network tab can detect redirect from server
+        response = RedirectResponse(url="/web/dashboard", status_code=302, headers={"X-Login-Redirect": "true"})
         response.set_cookie(
             key="access_token",
-            value=f"{access_token}",
+            value=access_token,
             httponly=True,
-            max_age=int(access_token_expires.total_seconds())
+            secure=settings.ENVIRONMENT == "production" if hasattr(settings, 'ENVIRONMENT') else False,
+            samesite="lax",
+            max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
         )
+        
+        logger.info(f"User {user.id} logged in successfully")
         return response
-    else:
-        # For regular requests, use redirect
-        response = RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
-        response.set_cookie(
-            key="access_token",
-            value=f"{access_token}",
-            httponly=True,
-            max_age=int(access_token_expires.total_seconds())
+        
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "error": "Bir hata oluştu. Lütfen tekrar deneyiniz",
+                "page_title": "Giriş Yap"
+            }
         )
-        return response
 
-@router.get("/logout")
-async def web_logout():
-    response = RedirectResponse(url="/web", status_code=status.HTTP_302_FOUND)
-    response.delete_cookie("access_token")
+
+
+
+
+@router.post("/logout")
+async def logout(
+    current_user = Depends(get_current_user)
+):
+    """Kullanıcı logout'ını işle"""
+    response = RedirectResponse(url="/web/auth/login?logged_out=true", status_code=302)
+    response.delete_cookie(key="access_token")
+    logger.info(f"User {current_user.id} logged out")
     return response

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Finans - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<div class="relative flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
+    <div class="max-w-[1200px] mx-auto flex flex-col gap-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#29382f] pb-6">
+            <div class="flex flex-col gap-2">
+                <h2 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Finansal Geçmiş</h2>
+                <p class="text-text-muted max-w-2xl">Geçmiş ödemelerinizi görüntüleyin, bekleyen borçlarınızı takip edin ve güvenle ödeme yapın.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="/finance/export" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#29382f] hover:bg-[#34453b] text-white text-sm font-medium transition-colors">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+                    <span>Rapor İndir</span>
+                </a>
+            </div>
+        </div>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="flex flex-col justify-between gap-4 rounded-2xl p-6 bg-surface-dark border border-[#29382f] relative overflow-hidden group hover:border-accent-terracotta/50 transition-colors duration-300">
+                <div class="flex items-start justify-between relative z-10">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-accent-sage text-sm font-medium uppercase tracking-wider">Güncel Borç</p>
+                        <p class="text-accent-terracotta tracking-tight text-3xl font-bold font-display">{% if balance and balance != 0 %}₺{{ '{:,.2f}'.format(balance) }}{% else %}₺0.00{% endif %}</p>
+                    </div>
+                    <div class="size-10 rounded-full bg-red-700/20 flex items-center justify-center text-red-400">
+                        <span class="material-symbols-outlined">warning</span>
+                    </div>
+                </div>
+                <p class="text-xs text-text-muted relative z-10 flex items-center gap-1">
+                    {% if next_payment_date %}
+                    <span class="size-1.5 rounded-full bg-accent-terracotta"></span>
+                    Son ödeme tarihi {{ (next_payment_date).strftime('%d.%m.%Y') }}.
+                    {% else %}
+                    <span class="size-1.5 rounded-full bg-accent-sage"></span>
+                    Son ödeme bilgisi yok.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="flex flex-col justify-between gap-4 rounded-2xl p-6 bg-surface-dark border border-[#29382f] relative overflow-hidden group hover:border-accent-terracotta/50 transition-colors duration-300">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-accent-sage text-sm font-medium uppercase tracking-wider">Son Başarılı Ödeme</p>
+                        {% if payments and payments|length > 0 %}
+                            {% set last = payments[0] %}
+                            <p class="text-white tracking-tight text-3xl font-bold font-display">{{ last.payment_date.strftime('%d.%m.%Y') if last.payment_date else '-' }}</p>
+                        {% else %}
+                            <p class="text-white tracking-tight text-3xl font-bold font-display">-</p>
+                        {% endif %}
+                    </div>
+                    <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined">check_circle</span>
+                    </div>
+                </div>
+                <p class="text-xs text-text-muted flex items-center gap-1">
+                    {% if payments and payments|length > 0 and last.subscription and last.subscription.package %}
+                        {{ last.subscription.package.name }}
+                    {% else %}
+                        Son ödeme bilgisi yok
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="flex flex-col justify-between gap-4 rounded-2xl p-6 bg-surface-dark border border-[#29382f] relative overflow-hidden group hover:border-accent-terracotta/50 transition-colors duration-300">
+                <div class="flex items-start justify-between relative z-10">
+                    <div class="flex flex-col gap-1">
+                        <p class="text-accent-sage text-sm font-medium uppercase tracking-wider">Toplam Ödenen</p>
+                        <p class="text-white text-3xl font-bold">₺{{ '{:,.2f}'.format(total_paid_12mo if total_paid_12mo is defined else 0.0) }}</p>
+                    </div>
+                    <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                </div>
+                <p class="text-xs text-text-muted relative z-10">Son 12 ay</p>
+            </div>
+        </section>
+
+        <section class="flex flex-col gap-5 pb-10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 class="text-white text-lg font-bold flex items-center gap-2">
+                    Hareketler
+                    <span class="bg-[#29382f] text-accent-sage text-xs px-2 py-0.5 rounded-full">{{ payments|length if payments else 0 }}</span>
+                </h3>
+                <div class="flex gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
+                    <button id="btn-all" class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white text-[#111814] px-5 transition-transform hover:scale-105 active:scale-95 shadow-sm">
+                        <span class="text-sm font-bold">Tümü</span>
+                    </button>
+                    <button id="btn-payments" class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-[#29382f] text-accent-sage px-5 border border-transparent hover:border-white/10 hover:text-white transition-all">
+                        <span class="text-sm font-medium">Ödemeler</span>
+                    </button>
+                    <button id="btn-debts" class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-[#29382f] text-accent-sage px-5 border border-transparent hover:border-white/10 hover:text-white transition-all">
+                        <span class="text-sm font-medium">Borçlar</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col rounded-2xl bg-surface-dark border border-[#29382f] overflow-hidden shadow-xl shadow-black/20">
+                <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-[#29382f] bg-[#223028] text-xs font-semibold text-accent-sage uppercase tracking-wider">
+                    <div class="col-span-5">Açıklama</div>
+                    <div class="col-span-3">Tarih</div>
+                    <div class="col-span-2 text-right">Tutar</div>
+                    <div class="col-span-2 text-right">Durum</div>
+                </div>
+
+                {% if activities and activities|length > 0 %}
+                    {% for a in activities %}
+                        {% set is_paid = (a.status == 'paid') %}
+                        <div class="activity-row group flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 px-6 py-5 border-b border-[#29382f] hover:bg-[#223028] transition-colors items-center cursor-pointer {% if a.type == 'payment' %}type-payment{% else %}type-debt{% endif %}" data-type="{{ a.type }}" style="{% if loop.index0 >= 5 %}display:none;{% endif %}">
+                            <div class="col-span-5 flex items-center gap-4 w-full">
+                                <div class="size-10 shrink-0 rounded-full bg-[#29382f] flex items-center justify-center text-white group-hover:bg-primary group-hover:text-[#111814] transition-colors">
+                                    <span class="material-symbols-outlined">{% if a.type == 'payment' %}payment{% else %}receipt_long{% endif %}</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-white font-medium text-base group-hover:text-primary transition-colors">{{ a.description }}</span>
+                                    <span class="text-accent-sage text-sm md:hidden">{{ a.date.strftime('%d.%m.%Y') if a.date else '-' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-span-3 text-text-muted text-sm hidden md:block font-body">{{ a.date.strftime('%d.%m.%Y') if a.date else '-' }}</div>
+                            <div class="col-span-2 flex items-center justify-between w-full md:justify-end md:w-auto">
+                                <span class="md:hidden text-text-muted text-sm">Tutar</span>
+                                <span class="text-white font-bold font-display">₺{{ '{:,.2f}'.format(a.amount) }}</span>
+                            </div>
+                            <div class="col-span-2 flex justify-end w-full md:w-auto">
+                                {% if a.type == 'debt' %}
+                                    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-terracotta/20 border border-accent-terracotta/20 text-accent-terracotta text-xs font-bold shadow-sm shadow-accent-terracotta/10">Ödeme Bekliyor</div>
+                                {% else %}
+                                    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold"><span class="material-symbols-outlined" style="font-size: 14px;">check</span> Ödendi</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="px-6 py-6 text-center text-text-muted">Henüz işlem geçmişiniz yok.</div>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-center mt-2">
+                <button id="load-more" class="text-accent-sage text-sm font-medium hover:text-white transition-colors flex items-center gap-1 px-4 py-2 rounded-full hover:bg-[#29382f]">Daha Fazla Göster <span class="material-symbols-outlined" style="font-size: 18px;">expand_more</span></button>
+            </div>
+        </section>
+    </div>
+</div>
+<script>
+// Client-side filtering and paginated reveal for activities
+;(function(){
+    const pageSize = 5;
+    let shownCount = pageSize;
+    let currentFilter = 'all';
+
+    const rows = Array.from(document.querySelectorAll('.activity-row'));
+    const btnAll = document.getElementById('btn-all');
+    const btnPayments = document.getElementById('btn-payments');
+    const btnDebts = document.getElementById('btn-debts');
+    const loadMoreBtn = document.getElementById('load-more');
+
+    function setActiveButton(btn){
+        [btnAll, btnPayments, btnDebts].forEach(b => {
+            if(!b) return;
+            b.classList.remove('bg-white','text-[#111814]');
+            b.classList.remove('font-bold');
+            b.classList.remove('shadow-sm');
+            b.classList.remove('scale-105');
+        });
+        if(btn){
+            btn.classList.add('bg-white','text-[#111814]','font-bold','shadow-sm');
+        }
+    }
+
+    function render(){
+        const matching = rows.filter(r => {
+            if(currentFilter === 'all') return true;
+            return r.dataset.type === (currentFilter === 'payments' ? 'payment' : 'debt');
+        });
+
+        // hide all first
+        rows.forEach(r => r.style.display = 'none');
+
+        // show up to shownCount of matching
+        for(let i=0;i<Math.min(shownCount, matching.length);i++){
+            matching[i].style.display = '';
+        }
+
+        // show/hide load-more
+        if(matching.length > shownCount){
+            loadMoreBtn.style.display = '';
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
+    }
+
+    // initial
+    setActiveButton(btnAll);
+    render();
+
+    if(btnAll) btnAll.addEventListener('click', ()=>{ currentFilter='all'; shownCount = pageSize; setActiveButton(btnAll); render(); });
+    if(btnPayments) btnPayments.addEventListener('click', ()=>{ currentFilter='payments'; shownCount = pageSize; setActiveButton(btnPayments); render(); });
+    if(btnDebts) btnDebts.addEventListener('click', ()=>{ currentFilter='debts'; shownCount = pageSize; setActiveButton(btnDebts); render(); });
+
+    if(loadMoreBtn) loadMoreBtn.addEventListener('click', ()=>{ shownCount += pageSize; render(); });
+})();
+</script>
+{% endblock %}

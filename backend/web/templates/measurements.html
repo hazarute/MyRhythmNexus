@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Vücut Ölçümlerim - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<main class="flex-1 w-full max-w-[1200px] mx-auto p-4 md:p-8 lg:p-10 flex flex-col gap-8">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-4">
+        <div class="flex flex-col gap-2">
+            <h2 class="text-3xl md:text-4xl font-black tracking-tight text-[#111814] dark:text-white">Gelişim Takibi</h2>
+            <p class="text-sage text-base max-w-lg">Vücut ölçümleriniz ve zaman içindeki pozitif değişiminiz.</p>
+        </div>
+    </header>
+
+    {% set latest = measurement_sessions[0] if measurement_sessions|length > 0 else None %}
+    {% set prev = measurement_sessions[1] if measurement_sessions|length > 1 else None %}
+
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+        <div class="relative overflow-hidden rounded-2xl bg-surface-dark border border-[#3c5345]/50 p-6 md:p-8 flex flex-col justify-between group">
+            <div class="flex justify-between items-start z-10">
+                <div>
+                    <p class="text-sage text-sm font-medium uppercase tracking-wider mb-1">Güncel Kilo</p>
+                    {% set kilo = latest_map.get('kilo') or latest_map.get('kg') or latest_map.get('weight') %}
+                    <p class="text-5xl font-black text-white tracking-tighter">{{ kilo if kilo is not none else '—' }} <span class="text-2xl text-sage font-medium">kg</span></p>
+                </div>
+                <div class="flex flex-col items-end">
+                    {% set prev_kilo = prev_map.get('kilo') or prev_map.get('kg') or prev_map.get('weight') %}
+                    {% if kilo is not none and prev_kilo is not none %}
+                        {% set delta_kilo = kilo - prev_kilo %}
+                        {% if delta_kilo < 0 %}
+                            <div class="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">trending_down</span>
+                                {{ ('%.1f' % delta_kilo) }} kg
+                            </div>
+                        {% elif delta_kilo > 0 %}
+                            <div class="bg-red-700/20 text-red-300 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">trending_up</span>
+                                {{ ('%+.1f' % delta_kilo) }} kg
+                            </div>
+                        {% else %}
+                            <div class="bg-white/5 text-sage px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">0 kg</div>
+                        {% endif %}
+                    {% else %}
+                        <div class="bg-white/5 text-sage px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">—</div>
+                    {% endif %}
+                    <p class="text-xs text-sage mt-2">Son 30 gün</p>
+                </div>
+            </div>
+            <div class="mt-8 flex items-center gap-4 z-10">
+                <div class="h-1.5 flex-1 bg-[#3c5345]/30 rounded-full overflow-hidden">
+                    <div class="h-full w-[75%] rounded-full" style="background-color: {{ bmi_color_hex if bmi_color_hex else '#30e87a' }}; box-shadow: 0 0 10px {{ bmi_color_hex if bmi_color_hex else '#30e87a' }}"></div>
+                </div>
+                {% if bmi_value is not none and bmi_category is not none %}
+                    <span class="text-xs text-sage font-medium whitespace-nowrap">BKİ: <strong class="ml-1">{{ bmi_value }}</strong></span>
+                    <span class="ml-3 px-3 py-1 rounded-full text-xs font-bold" style="background-color: {{ bmi_color_hex }}; color: #0f172a">{{ bmi_category }}</span>
+                {% else %}
+                    <span class="text-xs text-sage font-medium whitespace-nowrap">Hedef: 55 kg</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="rounded-2xl bg-surface-dark border border-[#3c5345]/50 p-5 flex flex-col justify-center gap-1">
+                {% set waist = latest_map.get('bel') or latest_map.get('waist') %}
+                {% set prev_waist = prev_map.get('bel') or prev_map.get('waist') %}
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-sage">accessibility_new</span>
+                    {% if waist is not none and prev_waist is not none %}
+                        {% set delta_waist = waist - prev_waist %}
+                        {% if delta_waist < 0 %}
+                            <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_waist) }} cm</span>
+                        {% elif delta_waist > 0 %}
+                            <span class="text-red-700 text-xs font-bold bg-red-700/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_waist) }} cm</span>
+                        {% else %}
+                            <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">0 cm</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">— cm</span>
+                    {% endif %}
+                </div>
+                <p class="text-sage text-sm font-medium">Bel</p>
+                <p class="text-2xl font-bold text-white">{{ waist if waist is not none else '—' }} cm</p>
+                <p class="text-xs text-sage opacity-60">Önceki: {% if prev %}
+                    {% set prev_waist = prev_map.get('bel') or prev_map.get('waist') %}
+                    {{ prev_waist if prev_waist is not none else '—' }}
+                {% else %}—{% endif %} cm</p>
+            </div>
+            <div class="rounded-2xl bg-surface-dark border border-[#3c5345]/50 p-5 flex flex-col justify-center gap-1">
+                {% set hip = latest_map.get('kalca') or latest_map.get('kalça') or latest_map.get('hip') %}
+                {% set prev_hip = prev_map.get('kalca') or prev_map.get('kalça') or prev_map.get('hip') %}
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-sage">hotel_class</span>
+                    {% if hip is not none and prev_hip is not none %}
+                        {% set delta_hip = hip - prev_hip %}
+                        {% if delta_hip < 0 %}
+                            <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_hip) }} cm</span>
+                        {% elif delta_hip > 0 %}
+                            <span class="text-red-700 text-xs font-bold bg-red-700/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_hip) }} cm</span>
+                        {% else %}
+                            <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">0 cm</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">— cm</span>
+                    {% endif %}
+                </div>
+                <p class="text-sage text-sm font-medium">Kalça</p>
+                <p class="text-2xl font-bold text-white">{{ hip if hip is not none else '—' }} cm</p>
+                <p class="text-xs text-sage opacity-60">Önceki: {% if prev %}
+                    {% set prev_hip = prev_map.get('kalca') or prev_map.get('kalça') or prev_map.get('hip') %}
+                    {{ prev_hip if prev_hip is not none else '—' }}
+                {% else %}—{% endif %} cm</p>
+            </div>
+            <div class="rounded-2xl bg-surface-dark border border-[#3c5345]/50 p-5 flex flex-col justify-center gap-1">
+                {% set chest = latest_map.get('gogus') or latest_map.get('göğüs') or latest_map.get('chest') %}
+                {% set prev_chest = prev_map.get('gogus') or prev_map.get('göğüs') or prev_map.get('chest') %}
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-sage">favorite</span>
+                    {% if chest is not none and prev_chest is not none %}
+                        {% set delta_chest = chest - prev_chest %}
+                        {% if delta_chest < 0 %}
+                            <span class="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_chest) }} cm</span>
+                        {% elif delta_chest > 0 %}
+                            <span class="text-red-700 text-xs font-bold bg-red-700/10 px-2 py-0.5 rounded-full">{{ ('%+.1f' % delta_chest) }} cm</span>
+                        {% else %}
+                            <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">0 cm</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-sage text-xs font-bold bg-white/5 px-2 py-0.5 rounded-full">— cm</span>
+                    {% endif %}
+                </div>
+                <p class="text-sage text-sm font-medium">Göğüs</p>
+                <p class="text-2xl font-bold text-white">{{ chest if chest is not none else '—' }} cm</p>
+                <p class="text-xs text-sage opacity-60">Önceki: {% if prev %}
+                    {% set prev_chest = prev_map.get('gogus') or prev_map.get('göğüs') or prev_map.get('chest') %}
+                    {{ prev_chest if prev_chest is not none else '—' }}
+                {% else %}—{% endif %} cm</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="rounded-2xl bg-surface-dark border border-[#3c5345]/30 p-6 md:p-8">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+            <div>
+                <h3 class="text-lg font-bold text-white">Değişim Grafiği</h3>
+                <p class="text-sage text-sm">Son 6 aylık vücut analizi</p>
+            </div>
+            <div id="metric-buttons" class="flex bg-[#111814] p-1 rounded-lg border border-[#3c5345]/50">
+                <button class="px-4 py-1.5 rounded-md text-xs font-bold bg-primary text-[#111814] shadow-sm">Kilo</button>
+                <button class="px-4 py-1.5 rounded-md text-xs font-medium text-sage hover:text-white transition-colors">Bel</button>
+                <button class="px-4 py-1.5 rounded-md text-xs font-medium text-sage hover:text-white transition-colors">Göğüs</button>
+                <button class="px-4 py-1.5 rounded-md text-xs font-medium text-sage hover:text-white transition-colors">Kalça</button>
+            </div>
+        </div>
+        <div class="w-full h-[320px] relative">
+            <canvas id="measureChart" class="w-full h-full"></canvas>
+        </div>
+        <div class="flex justify-between mt-4 px-2 text-xs font-bold text-sage uppercase tracking-wider">
+            <!-- labels are rendered by the chart -->
+            <span></span>
+        </div>
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script>
+                (function(){
+                // Parse sessions json injected by server
+                const sessions = {{ sessions_json | safe }};
+
+                function getSeries(metricKeys){
+                    const labels = sessions.map(s=>s.label).reverse();
+                    const data = sessions.map(s=>{
+                        for (const k of metricKeys){
+                            if (s.values.hasOwnProperty(k) && s.values[k] !== null){
+                                return Number(s.values[k]);
+                            }
+                        }
+                        return null;
+                    }).reverse();
+                    return {labels, data};
+                }
+
+                const ctx = document.getElementById('measureChart').getContext('2d');
+                const gradientFill = ctx.createLinearGradient(0,0,0,240);
+                gradientFill.addColorStop(0, 'rgba(48,232,122,0.18)');
+                gradientFill.addColorStop(1, 'rgba(48,232,122,0)');
+
+                const config = {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Kilo',
+                            data: [],
+                            fill: true,
+                            backgroundColor: gradientFill,
+                            borderColor: '#30e87a',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#112117',
+                            pointBorderColor: '#30e87a',
+                            pointRadius: 5,
+                            tension: 0.25
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { display: true, grid: { display: false }, ticks: { color: '#93b49a' } },
+                            y: { display: false }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                };
+
+                const chart = new Chart(ctx, config);
+
+                function updateMetric(metric){
+                    // metric: one of 'kilo','bel','gogus','kalca'
+                    let keys;
+                    if (metric === 'kilo') keys = ['Kilo','kilo','kg','weight'];
+                    else if (metric === 'bel') keys = ['Bel','bel','waist'];
+                    else if (metric === 'gogus') keys = ['Göğüs','Göğüs','gogus','chest','Göğüs'];
+                    else if (metric === 'kalca') keys = ['Kalça','kalca','Kalça','hip'];
+                    else keys = [metric];
+
+                    const series = getSeries(keys);
+                    chart.data.labels = series.labels;
+                    chart.data.datasets[0].data = series.data;
+                    chart.data.datasets[0].label = metric === 'kilo' ? 'Kilo' : metric;
+                    chart.update();
+                }
+
+                // Wire metric buttons
+                document.querySelectorAll('#metric-buttons button').forEach(btn=>{
+                    btn.addEventListener('click', function(e){
+                        document.querySelectorAll('#metric-buttons button').forEach(b=>b.classList.remove('bg-primary','text-[#111814]','font-bold'));
+                        this.classList.add('bg-primary','text-[#111814]','font-bold');
+                        const txt = this.textContent.trim().toLowerCase();
+                        if (txt === 'kilo') updateMetric('kilo');
+                        else if (txt === 'bel') updateMetric('bel');
+                        else if (txt === 'göğüs' || txt === 'gogus') updateMetric('gogus');
+                        else if (txt === 'kalça' || txt === 'kalca') updateMetric('kalca');
+                    });
+                });
+
+                // initialize with Kilo
+                updateMetric('kilo');
+            })();
+        </script>
+    </section>
+
+    <section>
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">history</span>
+            Geçmiş Ölçümler
+        </h3>
+        <div class="flex flex-col gap-3">
+            <div class="hidden md:grid grid-cols-5 px-6 text-xs font-bold text-sage uppercase tracking-wider opacity-60">
+                <div class="col-span-1">Tarih</div>
+                <div class="col-span-1">Kilo</div>
+                <div class="col-span-1">Bel</div>
+                <div class="col-span-1">Kalça</div>
+                <div class="col-span-1 text-right">Detay</div>
+            </div>
+            {% for s in measurement_sessions %}
+            <div class="group flex flex-col md:grid md:grid-cols-5 items-center gap-4 md:gap-0 bg-surface-dark border border-[#3c5345]/30 hover:border-primary/50 p-4 md:px-6 md:py-4 rounded-xl transition-all cursor-pointer">
+                <div class="flex items-center gap-3 w-full md:w-auto md:col-span-1">
+                    <div class="bg-[#29382f] p-2 rounded-lg text-primary">
+                        <span class="material-symbols-outlined text-sm">calendar_month</span>
+                    </div>
+                    <span class="text-white font-medium">{{ s.session_date.strftime('%d %B %Y') }}</span>
+                </div>
+                <div class="flex justify-between w-full md:w-auto md:block md:col-span-1">
+                    <span class="md:hidden text-sage text-sm">Kilo:</span>
+                    {% set sess_vals = session_maps.get(s.id) if session_maps is defined else None %}
+                    {% set val_kilo = sess_vals.get('kilo') if sess_vals else None %}
+                    {% if val_kilo is none and sess_vals %}
+                        {% set val_kilo = sess_vals.get('kg') or sess_vals.get('weight') %}
+                    {% endif %}
+                    <span class="text-white font-bold">{{ val_kilo if val_kilo is not none else '—' }}{% if val_kilo is not none %} kg{% endif %}</span>
+                </div>
+                <div class="flex justify-between w-full md:w-auto md:block md:col-span-1">
+                    <span class="md:hidden text-sage text-sm">Bel:</span>
+                    {% set sess_vals = session_maps.get(s.id) if session_maps is defined else None %}
+                    {% set val_waist = sess_vals.get('bel') if sess_vals else None %}
+                    {% if val_waist is none and sess_vals %}
+                        {% set val_waist = sess_vals.get('waist') %}
+                    {% endif %}
+                    <span class="text-white font-bold">{{ val_waist if val_waist is not none else '—' }}{% if val_waist is not none %} cm{% endif %}</span>
+                </div>
+                <div class="flex justify-between w-full md:w-auto md:block md:col-span-1">
+                    <span class="md:hidden text-sage text-sm">Kalça:</span>
+                    {% set sess_vals = session_maps.get(s.id) if session_maps is defined else None %}
+                    {% set val_hip = sess_vals.get('kalca') if sess_vals else None %}
+                    {% if val_hip is none and sess_vals %}
+                        {% set val_hip = sess_vals.get('kalca') or sess_vals.get('kalça') or sess_vals.get('hip') %}
+                    {% endif %}
+                    <span class="text-white font-bold">{{ val_hip if val_hip is not none else '—' }}{% if val_hip is not none %} cm{% endif %}</span>
+                </div>
+                <div class="w-full md:w-auto md:col-span-1 md:text-right mt-2 md:mt-0">
+                    <a href="/web/measurements/{{ s.id }}" class="w-full md:w-auto inline-flex items-center justify-center text-xs font-bold text-primary hover:bg-primary hover:text-[#111814] border border-primary/30 px-4 py-2 rounded-full transition-colors">
+                        İncele
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            <!-- static/dummy rows removed; real sessions are rendered above (latest 5) -->
+        </div>
+    </section>
+</main>
+{% endblock %}

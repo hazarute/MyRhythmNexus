@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Ana Merkez - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<div class="max-w-[1200px] mx-auto px-6 pb-12 md:px-12">
+    <!-- Hero / Welcome Section -->
+    <section class="py-8 md:py-12 flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+        <div class="max-w-2xl">
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-3">
+                Hoş geldin, <span class="text-primary">{{ user.first_name }}!</span>
+            </h2>
+            <p class="text-lg text-slate-600 dark:text-[#9db8a8] font-normal leading-relaxed max-w-lg">
+                Bugün enerjin harika görünüyor. Spora geri dönmek için mükemmel bir gün.
+            </p>
+        </div>
+        <button class="bg-primary hover:bg-[#2bd46d] text-background-dark font-bold py-3 px-8 rounded-full flex items-center gap-2 transition-transform hover:scale-105 shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined">calendar_add_on</span>
+            Hemen Rezervasyon Yap
+        </button>
+    </section>
+
+    <!-- Active Subscriptions (show up to 2) -->
+    {% if subscriptions and subscriptions|length > 0 %}
+    <section class="mb-10">
+        <div class="bg-white dark:bg-card-dark rounded-lg p-1 shadow-sm md:p-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for sub in subscriptions %}
+                <a href="/web/subscriptions/{{ sub.id }}" class="block rounded-xl p-6 md:p-8 bg-background-light dark:bg-[#25382e] relative overflow-hidden group">
+                    <div class="absolute -right-10 -top-10 size-40 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all"></div>
+                    <div class="relative z-10 flex flex-col h-full justify-between gap-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-3 py-1 bg-terracotta/20 text-terracotta text-xs font-bold rounded-full uppercase tracking-wider">Aktif Abonelik</span>
+                                </div>
+                                <h3 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{{ sub.plan_name }}</h3>
+                                <p class="text-slate-500 dark:text-[#9db8a8] mt-1 text-sm">Geçerlilik: {{ sub.end_date }}</p>
+                            </div>
+                            <div class="size-12 bg-white/10 rounded-full flex items-center justify-center">
+                                <span class="material-symbols-outlined text-3xl text-primary">self_improvement</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Kullanılan Seanslar</span>
+                                <span class="text-xl font-bold text-slate-800 dark:text-white">{{ sub.used_sessions }} <span class="text-slate-400 dark:text-slate-500 text-sm font-normal">/
+                                    {% if sub.total_sessions is none %}Sınırsız Hak{% else %} {{ sub.total_sessions }} Hak{% endif %}
+                                </span></span>
+                            </div>
+                            {% if sub.total_sessions is not none %}
+                            <div class="h-3 w-full bg-slate-200 dark:bg-[#3c5345] rounded-full overflow-hidden">
+                                <div class="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style="width: {{ sub.percentage }}%;"></div>
+                            </div>
+                            {% else %}
+                            <div class="text-sm text-slate-400">Zaman bazlı paket — sınırsız erişim</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Navigation Grid -->
+    <section>
+        <h3 class="text-xl font-bold mb-6 px-2 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">grid_view</span>
+            Hızlı Erişim
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Card 1: Vücut Ölçümlerim -->
+            <a href="/web/measurements" class="group relative flex flex-col justify-between overflow-hidden rounded-lg bg-white dark:bg-card-dark p-6 h-64 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="absolute inset-0 opacity-10 dark:opacity-20 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAwPwTrlqVqElfUcPaWz9tZRpoCRFanhaIWCxelQSIudnQa0kYJSFJzRVdkFWIrPH7b0cd2l7YKHm_abPxAlGA8vvvzyK9C2JgkAr2T27XfgyER0_5GV3wVioFnX5OTAbRZTVdcHfgz4h5OsAu1O0OW3zskAGGbBFadGwAh9CfYkLnWkZtJrvZqLFBO95oqvzhQtVctJSlXkYJT2KBu128ACPX6EvKEXIcguP04rEKmxLKsAt6yixiMNEMbAUNQ1bC3qkMiGP-1d8i6');"></div>
+                <div class="relative z-10 flex justify-between items-start">
+                    <div class="p-3 bg-terracotta/10 text-terracotta rounded-full">
+                        <span class="material-symbols-outlined text-2xl">straighten</span>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-white transition-colors">arrow_outward</span>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Vücut Ölçümlerim</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-300 transition-colors">Gelişimini ve değişimini takip et</p>
+                </div>
+            </a>
+
+            <!-- Card 2: Finans Geçmişi -->
+            <a href="/web/finance" class="group relative flex flex-col justify-between overflow-hidden rounded-lg bg-white dark:bg-card-dark p-6 h-64 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <div class="absolute inset-0 opacity-10 dark:opacity-20 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEEU4Bca6KL06y92WyqaKZ7zBfNZBWNU0OiUderJMdU5fZenMzjEh6aXfyAXJ7iQOgtekzaFIYMF3rq5DByq54XitpkvrrLO4TPyChCd5toJVQJfPoFi_d4MSnmBkL-1xPoYZLsBAmdLRnpOPg-PB2QA-Goj2dHtVPV9Ej7BxhkLXBJWWrPMzpd8fBFOKLyZreiioFHEjocRArweZ-iqkV5XhQHHQsfW1vzt5jvTDcd-tEXs9DQRJ4OGV2Iy4UDRo7cLdG4JNVL8nb');"></div>
+                <div class="relative z-10 flex justify-between items-start">
+                    <div class="p-3 bg-sunny/10 text-sunny rounded-full">
+                        <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-white transition-colors">arrow_outward</span>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Finans Geçmişi</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-300 transition-colors">Ödemeler, faturalar ve bakiyen</p>
+                </div>
+            </a>
+
+            <!-- Card 3: Profilim -->
+            <a href="/web/profile" class="group relative flex flex-col justify-between overflow-hidden rounded-lg bg-white dark:bg-card-dark p-6 h-64 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <div class="absolute inset-0 opacity-10 dark:opacity-20 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAY8UaD71xJvtDo-9oF7fX5Wgde06yhZbHclPtRaM_G-vQp_frgQgazmYojcorv72W3PLS1w-HnDHzniJzfB4Cd20Oh7aggfctVcUK6BnnZdSKgSKBfMBR8snULZ7oqJv1Uc8WOJcpmN11VSDY1xkdstq6c0DCu-uAyPr2FsjoRIlpLQY5iGupbu3BCcrnqbvPYkWsysI8Pln-dbK0aYa2XAJIyu0tP_FTuR51SihKgE7JeWuiIMUccrK7rhwSo6vDx-EEt2Mgb7Mrb');"></div>
+                <div class="relative z-10 flex justify-between items-start">
+                    <div class="p-3 bg-primary/10 text-primary rounded-full">
+                        <span class="material-symbols-outlined text-2xl">person_edit</span>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-white transition-colors">arrow_outward</span>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Profilim</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-300 transition-colors">Kişisel bilgilerini güncelle</p>
+                </div>
+            </a>
+
+            <!-- Card 4: Tüm Abonelikler -->
+            <a href="/web/subscriptions" class="group relative flex flex-col justify-between overflow-hidden rounded-lg bg-white dark:bg-card-dark p-6 h-64 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <div class="absolute inset-0 opacity-10 dark:opacity-20 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAqOIT10e9BJ0OUG3HKq6w-4VZd529VTQ5FZHWxSaF-b--j6Cs1pD-IDU6AguJRE0Tuf8Wboqau7MabVoViLQNGQkM2h0beVJUFp4iojT4dDOCOMXEfF1oVqQ6KWsmGXRRCNfnsu7hzmhbf6rceGfl09F7UMy-8UG4KAXT9UIfvUVpiA8GOI7088vo_8v9wDTqCVuqGEWdF-c5qJ64izpoIZ_D_7MgI-4t2eSPst8rQKVdoFl7R7kwWINsU3UJeRdANzi0HgTj3VfyQ');"></div>
+                <div class="relative z-10 flex justify-between items-start">
+                    <div class="p-3 bg-sage/10 text-sage rounded-full">
+                        <span class="material-symbols-outlined text-2xl">history_edu</span>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-white transition-colors">arrow_outward</span>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Tüm Abonelikler</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-300 transition-colors">Aktif ve geçmiş paketlerin</p>
+                </div>
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

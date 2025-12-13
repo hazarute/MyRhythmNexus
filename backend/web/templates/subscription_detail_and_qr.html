@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subscription.package.name if subscription and subscription.package and subscription.package.name else 'Abonelik Detayı' }} - QR Kod - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<div class="flex-grow flex items-center justify-center p-6 relative">
+    <!-- Ambient Background Elements -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-sage/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-terracotta/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="w-full max-w-[1000px] grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
+        <!-- Left Side: Subscription Details -->
+        <div class="lg:col-span-5 flex flex-col gap-6 order-2 lg:order-1">
+            <!-- Status Card -->
+            <div class="glass-panel rounded-2xl p-8 flex flex-col gap-6 shadow-xl">
+                <div class="flex items-center justify-between pb-4 border-b border-white/5">
+                    <h2 class="text-2xl font-bold">Abonelik Durumu</h2>
+                    <span class="bg-primary/20 text-primary text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">{{ subscription.status.value if subscription.status is not none else 'Durum' }}</span>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <p class="text-sm text-gray-400 dark:text-[#9db8a8]">Abonelik Paketi</p>
+                    <p class="text-lg font-medium">{{ subscription.package.name if subscription and subscription.package and subscription.package.name else '-' }}</p>
+                </div>
+
+                <!-- Visual Progress -->
+                <div class="flex flex-col gap-4 py-2">
+                    <div class="flex justify-between items-end">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-4xl font-bold text-white">{{ used_sessions }}</span>
+                            <span class="text-lg text-gray-500 font-medium">/
+                                {% if total_sessions is none %}
+                                    <span class="font-medium">Sınırsız</span>
+                                {% else %}
+                                    {{ total_sessions }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if total_sessions is none %}
+                            <span class="text-sm text-primary font-medium">Sınırsız Erişim</span>
+                        {% else %}
+                            <span class="text-sm text-primary font-medium">{{ percentage|round(0) }}% Kullanıldı</span>
+                        {% endif %}
+                    </div>
+                    {% if total_sessions is not none %}
+                    <div class="h-4 w-full bg-[#29382f] rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-primary to-sage" style="width: {{ percentage }}%"></div>
+                    </div>
+                    {% endif %}
+                    <p class="text-xs text-gray-400 text-right">Kalan Seans: <span class="text-white font-bold">{% if total_sessions is none %}Sınırsız{% elif remaining_sessions is not none %}{{ remaining_sessions }}{% else %}-{% endif %}</span></p>
+                </div>
+
+                <!-- Date Info -->
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div class="bg-[#29382f]/50 p-4 rounded-xl border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-[#9db8a8]">
+                            <span class="material-symbols-outlined text-lg">calendar_month</span>
+                            <span class="text-xs font-semibold uppercase">Başlangıç</span>
+                        </div>
+                        <p class="font-medium text-white">{{ subscription.start_date.strftime('%d %b %Y') }}</p>
+                    </div>
+                    <div class="bg-[#29382f]/50 p-4 rounded-xl border border-white/5">
+                        <div class="flex items-center gap-2 mb-2 text-terracotta">
+                            <span class="material-symbols-outlined text-lg">event_busy</span>
+                            <span class="text-xs font-semibold uppercase">Bitiş</span>
+                        </div>
+                        <p class="font-medium text-white">{{ subscription.end_date.strftime('%d %b %Y') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Class Teaser -->
+            {% if next_class %}
+            <div class="bg-sunny/10 border border-sunny/20 rounded-2xl p-6 flex items-center justify-between">
+                <div>
+                    <p class="text-sunny text-xs font-bold uppercase mb-1">Yaklaşan Ders</p>
+                    <p class="text-white font-medium">{{ next_class.name }}</p>
+                </div>
+                <button class="bg-sunny text-black size-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Side: The Access Pass (QR) -->
+        <div class="lg:col-span-7 flex justify-center order-1 lg:order-2">
+            <div class="relative w-full max-w-md">
+                <!-- Card Shape -->
+                <div class="bg-white dark:bg-[#f3f4f3] rounded-[2.5rem] p-2 shadow-2xl relative overflow-hidden transform transition-transform hover:scale-[1.01] duration-300">
+                    <!-- Top decorative cutout -->
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#111814] rounded-b-2xl z-20"></div>
+
+                    <!-- Inner Content Container -->
+                    <div class="bg-white rounded-[2rem] p-8 flex flex-col items-center text-center h-full border border-gray-100 relative z-10">
+                        <!-- Header -->
+                        <div class="mt-8 mb-6">
+                            <p class="text-gray-400 text-xs font-bold tracking-[0.2em] uppercase mb-2">MyRhythmNexus Pass</p>
+                            <h3 class="text-3xl font-bold text-gray-900 tracking-tight">{{ subscription.package.name if subscription and subscription.package and subscription.package.name else 'Stüdyo Girişi' }}</h3>
+                        </div>
+
+                        <!-- QR Container -->
+                        <div class="p-4 bg-white rounded-3xl border-2 border-gray-200 mb-8 flex items-center justify-center">
+                            <div class="bg-white p-0 rounded-md relative w-72 h-72 flex items-center justify-center">
+                                {% if subscription and subscription.qr_code and subscription.qr_code.qr_token %}
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={{ subscription.qr_code.qr_token }}" alt="QR Kod" class="w-full h-full object-contain" />
+                                {% else %}
+                                <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 rounded-md">
+                                    <div class="text-center">
+                                        <span class="material-symbols-outlined text-6xl block mb-2">qr_code_2</span>
+                                        <p class="text-xs">QR Kod Burada</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="flex items-center gap-3 bg-gray-50 px-5 py-3 rounded-full mb-6 border border-gray-100">
+                            <div class="size-8 rounded-full bg-gray-200 bg-cover bg-center flex items-center justify-center text-lg font-bold text-gray-700">
+                                {{ user.first_name[0] if user and user.first_name else '' }}
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <span class="text-sm font-bold text-gray-800 leading-none">{{ user.full_name if user.full_name else (user.first_name ~ (' ' ~ user.last_name if user.last_name else '')) }}</span>
+                                <span class="text-xs text-gray-400 font-medium uppercase"></span>
+                            </div>
+                        </div>
+
+                        <!-- Instructional Text -->
+                        <p class="text-gray-400 text-sm max-w-[200px] leading-relaxed">
+                            Geçiş yapmak için QR kodu okutunuz.
+                        </p>
+
+                        <!-- Kod Yenile butonu kaldırıldı -->
+                    </div>
+
+                    <!-- Bottom Decoration -->
+                    <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-terracotta via-primary to-sage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .qr-glow {
+        box-shadow: 0 0 40px -10px rgba(48, 232, 122, 0.3);
+    }
+    @keyframes scan {
+        0% { top: 6%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: 88%; opacity: 0; }
+    }
+</style>
+{% endblock %}

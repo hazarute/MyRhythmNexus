@@ -86,8 +86,13 @@ MyRhythmNexus/
 │   │   ├── routes/              # Python Rotaları (UYGULANDI)
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py          # Login, Logout, Register işlemleri
-│   │   │   └── dashboard.py     # Kartlarım, Profil görüntüleme
-│   │   └── router.py            # Alt rotaları toplayan dosya
+│   │   │   ├── dashboard.py     # Kartlarım, Profil görüntüleme
+│   │   │   ├── register.py      # Kayıt işlemleri
+│   │   │   ├── cards.py         # Abonelik listesi ve detay (yeni)
+│   │   │   ├── measurements.py  # Vücut ölçümleri (yeni)
+│   │   │   ├── finance.py       # Ödemeler (yeni)
+│   │   │   └── profile.py       # Ayarlar (yeni)
+│   │   └── router.py            # Alt rotaları toplayan hub (include_router kullanılarak)
 │
 └── desktop/               # --- PROJE 1: MASAÜSTÜ ADMIN PANELİ ---
     ├── main.py            # Uygulama başlatıcı

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title if page_title else 'Ölçüm Detayı' }} - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<main class="flex-1 w-full max-w-[900px] mx-auto p-4 md:p-8 lg:p-10 flex flex-col gap-6">
+    <header class="flex items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl md:text-3xl font-black text-white">{{ page_title if page_title else 'Ölçüm Detayı' }}</h2>
+            <p class="text-sage text-sm mt-1">Tam oturum verileri ve ayrıntılar</p>
+        </div>
+        <div class="text-right">
+            <a href="/web/measurements" class="text-xs font-bold text-sage hover:text-white">← Geri</a>
+        </div>
+    </header>
+
+    {% if error %}
+        <div class="rounded-md bg-red-800/50 p-4 text-sm text-red-200">{{ error }}</div>
+    {% endif %}
+
+    {% if session %}
+    <section class="rounded-2xl bg-surface-dark border border-[#3c5345]/30 p-6 md:p-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-lg font-bold text-white">Ölçüm Tarihi: {{ session.session_date.strftime('%d %B %Y') if session.session_date else '—' }}</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {% for mv in values %}
+            <div class="rounded-lg bg-[#0f1a17] p-4 border border-[#26372b]/40">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sage text-xs font-medium">{{ mv.type_name }}</div>
+                        <div class="text-white text-lg font-bold">{{ mv.value }}{% if mv.unit %} {{ mv.unit }}{% endif %}</div>
+                    </div>
+                    <div class="text-sage text-xs text-right">&nbsp;</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if bmi is defined and bmi is not none %}
+        <div class="mt-6 flex items-center gap-4">
+            <div class="rounded-lg bg-[#0f1a17] p-4 border border-[#26372b]/40">
+                <div class="text-sage text-xs">Vücut Kitle İndeksi</div>
+                <div class="text-white text-2xl font-bold">{{ bmi.value }}</div>
+                <div class="text-sage text-sm">{{ bmi.category }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+    </section>
+    {% else %}
+        <div class="rounded-2xl bg-surface-dark border border-[#3c5345]/30 p-6 text-sage">Bu ölçüm bulunamadı veya erişiminiz yok.</div>
+    {% endif %}
+
+</main>
+{% endblock %}

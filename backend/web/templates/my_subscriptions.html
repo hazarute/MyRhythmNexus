@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Aboneliklerim - MyRhythmNexus{% endblock %}
+
+{% block content %}
+<div class="max-w-[1200px] mx-auto px-6 pb-12 md:px-12">
+    <!-- Header -->
+    <div class="py-8 md:py-12">
+        <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-3">Aboneliklerim</h2>
+        <p class="text-lg text-slate-600 dark:text-[#9db8a8] font-normal">Aktif ve geçmiş paketlerini yönet</p>
+    </div>
+
+    <!-- Active Subscriptions -->
+    {% if active_subscriptions %}
+    <section class="mb-12">
+        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">verified</span>
+            Aktif Paketler
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for sub in active_subscriptions %}
+            <div class="bg-white dark:bg-card-dark rounded-lg p-6 border-2 border-primary/20 hover:border-primary transition-all hover:shadow-lg" onclick="window.location.href='/web/subscriptions/{{ sub.id }}'" style="cursor: pointer;">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-2xl font-bold text-slate-800 dark:text-white">{{ sub.package.name if sub.package else 'Paket' }}</h4>
+                        {% set total_sessions = sub.package.plan.sessions_granted if sub.package and sub.package.plan and sub.package.plan.sessions_granted else None %}
+                        <p class="text-sm text-slate-600 dark:text-[#9db8a8] mt-1">{% if total_sessions %}{{ total_sessions }} Seans{% else %}Seans bilgisi yok{% endif %}</p>
+                    </div>
+                    <span class="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full">Aktif</span>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 dark:text-slate-400">Başlama Tarihi</span>
+                        <span class="font-medium">{{ sub.start_date.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 dark:text-slate-400">Bitiş Tarihi</span>
+                        <span class="font-medium">{{ sub.end_date.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600 dark:text-slate-400">Kalan Seanslar</span>
+                        {% if total_sessions is not none %}
+                        <span class="font-bold text-primary">{{ (total_sessions - sub.used_sessions) if sub.used_sessions is not none else total_sessions }} / {{ total_sessions }}</span>
+                        {% else %}
+                        <span class="font-bold text-primary">-</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <a href="/web/subscriptions/{{ sub.id }}" class="w-full bg-primary hover:bg-[#2bd46d] text-background-dark font-bold py-3 rounded-lg transition-transform hover:scale-105 inline-block text-center">
+                    QR Kodunu Görüntüle
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% else %}
+    <div class="bg-white dark:bg-card-dark rounded-lg p-12 text-center mb-12">
+        <span class="material-symbols-outlined text-5xl text-slate-400 dark:text-slate-600 mx-auto block mb-4">package</span>
+        <h3 class="text-2xl font-bold mb-2">Aktif Paket Yok</h3>
+        <p class="text-slate-600 dark:text-slate-400 mb-6">Henüz herhangi bir paket satın almadınız. Şimdi abone olmaya başlayın!</p>
+        <a href="#" class="inline-block bg-primary hover:bg-[#2bd46d] text-background-dark font-bold py-3 px-8 rounded-full transition-transform hover:scale-105">
+            Paket Satın Al
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Passive Subscriptions -->
+    {% if passive_subscriptions %}
+    <section>
+        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400">clock</span>
+            Geçmiş Paketler
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for sub in passive_subscriptions %}
+            <div class="bg-white dark:bg-card-dark rounded-lg p-6 opacity-75 hover:opacity-100 transition-opacity">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-slate-600 dark:text-slate-400">{{ sub.plan_name }}</h4>
+                        <p class="text-sm text-slate-500 dark:text-slate-500 mt-1">{{ sub.session_count }} Seans</p>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-400 text-xs font-bold rounded-full">Sona Erdi</span>
+                </div>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-600 dark:text-slate-400">Bitiş Tarihi</span>
+                        <span>{{ sub.end_date.strftime('%d.%m.%Y') }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

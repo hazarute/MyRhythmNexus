@@ -10,6 +10,13 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 import platform
 from desktop.core.config import get_app_config_dir
+import re
+
+try:
+    from packaging.version import Version, InvalidVersion
+    _HAS_PACKAGING = True
+except Exception:
+    _HAS_PACKAGING = False
 
 class UpdateManager:
     """Handles update logic: checking, downloading, and installing."""
@@ -26,6 +33,8 @@ class UpdateManager:
     def get_current_version_info(self) -> Dict[str, Any]:
         """Get current version information from local file or detection."""
         version_file = self.app_data_dir / self.CURRENT_VERSION_FILE
+        detected_version = self._detect_version_from_files()
+
         if version_file.exists():
             try:
                 with open(version_file, 'r', encoding='utf-8') as f:
@@ -34,12 +43,26 @@ class UpdateManager:
                         data['version'] = self.current_version
                     if 'installed' not in data:
                         data['installed'] = False
+
+                    # When running from source (not frozen), prefer runtime/current_version
+                    # to avoid using a stale saved `version.json` that may belong to
+                    # a packaged installer. For packaged/frozen executables, keep
+                    # the saved value but allow the runtime `current_version` to
+                    # override if it is newer.
+                    try:
+                        if not getattr(sys, 'frozen', False):
+                            data['version'] = self.current_version or detected_version
+                        else:
+                            if self.current_version and self._is_newer_version(self.current_version, data.get('version', '0.0.0')):
+                                data['version'] = self.current_version
+                    except Exception:
+                        pass
+
                     return data
-            except:
+            except Exception:
                 pass
-        
+
         # Fallback detection
-        detected_version = self._detect_version_from_files()
         return {"version": detected_version, "installed": False}
 
     def _detect_version_from_files(self) -> str:
@@ -116,16 +139,45 @@ class UpdateManager:
 
     def _is_newer_version(self, new_version: str, current_version: str) -> bool:
         """Compare version strings."""
-        try:
-            new_parts = [int(x) for x in new_version.split('.')]
-            current_parts = [int(x) for x in current_version.split('.')]
+        # Normalize inputs to strings
+        if new_version is None:
+            return False
+        if current_version is None:
+            current_version = '0.0.0'
 
+        new_v = str(new_version).strip()
+        cur_v = str(current_version).strip()
+
+        # Prefer using packaging.version when available
+        if _HAS_PACKAGING:
+            try:
+                return Version(new_v) > Version(cur_v)
+            except InvalidVersion:
+                # fall back to simple parse below
+                pass
+
+        # Fallback: numeric segment comparison ignoring non-digit suffixes
+        def to_int_parts(v: str):
+            # remove any leading non-digit characters like 'v' or 'version '
+            v = re.sub(r'^[^0-9]+', '', v)
+            parts = []
+            for seg in v.split('.'):
+                # extract first run of digits from the segment
+                m = re.search(r"(\d+)", seg)
+                if m:
+                    parts.append(int(m.group(1)))
+                else:
+                    parts.append(0)
+            return parts
+
+        try:
+            new_parts = to_int_parts(new_v)
+            current_parts = to_int_parts(cur_v)
             max_len = max(len(new_parts), len(current_parts))
             new_parts.extend([0] * (max_len - len(new_parts)))
             current_parts.extend([0] * (max_len - len(current_parts)))
-
             return new_parts > current_parts
-        except:
+        except Exception:
             return False
 
     def _get_download_url(self, release_data: Dict) -> Optional[str]:

@@ -12,7 +12,15 @@ class AutoUpdater:
     Delegates to UpdateManager and uses core config functions.
     """
 
-    def __init__(self, current_version: str = "1.0.0"):
+    def __init__(self, current_version: Optional[str] = None):
+        # If no explicit current_version is provided, prefer the packaged
+        # DesktopConfig.VERSION so local runs use the same version string.
+        if not current_version:
+            try:
+                current_version = DesktopConfig.VERSION
+            except Exception:
+                current_version = "1.0.0"
+
         self.update_manager = UpdateManager(current_version)
 
     # --- Version / Update Methods ---

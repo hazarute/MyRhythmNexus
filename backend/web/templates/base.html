@@ -93,12 +93,20 @@
         </header>
         <!-- Mobile menu (hidden by default) -->
         <div id="mobileMenu" class="fixed inset-x-0 top-20 bg-white dark:bg-card-dark border-b border-slate-200 dark:border-white/10 shadow-md z-40 hidden md:hidden">
-            <div class="max-w-[1200px] mx-auto px-4 py-4 flex flex-col gap-2">
+                <div class="max-w-[1200px] mx-auto px-4 py-4 flex flex-col gap-2">
                 <a href="/web/dashboard" class="px-4 py-2 rounded-md {% if request.url.path == '/web/dashboard' %}bg-primary text-[#112117] font-bold{% else %}text-sage hover:bg-white/5{% endif %}">Ana Sayfa</a>
                 <a href="/web/subscriptions" class="px-4 py-2 rounded-md {% if request.url.path == '/web/subscriptions' %}bg-primary text-[#112117] font-bold{% else %}text-sage hover:bg-white/5{% endif %}">Abonelikler</a>
                 <a href="/web/measurements" class="px-4 py-2 rounded-md {% if request.url.path == '/web/measurements' %}bg-primary text-[#112117] font-bold{% else %}text-sage hover:bg-white/5{% endif %}">Vücut Ölçümleri</a>
                 <a href="/web/finance" class="px-4 py-2 rounded-md {% if request.url.path == '/web/finance' %}bg-primary text-[#112117] font-bold{% else %}text-sage hover:bg-white/5{% endif %}">Ödemeler</a>
                 <a href="/web/profile" class="px-4 py-2 rounded-md {% if request.url.path == '/web/profile' %}bg-primary text-[#112117] font-bold{% else %}text-sage hover:bg-white/5{% endif %}">Profil</a>
+                    {% if user %}
+                    <form method="post" action="/web/auth/logout" class="px-4 py-2">
+                        <button type="submit" class="w-full text-left px-4 py-2 rounded-md flex items-center gap-2 text-sage hover:text-white hover:bg-white/5">
+                            <span class="material-symbols-outlined">logout</span>
+                            Çıkış Yap
+                        </button>
+                    </form>
+                    {% endif %}
             </div>
         </div>
         

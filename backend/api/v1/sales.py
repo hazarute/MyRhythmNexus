@@ -177,7 +177,17 @@ async def list_subscriptions(
         
     query = query.offset(skip).limit(limit)
     result = await db.execute(query)
-    return result.scalars().all()
+    subscriptions = result.scalars().all()
+
+    # Filter out payments with zero amount from returned subscriptions
+    for s in subscriptions:
+        try:
+            s.payments = [p for p in (s.payments or []) if p.amount_paid is not None and float(p.amount_paid) != 0.0]
+        except Exception:
+            # If conversion fails, keep original payments to avoid data loss
+            pass
+
+    return subscriptions
 
 @router.get("/subscriptions/{subscription_id}", response_model=SubscriptionRead)
 async def get_subscription(
@@ -199,6 +209,10 @@ async def get_subscription(
     subscription = result.scalar_one_or_none()
     if not subscription:
         raise HTTPException(status_code=404, detail="Subscription not found")
+    try:
+        subscription.payments = [p for p in (subscription.payments or []) if p.amount_paid is not None and float(p.amount_paid) != 0.0]
+    except Exception:
+        pass
     return subscription
 
 @router.post("/payments", response_model=PaymentRead)

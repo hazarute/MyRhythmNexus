@@ -35,7 +35,7 @@ from backend.schemas.sales import (
     PaymentPagination,
 )
 from backend.core.date_utils import calculate_end_date
-from backend.core.time_utils import get_turkey_time
+from backend.core.time_utils import get_turkey_time, convert_to_turkey_time
 
 router = APIRouter()
 
@@ -58,9 +58,10 @@ async def create_subscription(
     if not plan:
         raise HTTPException(status_code=404, detail="Plan Definition not found")
 
-    # 2. Calculate End Date
+    # 2. Normalize start_date to Turkey timezone and calculate End Date
+    start_date = convert_to_turkey_time(sub_in.start_date)
     repeat_weeks = cast(int, plan.repeat_weeks) or 1
-    end_date = calculate_end_date(sub_in.start_date, str(plan.cycle_period), repeat_weeks)
+    end_date = calculate_end_date(start_date, str(plan.cycle_period), repeat_weeks)
 
     # 2.1 Normalize status based on dates: prevent creating an "active" subscription
     # for periods that are already expired or otherwise outside current time window.
@@ -89,7 +90,7 @@ async def create_subscription(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
         purchase_price=purchase_price,
-        start_date=sub_in.start_date,
+        start_date=start_date,
         end_date=end_date,
         status=enforced_status,
         access_type=plan.access_type or "SESSION_BASED",
@@ -352,9 +353,10 @@ async def create_subscription_with_events(
     if not plan:
         raise HTTPException(status_code=404, detail="Plan Definition not found")
 
-    # 2. Calculate End Date
+    # 2. Normalize start_date to Turkey timezone and calculate End Date
+    start_date = convert_to_turkey_time(sub_in.start_date)
     repeat_weeks = cast(int, plan.repeat_weeks) or 1
-    end_date = calculate_end_date(sub_in.start_date, str(plan.cycle_period), repeat_weeks)
+    end_date = calculate_end_date(start_date, str(plan.cycle_period), repeat_weeks)
 
     # 3. Create Subscription
     # Determine purchase price: use override if provided, otherwise package price
@@ -379,7 +381,7 @@ async def create_subscription_with_events(
         member_user_id=sub_in.member_user_id,
         package_id=sub_in.package_id,
         purchase_price=purchase_price,
-        start_date=sub_in.start_date,
+        start_date=start_date,
         end_date=end_date,
         status=enforced_status,
         access_type=plan.access_type or "SESSION_BASED",
@@ -488,7 +490,7 @@ async def create_subscription_with_events(
             "sunday": 6
         }
         
-        start_datetime = sub_in.start_date
+        start_datetime = start_date
         
         # Create ClassEvent(s) for each day_and_time pair and each week
         for day_time in sub_in.class_events.days_and_times:

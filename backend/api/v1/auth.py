@@ -42,8 +42,12 @@ async def register(
     role_query = select(Role).where(Role.role_name == "MEMBER")
     role_result = await db.execute(role_query)
     role = role_result.scalar_one_or_none()
-    if role:
-        user.roles.append(role)
+    if not role:
+        # Create MEMBER role if it doesn't exist to ensure consistent assignment
+        role = Role(role_name="MEMBER")
+        db.add(role)
+        await db.flush()
+    user.roles.append(role)
     
     db.add(user)
     await db.commit()

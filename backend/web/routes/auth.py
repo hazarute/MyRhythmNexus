@@ -148,8 +148,6 @@ async def login_post(
         email = str(form_data.get("email", "")).strip()
         password = str(form_data.get("password", "")).strip()
         # Ensure we always emit visible debug output for browser tests
-        print(f"[LOGIN DEBUG] received form keys: {list(form_data.keys())}")
-        print(f"[LOGIN DEBUG] email={email}, password_provided={'yes' if password else 'no'}")
         logger.info(f"Login attempt received: email={email}, password_provided={'yes' if password else 'no'}")
         
         if not email or not password:
@@ -166,7 +164,6 @@ async def login_post(
             select(User).where(User.email == email.lower())
         )
         user = result.scalar_one_or_none()
-        print(f"[LOGIN DEBUG] user_lookup: {'found' if user else 'not found'} for {email}")
         logger.info(f"User lookup result: {'found' if user else 'not found'} for email={email}")
         
         password_ok = False
@@ -175,8 +172,6 @@ async def login_post(
                 password_ok = verify_password(password, str(user.password_hash))
             except Exception as _e:
                 logger.info(f"Password verify error for user {user.id}: {_e}")
-
-        print(f"[LOGIN DEBUG] password_ok={password_ok}")
 
         if not user or not password_ok:
             logger.info(f"Login failed for {email}: user_found={bool(user)}, password_ok={password_ok}")
@@ -212,7 +207,6 @@ async def login_post(
             expires_delta=access_token_expires
         )
         
-        print(f"[LOGIN DEBUG] is_active={is_active} - preparing redirect")
         # Add visible header so browser network tab can detect redirect from server
         response = RedirectResponse(url="/web/dashboard", status_code=302, headers={"X-Login-Redirect": "true"})
         response.set_cookie(

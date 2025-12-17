@@ -38,10 +38,29 @@ async def dashboard(
                 selectinload(Subscription.package).selectinload(ServicePackage.plan)
             ).where(
                 Subscription.member_user_id == current_user.id,
-                Subscription.status.in_(["active", "ongoing"])
+                Subscription.status.in_(["active", "ongoing"]),
             ).order_by(Subscription.start_date.desc()).limit(2)
         )
         subscriptions_rows = result.scalars().all()
+        # Debug: log subscription metadata to help troubleshoot missing items
+        try:
+            sub_ids = [s.id for s in subscriptions_rows]
+        except Exception:
+            sub_ids = None
+        logger.warning(f"[DEBUG dashboard] user_id={current_user.id} found_subscriptions={len(subscriptions_rows)} ids={sub_ids}")
+        try:
+            for s in subscriptions_rows:
+                status_val = getattr(s.status, 'value', s.status)
+                pkg_id = getattr(s, 'package_id', None)
+                access_type = getattr(s, 'access_type', None)
+                plan = getattr(getattr(s, 'package', None), 'plan', None)
+                plan_sessions = getattr(plan, 'sessions_granted', None) if plan is not None else None
+                plan_access = getattr(plan, 'access_type', None) if plan is not None else None
+                logger.warning(
+                    f"[DEBUG dashboard] sub_id={s.id} status={status_val} access_type={access_type} package_id={pkg_id} plan_sessions={plan_sessions} plan_access={plan_access}"
+                )
+        except Exception:
+            logger.exception("[DEBUG dashboard] error while logging subscription details")
         subscription = subscriptions_rows[0] if subscriptions_rows else None
         
         # Sonraki class booking'ini al
@@ -78,7 +97,7 @@ async def dashboard(
             subscriptions.append({
                 'id': sub.id,
                 'plan_name': sub.package.name if sub.package and getattr(sub.package, 'name', None) else sub.package_id,
-                'end_date': sub.end_date.strftime('%d %B %Y') if sub.end_date else '',
+                'end_date': sub.end_date.strftime('%d/%m/%Y') if sub.end_date else '',
                 'used_sessions': used,
                 'total_sessions': total,
                 'remaining_sessions': remaining,
@@ -91,7 +110,10 @@ async def dashboard(
         if next_booking and getattr(next_booking, 'event', None):
             ev = next_booking.event
             template_name = ev.template.name if getattr(ev, 'template', None) else ''
-            instructor_name = ev.instructor.user.full_name if getattr(ev, 'instructor', None) and getattr(ev.instructor, 'user', None) else ''
+            instructor_name = ''
+            if getattr(ev, 'instructor', None) and getattr(ev.instructor, 'user', None):
+                u = ev.instructor.user
+                instructor_name = getattr(u, 'full_name', None) or f"{getattr(u, 'first_name', '')} {getattr(u, 'last_name', '')}".strip()
             next_class = {
                 'name': template_name,
                 'instructor': instructor_name,

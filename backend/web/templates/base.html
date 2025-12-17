@@ -41,7 +41,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-background-light dark:bg-background-dark min-h-screen font-display text-slate-900 dark:text-white selection:bg-primary selection:text-background-dark overflow-x-hidden">
-    <div class="flex flex-col min-h-screen">
+    <div class="flex flex-col min-h-screen pb-20 md:pb-0">
         <!-- Top Navigation Header (revised to match reference) -->
         <header class="sticky top-0 z-50 w-full border-b border-[#3c5345]/30 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md">
             <div class="max-w-[1400px] mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
@@ -111,7 +111,7 @@
         </div>
         
         <!-- Main Content Area -->
-        <main class="flex-1 w-full">
+        <main class="flex-1 w-full pb-20 md:pb-0">
             {% block content %}{% endblock %}
         </main>
         

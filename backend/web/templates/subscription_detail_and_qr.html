@@ -3,13 +3,13 @@
 {% block title %}{{ subscription.package.name if subscription and subscription.package and subscription.package.name else 'Abonelik Detayı' }} - QR Kod - MyRhythmNexus{% endblock %}
 
 {% block content %}
-<div class="flex-grow flex items-center justify-center p-6 relative">
-    <!-- Ambient Background Elements -->
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-sage/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-terracotta/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex-grow flex items-start lg:items-center justify-center pt-0 sm:pt-2 px-6 pb-6 relative overflow-x-hidden">
+    <!-- Ambient Background Elements (hidden on small screens to prevent horizontal overflow) -->
+    <div class="hidden lg:block absolute top-1/4 left-1/4 w-96 h-96 bg-sage/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="hidden lg:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-terracotta/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="w-full max-w-[1000px] grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
-        <!-- Left Side: Subscription Details -->
+        <!-- Left Column: Subscription Details (mobile: second, desktop: first) -->
         <div class="lg:col-span-5 flex flex-col gap-6 order-2 lg:order-1">
             <!-- Status Card -->
             <div class="glass-panel rounded-2xl p-8 flex flex-col gap-6 shadow-xl">
@@ -69,73 +69,44 @@
                 </div>
             </div>
 
-            <!-- Next Class Teaser -->
-            {% if next_class %}
-            <div class="bg-sunny/10 border border-sunny/20 rounded-2xl p-6 flex items-center justify-between">
-                <div>
-                    <p class="text-sunny text-xs font-bold uppercase mb-1">Yaklaşan Ders</p>
-                    <p class="text-white font-medium">{{ next_class.name }}</p>
-                </div>
-                <button class="bg-sunny text-black size-10 rounded-full flex items-center justify-center hover:bg-white transition-colors">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                </button>
-            </div>
-            {% endif %}
+            <!-- End subscription details column -->
         </div>
 
-        <!-- Right Side: The Access Pass (QR) -->
-        <div class="lg:col-span-7 flex justify-center order-1 lg:order-2">
-            <div class="relative w-full max-w-md">
-                <!-- Card Shape -->
-                <div class="bg-white dark:bg-[#f3f4f3] rounded-[2.5rem] p-2 shadow-2xl relative overflow-hidden transform transition-transform hover:scale-[1.01] duration-300">
-                    <!-- Top decorative cutout -->
-                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-[#111814] rounded-b-2xl z-20"></div>
+        <!-- Right Column: QR card (mobile: first, desktop: second) -->
+        <div class="lg:col-span-7 order-1 lg:order-2 flex items-start justify-center">
+            <!-- Card Shape: simplified phone-like frame replaced with clean white card + light gray border -->
+            <div class="access-card rounded-2xl p-6 shadow-lg relative bg-transparent w-full max-w-[480px] lg:max-w-[420px]">
+                <div class="access-card-inner rounded-2xl bg-white border border-gray-200 px-6 py-8 sm:px-8 sm:py-10 text-center">
+                    <!-- Title -->
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">MyRhythmNexus Pass</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">{{ subscription.package.name if subscription and subscription.package and subscription.package.name else 'Stüdyo Girişi' }}</h3>
 
-                    <!-- Inner Content Container -->
-                    <div class="bg-white rounded-[2rem] p-8 flex flex-col items-center text-center h-full border border-gray-100 relative z-10">
-                        <!-- Header -->
-                        <div class="mt-8 mb-6">
-                            <p class="text-gray-400 text-xs font-bold tracking-[0.2em] uppercase mb-2">MyRhythmNexus Pass</p>
-                            <h3 class="text-3xl font-bold text-gray-900 tracking-tight">{{ subscription.package.name if subscription and subscription.package and subscription.package.name else 'Stüdyo Girişi' }}</h3>
-                        </div>
-
-                        <!-- QR Container -->
-                        <div class="p-4 bg-white rounded-3xl border-2 border-gray-200 mb-8 flex items-center justify-center" style="background-color:#fff; filter:none; -webkit-filter:none;">
-                            <div class="bg-white p-0 rounded-md relative w-72 h-72 flex items-center justify-center no-invert" style="background-color:#fff; filter:none; -webkit-filter:none; color:#000;">
-                                {% if subscription and subscription.qr_code and subscription.qr_code.qr_token %}
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={{ subscription.qr_code.qr_token }}" alt="QR Kod" class="w-full h-full object-contain" />
-                                {% else %}
-                                <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 rounded-md">
-                                    <div class="text-center">
-                                        <span class="material-symbols-outlined text-6xl block mb-2">qr_code_2</span>
-                                        <p class="text-xs">QR Kod Burada</p>
-                                    </div>
+                    <!-- QR frame -->
+                    <div class="qr-frame mb-8 flex items-center justify-center">
+                        <div class="qr-wrapper bg-white rounded-xl p-3 sm:p-4 border border-gray-100 w-full sm:w-11/12 max-w-none sm:max-w-[420px] lg:max-w-[360px] flex items-center justify-center" style="aspect-ratio:1/1;">
+                            {% if subscription and subscription.qr_code and subscription.qr_code.qr_token %}
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data={{ subscription.qr_code.qr_token }}" alt="QR Kod" class="w-full h-full object-contain" />
+                            {% else %}
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 rounded-md">
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined text-6xl block mb-2">qr_code_2</span>
+                                    <p class="text-xs">QR Kod Burada</p>
                                 </div>
-                                {% endif %}
                             </div>
+                            {% endif %}
                         </div>
-
-                        <!-- User Info -->
-                        <div class="flex items-center gap-3 bg-gray-50 px-5 py-3 rounded-full mb-6 border border-gray-100">
-                            <div class="size-8 rounded-full bg-gray-200 bg-cover bg-center flex items-center justify-center text-lg font-bold text-gray-700">
-                                {{ user.first_name[0] if user and user.first_name else '' }}
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <span class="text-sm font-bold text-gray-800 leading-none">{{ user.full_name if user.full_name else (user.first_name ~ (' ' ~ user.last_name if user.last_name else '')) }}</span>
-                                <span class="text-xs text-gray-400 font-medium uppercase"></span>
-                            </div>
-                        </div>
-
-                        <!-- Instructional Text -->
-                        <p class="text-gray-400 text-sm max-w-[200px] leading-relaxed">
-                            Geçiş yapmak için QR kodu okutunuz.
-                        </p>
-
-                        <!-- Kod Yenile butonu kaldırıldı -->
                     </div>
 
-                    <!-- Bottom Decoration -->
-                    <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-terracotta via-primary to-sage"></div>
+                    <!-- User chip: light gray pill with name and small info -->
+                    <div class="user-chip mx-auto inline-flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full border border-gray-100 mb-4">
+                        <div class="size-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-700">{{ user.first_name[0] if user and user.first_name else '' }}</div>
+                        <div class="text-left">
+                            <div class="user-fullname text-sm font-semibold text-gray-700">{{ user.full_name if user.full_name else (user.first_name ~ (' ' ~ user.last_name if user.last_name else '')) }}</div>
+                            <div class="text-xs text-gray-400">{{ user.email if user and user.email else '' }}</div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray-500">Geçiş yapmak için QR kodu okutunuz.</p>
                 </div>
             </div>
         </div>
@@ -154,12 +125,18 @@
     }
 </style>
 <style>
-    /* Prevent browser-level forced dark/invert from darkening the QR card where possible */
-    .no-invert, .no-invert * {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        -webkit-filter: none !important;
-        filter: none !important;
-    }
+    /* QR/access card styles */
+    .access-card { }
+    .access-card-inner { box-shadow: 0 6px 18px rgba(15,23,42,0.06); }
+    .qr-wrapper { background: #fff; border-radius: 12px; }
+    /* Force-white only for QR wrapper to resist forced dark, keep minimal rules */
+    .qr-wrapper { -webkit-filter: none !important; filter: none !important; }
+
+    /* User chip styling */
+    .user-chip { background-color: #f8fafc; }
+    .user-fullname { color: #374151; }
+
+    /* Subtle accent strip alignment */
+    .access-card .absolute { pointer-events: none; }
 </style>
 {% endblock %}

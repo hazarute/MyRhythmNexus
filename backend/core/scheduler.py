@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from datetime import datetime, timedelta
 import zoneinfo
+import secrets
 
 from backend.core.database import get_db
 from backend.core.time_utils import get_turkey_time
@@ -124,13 +125,23 @@ class UserActivityScheduler:
 
                 if expired_ids:
                     try:
-                        qr_update = (
-                            update(SubscriptionQrCode)
+                        # Load QR records for expired subscriptions and update each to a guaranteed-nonconflicting token
+                        qr_query = (
+                            select(SubscriptionQrCode)
                             .where(SubscriptionQrCode.subscription_id.in_(expired_ids))
-                            .values(is_active=False)
                         )
-                        await db.execute(qr_update)
-                        print(f"[{now}] Deactivated QR codes for {len(expired_ids)} expired subscriptions")
+                        qr_result = await db.execute(qr_query)
+                        qr_rows = qr_result.scalars().all()
+
+                        for qr in qr_rows:
+                            # Assign a deactivated token that cannot collide with active-only hex tokens
+                            # Format: DEACT_<32HEX>_<idprefix>
+                            new_token = f"DEACT_{secrets.token_hex(16).upper()}_{qr.id.replace('-', '')[:8]}"
+                            qr.qr_token = new_token
+                            qr.is_active = False
+                            db.add(qr)
+
+                        print(f"[{now}] Deactivated and rotated QR tokens for {len(qr_rows)} expired subscriptions")
                     except Exception as e:
                         # Log but continue; we'll rollback overall if commit fails below
                         print(f"[{now}] Error deactivating QR codes: {e}")

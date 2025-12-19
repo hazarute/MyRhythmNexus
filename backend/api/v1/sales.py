@@ -117,7 +117,13 @@ async def create_subscription(
     MAX_TOKEN_ATTEMPTS = 5
     for _attempt in range(MAX_TOKEN_ATTEMPTS):
         qr_token = secrets.token_hex(16).upper()
-        result = await db.execute(select(SubscriptionQrCode).where(SubscriptionQrCode.qr_token == qr_token))
+        # Only consider collisions against currently active QR tokens
+        result = await db.execute(
+            select(SubscriptionQrCode).where(
+                SubscriptionQrCode.qr_token == qr_token,
+                SubscriptionQrCode.is_active == True
+            )
+        )
         if result.scalar_one_or_none() is None:
             break
     else:
@@ -432,7 +438,13 @@ async def create_subscription_with_events(
     MAX_TOKEN_ATTEMPTS = 5
     for _attempt in range(MAX_TOKEN_ATTEMPTS):
         qr_token = secrets.token_hex(16).upper()
-        result = await db.execute(select(SubscriptionQrCode).where(SubscriptionQrCode.qr_token == qr_token))
+        # Only consider collisions against currently active QR tokens
+        result = await db.execute(
+            select(SubscriptionQrCode).where(
+                SubscriptionQrCode.qr_token == qr_token,
+                SubscriptionQrCode.is_active == True
+            )
+        )
         if result.scalar_one_or_none() is None:
             break
     else:

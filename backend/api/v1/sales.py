@@ -139,7 +139,8 @@ async def create_subscription(
     # 6. Update User updated_at timestamp
     member_user = await db.get(User, sub_in.member_user_id)
     if member_user:
-        member_user.updated_at = get_turkey_time()
+        # Set user's updated_at to subscription end_date so member record reflects subscription expiry
+        member_user.updated_at = end_date
         db.add(member_user)
 
     try:

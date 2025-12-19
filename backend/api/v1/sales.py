@@ -112,7 +112,17 @@ async def create_subscription(
         db.add(payment)
     
     # 5. Generate QR Code
-    qr_token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
+    # Generate a unique cryptographically secure hex token (0-9, A-F).
+    # Try a few times to avoid collision with existing tokens in DB.
+    MAX_TOKEN_ATTEMPTS = 5
+    for _attempt in range(MAX_TOKEN_ATTEMPTS):
+        qr_token = secrets.token_hex(16).upper()
+        result = await db.execute(select(SubscriptionQrCode).where(SubscriptionQrCode.qr_token == qr_token))
+        if result.scalar_one_or_none() is None:
+            break
+    else:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Unable to generate unique QR token, lütfen tekrar deneyin.")
     qr_code = SubscriptionQrCode(
         subscription_id=subscription.id,
         qr_token=qr_token,
@@ -417,7 +427,17 @@ async def create_subscription_with_events(
         db.add(payment)
     
     # 5. Generate QR Code
-    qr_token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
+    # Generate a unique cryptographically secure hex token (0-9, A-F).
+    # Try a few times to avoid collision with existing tokens in DB.
+    MAX_TOKEN_ATTEMPTS = 5
+    for _attempt in range(MAX_TOKEN_ATTEMPTS):
+        qr_token = secrets.token_hex(16).upper()
+        result = await db.execute(select(SubscriptionQrCode).where(SubscriptionQrCode.qr_token == qr_token))
+        if result.scalar_one_or_none() is None:
+            break
+    else:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Unable to generate unique QR token, lütfen tekrar deneyin.")
     qr_code = SubscriptionQrCode(
         subscription_id=subscription.id,
         qr_token=qr_token,

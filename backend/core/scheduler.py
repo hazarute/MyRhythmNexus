@@ -8,7 +8,7 @@ import zoneinfo
 from backend.core.database import get_db
 from backend.core.time_utils import get_turkey_time
 from backend.models.user import User, Role
-from backend.models.operation import Subscription, SubscriptionStatus
+from backend.models.operation import Subscription, SubscriptionStatus, SubscriptionQrCode
 from backend.models.service import PlanDefinition, ServicePackage
 
 
@@ -114,6 +114,26 @@ class UserActivityScheduler:
                     await db.execute(session_update)
                     expired_count += len(session_expired_ids)
                     print(f"[{now}] Expired {len(session_expired_ids)} subscriptions due to used sessions")
+
+                # Deactivate QR codes for any subscriptions that were marked expired
+                expired_ids = []
+                if time_expired_ids:
+                    expired_ids.extend(time_expired_ids)
+                if session_expired_ids:
+                    expired_ids.extend(session_expired_ids)
+
+                if expired_ids:
+                    try:
+                        qr_update = (
+                            update(SubscriptionQrCode)
+                            .where(SubscriptionQrCode.subscription_id.in_(expired_ids))
+                            .values(is_active=False)
+                        )
+                        await db.execute(qr_update)
+                        print(f"[{now}] Deactivated QR codes for {len(expired_ids)} expired subscriptions")
+                    except Exception as e:
+                        # Log but continue; we'll rollback overall if commit fails below
+                        print(f"[{now}] Error deactivating QR codes: {e}")
 
                 if expired_count > 0:
                     await db.commit()

@@ -11,6 +11,30 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
+def _normalize_name(name: Optional[str]) -> Optional[str]:
+    """Normalize a person name: strip, collapse spaces, reject digits, Title Case each part.
+
+    Returns normalized name or None if invalid.
+    """
+    if not name:
+        return None
+    s = name.strip()
+    s = re.sub(r"\s+", " ", s)
+    if not s:
+        return None
+    # Reject names containing digits
+    if any(ch.isdigit() for ch in s):
+        return None
+
+    parts = s.split(" ")
+    def cap(p: str) -> str:
+        if not p:
+            return ""
+        return p[0].upper() + p[1:].lower() if len(p) > 1 else p.upper()
+
+    return " ".join(cap(p) for p in parts)
+
 from backend.core.config import settings
 from backend.core.database import get_db
 from backend.core.security import hash_password
@@ -104,12 +128,23 @@ async def web_register(
             {"request": request, "error": "Bu telefon numarası zaten kayıtlı", "form": form_values, "errors": {"phone_number": "Bu telefon numarası zaten kayıtlı"}}
         )
 
+    # Normalize and validate names (capitalize initials)
+    normalized_first = _normalize_name(first_name)
+    normalized_last = _normalize_name(last_name)
+
+    if not normalized_first or not normalized_last:
+        form_values.update({"first_name": first_name, "last_name": last_name})
+        return templates.TemplateResponse(
+            "register.html",
+            {"request": request, "error": "İsim ve soyisim geçerli olmalı (sayı içeremez).", "form": form_values, "errors": {"first_name": "Geçersiz isim/soyisim"}}
+        )
+
     try:
         # Create new user (inactive - pending admin approval)
         user = User(
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            first_name=normalized_first,
+            last_name=normalized_last,
             phone_number=normalized_phone,
             password_hash=hash_password(password),
             is_active=False,  # Pending approval

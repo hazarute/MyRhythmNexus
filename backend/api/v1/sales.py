@@ -63,9 +63,9 @@ async def create_subscription(
     repeat_weeks = cast(int, plan.repeat_weeks) or 1
     end_date = calculate_end_date(start_date, str(plan.cycle_period), repeat_weeks)
 
-    # Grace period for SESSION_BASED plans: allow a few extra days
-    # so members can complete their session quota if schedule shifts occur.
-    # This preserves existing structure; we only extend the calculated end_date.
+    # Grace period for SESSION_BASED plans: allow a few extra days so members
+    # can complete their session quota if schedule shifts occur. This extends
+    # the calculated end_date by a small buffer.
     if (plan.access_type or "SESSION_BASED") == "SESSION_BASED":
         end_date = end_date + timedelta(days=5)
 
@@ -394,6 +394,12 @@ async def create_subscription_with_events(
     start_date = convert_to_turkey_time(sub_in.start_date)
     repeat_weeks = cast(int, plan.repeat_weeks) or 1
     end_date = calculate_end_date(start_date, str(plan.cycle_period), repeat_weeks)
+
+    # Grace period for SESSION_BASED plans: allow a few extra days so members
+    # can complete their session quota if schedule shifts occur. This extends
+    # the calculated end_date by a small buffer.
+    if (plan.access_type or "SESSION_BASED") == "SESSION_BASED":
+        end_date = end_date + timedelta(days=5)
 
     # 3. Create Subscription
     # Determine purchase price: use override if provided, otherwise package price

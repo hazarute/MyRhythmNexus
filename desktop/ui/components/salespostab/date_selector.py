@@ -37,6 +37,7 @@ class DateSelector(ctk.CTkFrame):
         # Store plan info for end date calculation
         self.cycle_period: str = "MONTHLY"
         self.repeat_weeks: int = 4
+        self.is_session_based: bool = False
         
         # Header
         header = ctk.CTkFrame(self, fg_color="transparent")
@@ -94,12 +95,12 @@ class DateSelector(ctk.CTkFrame):
             self.btn_start_date.configure(text=self._format_start_button_text())
             
             # Update end date when start date changes
-            self.set_end_date_from_plan(self.cycle_period, self.repeat_weeks)
+            self.set_end_date_from_plan(self.cycle_period, self.repeat_weeks, self.is_session_based)
             
             if self.on_date_change:
                 self.on_date_change(self.start_date, None)
     
-    def set_end_date_from_plan(self, cycle_period: str, repeat_weeks: int):
+    def set_end_date_from_plan(self, cycle_period: str, repeat_weeks: int, is_session_based: bool = False):
         """Plan verilerine göre bitiş tarihini hesapla ve göster
         
         Args:
@@ -109,6 +110,7 @@ class DateSelector(ctk.CTkFrame):
         # Store plan info for later date picker updates
         self.cycle_period = cycle_period
         self.repeat_weeks = repeat_weeks
+        self.is_session_based = bool(is_session_based)
         
         try:
             # Use backend's calculate_end_date for consistent business logic
@@ -117,6 +119,11 @@ class DateSelector(ctk.CTkFrame):
                 cycle_period,
                 repeat_weeks
             )
+
+            # If this is a session-based plan, present a small grace period
+            # so UI preview matches server-side behaviour (added +5 days).
+            if is_session_based:
+                end_datetime = end_datetime + timedelta(days=5)
             end_date = end_datetime.date()
             weeks = (end_date - self.start_date).days // 7
             

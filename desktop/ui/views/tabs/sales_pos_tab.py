@@ -197,13 +197,13 @@ class SalesPOSTab(ctk.CTkFrame):
         plan = pkg.get("plan", {})
         cycle_period = plan.get("cycle_period", "MONTHLY")
         repeat_weeks = plan.get("repeat_weeks", 4) or 4
-        
-        if self.date_selector:
-            self.date_selector.set_end_date_from_plan(cycle_period, repeat_weeks)
-        
+
         # Check if SESSION_BASED
         access_type = plan.get("access_type", "SESSION_BASED")
         is_session_based = access_type == "SESSION_BASED"
+
+        if self.date_selector:
+            self.date_selector.set_end_date_from_plan(cycle_period, repeat_weeks, is_session_based)
         
         if is_session_based:
             # Enable checkbox and prepare class event scheduler

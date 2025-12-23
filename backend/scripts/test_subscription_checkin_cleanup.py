@@ -47,7 +47,7 @@ def create_member(token: str, email: str):
 
 
 def create_subscription(token: str, member_id: str, package_id: str):
-    url = f"{BASE_URL}/api/v1/sales/subscriptions"
+    url = f"{BASE_URL}/api/v1/sales/subscriptions-with-events"
     payload = {
         "member_user_id": member_id,
         "package_id": package_id,

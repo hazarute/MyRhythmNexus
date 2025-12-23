@@ -39,146 +39,7 @@ from backend.core.time_utils import get_turkey_time, convert_to_turkey_time
 
 router = APIRouter()
 
-@router.post("/subscriptions", response_model=SubscriptionRead)
-async def create_subscription(
-    sub_in: SubscriptionCreate,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    # 1. Get Package and Plan
-    package = await db.get(ServicePackage, sub_in.package_id)
-    if not package:
-        raise HTTPException(status_code=404, detail="Service Package not found")
-    
-    # Ensure package is loaded with plan
-    # If not loaded, we might need to query it or rely on lazy loading (but async requires explicit load usually)
-    # Let's query plan separately to be safe if not eager loaded, or use options on package query if we did that.
-    # Since we used get(), we might not have relationships.
-    plan = await db.get(PlanDefinition, package.plan_id)
-    if not plan:
-        raise HTTPException(status_code=404, detail="Plan Definition not found")
 
-    # 2. Normalize start_date to Turkey timezone and calculate End Date
-    start_date = convert_to_turkey_time(sub_in.start_date)
-    repeat_weeks = cast(int, plan.repeat_weeks) or 1
-    end_date = calculate_end_date(start_date, str(plan.cycle_period), repeat_weeks)
-
-    # Grace period for SESSION_BASED plans: allow a few extra days so members
-    # can complete their session quota if schedule shifts occur. This extends
-    # the calculated end_date by a small buffer.
-    if (plan.access_type or "SESSION_BASED") == "SESSION_BASED":
-        end_date = end_date + timedelta(days=5)
-
-    # 2.1 Normalize status based on dates: prevent creating an "active" subscription
-    # for periods that are already expired or otherwise outside current time window.
-    now = get_turkey_time()
-    # If end_date is before now -> expired
-    if end_date < now:
-        enforced_status = SubscriptionStatus.expired
-    else:
-        # start_date <= now <= end_date -> active
-        enforced_status = SubscriptionStatus.active
-
-    # 3. Create Subscription
-    # Determine purchase price: use override if provided, otherwise package price
-    purchase_price = sub_in.purchase_price_override if sub_in.purchase_price_override is not None else package.price
-    
-    # Validate purchase_price_override if provided
-    if sub_in.purchase_price_override is not None:
-        if sub_in.purchase_price_override <= 0:
-            raise HTTPException(status_code=400, detail="Purchase price must be greater than 0")
-        package_price = float(package.price)
-        if float(sub_in.purchase_price_override) > package_price * 2:
-            raise HTTPException(status_code=400, detail="Purchase price cannot be more than double the package price")
-    
-    # Use enforced status regardless of client-supplied status to keep business rules consistent
-    subscription = Subscription(
-        member_user_id=sub_in.member_user_id,
-        package_id=sub_in.package_id,
-        purchase_price=purchase_price,
-        start_date=start_date,
-        end_date=end_date,
-        status=enforced_status,
-        access_type=plan.access_type or "SESSION_BASED",
-        used_sessions=0,
-    )
-    db.add(subscription)
-    await db.flush() # Flush to get ID
-
-    # 4. Handle Initial Payment
-    if sub_in.initial_payment:
-        payment = Payment(
-            subscription_id=subscription.id,
-            recorded_by_user_id=current_user.id,
-            amount_paid=sub_in.initial_payment.amount_paid,
-            payment_method=sub_in.initial_payment.payment_method,
-            refund_amount=sub_in.initial_payment.refund_amount,
-            refund_reason=sub_in.initial_payment.refund_reason,
-        )
-        db.add(payment)
-    
-    # 5. Generate QR Code
-    # Generate a unique cryptographically secure hex token (0-9, A-F).
-    # Try a few times to avoid collision with existing tokens in DB.
-    MAX_TOKEN_ATTEMPTS = 5
-    for _attempt in range(MAX_TOKEN_ATTEMPTS):
-        qr_token = secrets.token_hex(16).upper()
-        # Only consider collisions against currently active QR tokens
-        result = await db.execute(
-            select(SubscriptionQrCode).where(
-                SubscriptionQrCode.qr_token == qr_token,
-                SubscriptionQrCode.is_active == True
-            )
-        )
-        if result.scalar_one_or_none() is None:
-            break
-    else:
-        await db.rollback()
-        raise HTTPException(status_code=500, detail="Unable to generate unique QR token, lütfen tekrar deneyin.")
-    qr_code = SubscriptionQrCode(
-        subscription_id=subscription.id,
-        qr_token=qr_token,
-        is_active=True
-    )
-    db.add(qr_code)
-
-    # 6. Update User updated_at timestamp
-    member_user = await db.get(User, sub_in.member_user_id)
-    if member_user:
-        # Set user's updated_at to subscription end_date so member record reflects subscription expiry
-        member_user.updated_at = end_date
-        db.add(member_user)
-
-    try:
-        await db.commit()
-        await db.refresh(subscription)
-    except DBAPIError as e:
-        await db.rollback()
-        # Extract the original error message if possible
-        error_str = str(e.orig) if hasattr(e, 'orig') and e.orig else str(e)
-        if "numeric field overflow" in error_str:
-             raise HTTPException(status_code=400, detail="Ödeme tutarı çok yüksek. Lütfen daha küçük bir tutar giriniz.")
-        raise HTTPException(status_code=400, detail=f"Veritabanı hatası: {error_str}")
-    except Exception as e:
-        await db.rollback()
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail=f"Beklenmeyen hata: {str(e)}")
-    
-    # Re-fetch with payments
-    query = (
-        select(Subscription)
-        .where(Subscription.id == subscription.id)
-        .options(
-            selectinload(Subscription.payments),
-            selectinload(Subscription.class_events).selectinload(ClassEvent.template),
-            selectinload(Subscription.package).selectinload(ServicePackage.category),
-            selectinload(Subscription.package).selectinload(ServicePackage.offering),
-            selectinload(Subscription.package).selectinload(ServicePackage.plan)
-        )
-    )
-    result = await db.execute(query)
-    return result.scalar_one()
 
 @router.get("/subscriptions", response_model=List[SubscriptionRead])
 async def list_subscriptions(
@@ -473,7 +334,7 @@ async def create_subscription_with_events(
     # 6. Update User updated_at timestamp
     member_user = await db.get(User, sub_in.member_user_id)
     if member_user:
-        member_user.updated_at = get_turkey_time()
+        member_user.updated_at = end_date
         db.add(member_user)
 
     # 7. Create ClassEvent(s) if requested

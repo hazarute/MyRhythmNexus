@@ -347,75 +347,7 @@ async def get_subscription_qr_code(
     }
 
 
-@router.post("/check-in/time-based")
-async def check_in_time_based(
-    body: dict,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """
-    TIME_BASED subscriptions için check-in endpoint.
-    Event seçimi gerekmez - sadece katılım sayılır.
-    """
-    qr_token = body.get('qr_token')
-    # 1. Find Subscription by QR Token
-    qr_query = select(SubscriptionQrCode).where(SubscriptionQrCode.qr_token == qr_token)
-    qr_result = await db.execute(qr_query)
-    qr_code = qr_result.scalar_one_or_none()
-
-    if not qr_code:
-        raise HTTPException(status_code=404, detail="QR kod geçersiz veya süresi dolmuş")
-
-    subscription_id = qr_code.subscription_id
-    subscription_query = (
-        select(Subscription)
-        .where(Subscription.id == subscription_id)
-        .options(
-            selectinload(Subscription.member),
-            selectinload(Subscription.package).selectinload(ServicePackage.plan)
-        )
-    )
-    subscription_result = await db.execute(subscription_query)
-    subscription = subscription_result.scalar_one_or_none()
-
-    if not subscription:
-        raise HTTPException(status_code=404, detail="Abonelik bulunamadı")
-
-    member = subscription.member
-    plan = subscription.package.plan
-
-    # 2. Validate Subscription Status and Type
-    if plan.access_type != "TIME_BASED":
-        raise HTTPException(status_code=400, detail="Bu endpoint sadece TIME_BASED abonelikler için")
-
-    # 3. Create SessionCheckIn WITHOUT event (NULL event_id)
-    # TIME_BASED subscriptions don't require events
-    check_in = SessionCheckIn(
-        subscription_id=subscription.id,
-        member_user_id=member.id,
-        event_id=None,  # TIME_BASED doesn't need event
-        verified_by_user_id=current_user.id,
-    )
-    db.add(check_in)
-    
-    # 4. Increment attendance_count
-    subscription.attendance_count += 1
-    db.add(subscription)
-
-    # Capture values before commit
-    member_first_name = member.first_name
-    member_last_name = member.last_name
-
-    await db.commit()
-    await db.refresh(check_in)
-
-    return CheckInResponse(
-        success=True,
-        message="TIME_BASED check-in successful",
-        member_name=f"{member_first_name} {member_last_name}",
-        remaining_sessions=9999,
-        check_in_time=check_in.check_in_time.strftime("%Y-%m-%d %H:%M:%S")
-    )
+# /check-in/time-based endpoint removed: unified check-in handled by /check-in
 
 
 @router.delete("/history/{checkin_id}", status_code=204)

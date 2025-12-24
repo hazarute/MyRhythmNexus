@@ -120,7 +120,7 @@ async def test_time_based_checkin_flow(client: AsyncClient, db_session):
             "payment_method": "KREDI_KARTI"
         }
     }
-    sub_resp = await client.post("/api/v1/sales/subscriptions", json=sub_data, headers=admin_headers)
+    sub_resp = await client.post("/api/v1/sales/subscriptions-with-events", json=sub_data, headers=admin_headers)
     assert sub_resp.status_code == 200
     subscription_id = sub_resp.json()["id"]
     sub_info = sub_resp.json()
@@ -140,9 +140,9 @@ async def test_time_based_checkin_flow(client: AsyncClient, db_session):
     assert scan_data["member_name"] == "Member User"
     assert scan_data["access_type"] == "TIME_BASED"
 
-    # --- TEST 4: Check-in via /check-in/time-based endpoint ---
+    # --- TEST 4: Check-in via /check-in endpoint for TIME_BASED ---
     checkin_resp = await client.post(
-        "/api/v1/checkin/check-in/time-based",
+        "/api/v1/checkin/check-in",
         json={"qr_token": qr_token},
         headers=admin_headers
     )
@@ -161,7 +161,7 @@ async def test_time_based_checkin_flow(client: AsyncClient, db_session):
     # --- TEST 6: Multiple check-ins (TIME_BASED should allow unlimited) ---
     for i in range(2, 6):
         checkin_resp = await client.post(
-            "/api/v1/checkin/check-in/time-based",
+            "/api/v1/checkin/check-in",
             json={"qr_token": qr_token},
             headers=admin_headers
         )
@@ -225,7 +225,7 @@ async def test_time_based_checkin_flow(client: AsyncClient, db_session):
             "payment_method": "KREDI_KARTI"
         }
     }
-    session_sub_resp = await client.post("/api/v1/sales/subscriptions", json=session_sub_data, headers=admin_headers)
+    session_sub_resp = await client.post("/api/v1/sales/subscriptions-with-events", json=session_sub_data, headers=admin_headers)
     assert session_sub_resp.status_code == 200
     session_subscription_id = session_sub_resp.json()["id"]
     

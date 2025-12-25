@@ -80,6 +80,14 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     if args.interactive:
         print('Interactive mode — provide values (leave blank to accept defaults)')
+        if not token:
+            try:
+                import getpass
+                tok = getpass.getpass('GITHUB token (press Enter to skip): ').strip()
+                token = tok or None
+            except Exception:
+                token = None
+
         if sys.stdin.isatty():
             while True:
                 print('\nSelect build target:')
@@ -92,20 +100,15 @@ def main(argv: Optional[list[str]] = None) -> int:
             args.docker = (choice == '2')
         else:
             args.docker = getattr(args, 'docker', False)
-        if not token:
-            try:
-                import getpass
+        
+        if token:
+            dry_run = prompt_yesno('Dry-run (do not call GitHub)?', default=dry_run)
 
-                tok = getpass.getpass('GITHUB token (press Enter to skip): ').strip()
-                token = tok or None
-            except Exception:
-                token = None
+        # Note: GitHub upload/token prompt removed per configuration.
         if not version:
             print('Version is required (provide in desktop/core/config.py or --version).', file=sys.stderr)
             return 2
         no_build = not prompt_yesno('Run build script before packaging?', default=not no_build)
-        if token:
-            dry_run = prompt_yesno('Dry-run (do not call GitHub)?', default=dry_run)
         pkg_choice = prompt_yesno('Create per-customer package after build?', default=False)
         if pkg_choice:
             args.package_customer = True
@@ -131,7 +134,6 @@ def main(argv: Optional[list[str]] = None) -> int:
     if not args.interactive and not token:
         try:
             import getpass
-
             if sys.stdin.isatty():
                 tok = getpass.getpass('GitHub token (leave blank to skip release upload): ').strip()
                 token = tok or None
@@ -139,6 +141,8 @@ def main(argv: Optional[list[str]] = None) -> int:
                 token = None
         except Exception:
             token = None
+
+    # Non-interactive token prompting removed — upload disabled.
 
     print('Repo:', repo)
     print('Version:', version)
@@ -168,7 +172,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                     except Exception as e:
                         print('Failed to remove', f, e)
         if getattr(args, 'docker', False):
-            ok = build_runner.run_docker_builder(version, token, Path.cwd())
+            ok = build_runner.run_docker_builder(version, Path.cwd())
         else:
             ok = build_runner.run_local_build(Path('build-desktop.sh'))
         if not ok:
@@ -210,7 +214,8 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         zip_path, digest = packaging.create_customer_package(exe_for_package, backend_url, customer, out_dir, license_server)
         print('Created package:', zip_path)
-        return 0
+        # Continue to GitHub release if token is present
+        # return 0
 
     if not token:
         print('No GITHUB token provided; skipping writing to release/. Built artifact at:', exe)
@@ -219,81 +224,28 @@ def main(argv: Optional[list[str]] = None) -> int:
     release_dir = Path('release')
     release_dir.mkdir(parents=True, exist_ok=True)
     real_ext = exe.suffix.lower()
-    suffix = real_ext if real_ext == '.exe' else ''
-    dst_name = f'MyRhythmNexus_v{version}{suffix}'
+    # Fix: pathlib treats .0 in v1.1.0 as an extension. Ignore numeric suffixes.
+    if real_ext and real_ext[1:].isdigit():
+        real_ext = ''
+    dst_name = f'MyRhythmNexus_v{version}{real_ext}'
     dst = release_dir / dst_name
+
     try:
         try:
             if exe.resolve() == dst.resolve():
                 print('Built artifact already at destination, skipping copy:', dst)
             else:
-                if os.name == 'nt' and str(exe).lower() == str(dst).lower():
-                    print('Built artifact already at destination (case-insensitive match), skipping copy:', dst)
-                else:
-                    tmp = dst.with_suffix(dst.suffix + '.tmp')
-                    try:
-                        import shutil
-
-                        shutil.copy2(exe, tmp)
-                        os.replace(tmp, dst)
-                        print('Copied to', dst)
-                    finally:
-                        try:
-                            if tmp.exists():
-                                tmp.unlink()
-                        except Exception:
-                            pass
-        except FileNotFoundError:
-            tmp = dst.with_suffix(dst.suffix + '.tmp')
-            try:
-                import shutil
-
-                shutil.copy2(exe, tmp)
-                os.replace(tmp, dst)
+                shutil.copy2(exe, dst)
                 print('Copied to', dst)
-            finally:
-                try:
-                    if tmp.exists():
-                        tmp.unlink()
-                except Exception:
-                    pass
-    except PermissionError as e:
-        print('Warning: could not copy built artifact due to file lock:', e, file=sys.stderr)
-        print('The built artifact is located at:', exe)
-        print('If you want the file copied to the release directory, close any process that may be using the file and re-run the script, or copy manually.', file=sys.stderr)
-        return 0
+        except FileNotFoundError:
+            shutil.copy2(exe, dst)
+            print('Copied to', dst)
     except Exception as e:
         print('Failed to copy built artifact:', e, file=sys.stderr)
         return 5
 
-    # At this point we have an artifact copied to `release/` and a token may be present.
-    if not token:
-        print('GITHUB_TOKEN not provided via --token or GITHUB_TOKEN env var; skipping GitHub upload.', file=sys.stderr)
-        return 0
-
-    # Small sanity log so user can see token presence (do not print token itself)
-    try:
-        token_preview = f"***{str(token)[-4:]}" if token else '<none>'
-    except Exception:
-        token_preview = '<unavailable>'
-    print('Github token provided (masked):', token_preview)
-
-    # Delegate to builder's github_release helper but wrap with robust error handling
-    try:
-        if hasattr(github_release, 'create_release_and_upload'):
-            success = github_release.create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
-        else:
-            print('Builder github_release module missing create_release_and_upload; cannot upload.', file=sys.stderr)
-            return 6
-    except Exception as e:
-        print('Exception while attempting to create release/upload asset:', e, file=sys.stderr)
-        return 6
-
-    if not success:
-        print('Upload failed. Check token permissions and network connectivity.', file=sys.stderr)
-        return 6
-    print('Upload completed successfully.')
-    return 0
+    success = github_release.create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
+    return 0 if success else 6
 
 
 if __name__ == '__main__':

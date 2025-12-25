@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-Cross-platform packager for per-customer distribution.
+Windows-only packager for per-customer distribution.
 
 Usage:
-  python tools/package_customer.py --exe-path dist/MyRhythmNexus.exe \
-    --backend-url https://acme.example.com/api/v1 --customer acme --output-dir release
+    python tools/package_customer_windows.py --exe-path dist/MyRhythmNexus.exe --backend-url https://acme.example.com/api/v1 --customer acme --output-dir release
 
 Produces: release/MyRhythmNexus-acme.zip and .sha256
 """
@@ -16,14 +15,12 @@ import shutil
 import sys
 import tempfile
 import subprocess
-import glob
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 
 def write_config(path: Path, backend_url: str, license_server_url: str | None = None) -> None:
     cfg = {"backend_urls": [backend_url], "settings": {"theme": "dark"}}
-    # Support both lowercase key and uppercase ENV-style key for compatibility
     if license_server_url:
         cfg["license_server_url"] = license_server_url
         cfg["LICENSE_SERVER_URL"] = license_server_url
@@ -44,22 +41,6 @@ def write_install_files(workdir: Path, exe_name: str) -> None:
         "endlocal\n"
     )
     (workdir / "install.bat").write_text(bat, encoding="ascii")
-
-    # Unix install.sh (optional)
-    sh = (
-        "#!/bin/sh\n"
-        "APPDIR=${XDG_CONFIG_HOME:-$HOME/.config}/MyRhythmNexus\n"
-        "mkdir -p \"$APPDIR\"\n"
-        f"cp \"$(dirname \"$0\")/{exe_name}\" \"$APPDIR/{exe_name}\"\n"
-        "cp \"$(dirname \"$0\")/config.json\" \"$APPDIR/config.json\"\n"
-        "echo 'Kurulum tamamlandi.'\n"
-    )
-    path = workdir / "install.sh"
-    path.write_text(sh, encoding="utf-8")
-    try:
-        path.chmod(0o755)
-    except Exception:
-        pass
 
 
 def make_zip(workdir: Path, zip_path: Path) -> None:
@@ -85,32 +66,26 @@ def remove_zone_identifier(path: Path) -> None:
         return
     try:
         ads = str(path) + ":Zone.Identifier"
-        # Path.exists works with ADS on Windows when provided as string
         if Path(ads).exists():
             os.remove(ads)
     except Exception:
-        # Best-effort; ignore failures
         pass
 
 
 def set_file_attributes(path: Path) -> None:
     """
-    Set sane file permissions: ensure scripts are executable on POSIX and clear read-only on Windows.
+    Set sane file permissions for Windows: clear read-only bit.
     """
     try:
         if os.name == "nt":
-            # On Windows, os.chmod can clear the read-only bit
             os.chmod(path, 0o644)
-        else:
-            mode = 0o755 if path.suffix == ".sh" else 0o644
-            path.chmod(mode)
     except Exception:
         pass
 
 
 def add_unblock_script(workdir: Path) -> None:
     """
-    Add helper scripts to unblock files on Windows (PowerShell) and a small Unix helper.
+    Add helper scripts to unblock files on Windows (PowerShell and batch).
     """
     bat = (
         "@echo off\n"
@@ -127,84 +102,85 @@ def add_unblock_script(workdir: Path) -> None:
     )
     (workdir / "Unblock-Files.ps1").write_text(ps1, encoding="utf-8")
 
-    sh = (
-        "#!/bin/sh\n"
-        "echo 'Nothing to do on Unix; ADS not applicable.'\n"
-    )
-    sh_path = workdir / "unblock.sh"
-    sh_path.write_text(sh, encoding="utf-8")
-    try:
-        sh_path.chmod(0o755)
-    except Exception:
-        pass
-
-    for fname in ("Unblock-Files.bat", "Unblock-Files.ps1", "unblock.sh"):
+    for fname in ("Unblock-Files.bat", "Unblock-Files.ps1"):
         try:
             set_file_attributes(workdir / fname)
         except Exception:
             pass
 
 
-def package(exe_path: Path, backend_url: str, customer: str, output_dir: Path, license_server_url: str | None = None) -> Path:
+def package_windows(exe_path: Path, backend_url: str, customer: str, output_dir: Path, license_server_url: str | None = None) -> Path:
     if not exe_path.exists():
         raise FileNotFoundError(f"Exe not found: {exe_path}")
-    
+
     output_dir.mkdir(parents=True, exist_ok=True)
     product = "MyRhythmNexus"
-    zip_name = f"{product}-{customer}.zip"
+    zip_name = f"{product}-{customer}-windows.zip"
     zip_path = output_dir / zip_name
-    
+
     with tempfile.TemporaryDirectory() as td:
         workdir = Path(td)
         exe_name = exe_path.name
-        
-        # EXE'yi kopyala ve ADS temizle
+
+        # Copy EXE and clean ADS
         shutil.copy2(exe_path, workdir / exe_name)
         remove_zone_identifier(workdir / exe_name)
         set_file_attributes(workdir / exe_name)
-        
-        # Config oluştur
+
+        # Config
         write_config(workdir / "config.json", backend_url, license_server_url)
-        
-        # Install dosyaları oluştur
+
+        # Install files
         write_install_files(workdir, exe_name)
         remove_zone_identifier(workdir / "install.bat")
         set_file_attributes(workdir / "install.bat")
-        
-        # Unblock script'leri ekle
+
+        # Unblock scripts
         add_unblock_script(workdir)
-        
-        # README ekle (kullanıcıya talimatlar)
-        readme = f"""# MyRhythmNexus - {customer} Installation
 
-## For Windows Users:
-1. Extract this ZIP file
-2. If you see security warnings, run "Unblock-Files.bat" as Administrator
-3. Run "install.bat" to install
-4. Run "{exe_name}" to start the application
+        # README for Windows users (Turkish instructions)
+        readme = """# MyRhythmNexus Kurulum Talimatları (Türkçe)
 
-## For Advanced Users (PowerShell):
-Right-click on the extracted folder -> Properties -> Check "Unblock" -> Apply
-"""
+    ## ADIM 1: ZIP Dosyasını Ayıkla
+    1. ZIP dosyasını sağ tıklayın
+    2. "Tümünü ayıkla" seçeneğini tıklayın
+    3. Bir klasöre ayıklayın
+
+    ## ADIM 2: Güvenlik Engelini Kaldır (ÖNEMLİ!)
+    1. Ayıklanan klasöre gidin
+    2. Unblock-Files.bat dosyasını **sağ tıklayın**
+    3. "Yönetici olarak çalıştır" seçeneğini tıklayın
+    4. Çıkan siyah pencerede herhangi bir tuşa basın
+
+    ## ADIM 3: Kurulumu Tamamla
+    1. install.bat dosyasını çalıştırın
+    2. Kurulum tamamlandığında program otomatik başlayacaktır
+
+    ## SIK SORULAN SORULAR:
+    ❓ **"Windows bu uygulamanın çalıştırılmasını engelledi" hatası alıyorum**
+    → Lütfen ADIM 2'yi tekrar uygulayın
+
+    ❓ **Yönetici izni istiyor**
+    → Windows'ta herhangi bir program kurarken yönetici izni normaldir
+    """
         (workdir / "README.txt").write_text(readme, encoding="utf-8")
-        
-        # ZIP oluştur
+
+        # Create ZIP
         make_zip(workdir, zip_path)
-    
+
     # Checksum
     digest = sha256_file(zip_path)
     (zip_path.with_suffix(zip_path.suffix + ".sha256")).write_text(digest, encoding="ascii")
-    
-    # ZIP dosyasının kendisi için de ADS temizle
+
+    # Remove ADS on ZIP file
     if os.name == 'nt':
         remove_zone_identifier(zip_path)
-    
+
     return zip_path
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    # Make flags optional so the script can fall back to interactive prompts
     parser.add_argument("--exe-path")
     parser.add_argument("--backend-url")
     parser.add_argument("--customer")
@@ -217,10 +193,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="Run build-desktop.bat (Windows) before packaging and use produced EXE if --exe-path not given")
     args = parser.parse_args(argv)
 
-    # Allow supplying license server via environment variable LICENSE_SERVER_URL
     license_server = args.license_server_url or os.environ.get("LICENSE_SERVER_URL")
 
-    # Helper prompts
     def prompt_nonempty(prompt_text: str, default: str | None = None) -> str:
         while True:
             if default:
@@ -251,26 +225,19 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             return ppath
 
-    # If interactive requested or required params missing, run prompts
-    # If --build requested, attempt to run the project's build script first
     if args.build:
-        # Prefer the Windows batch if present, otherwise try shell script
         try:
             if os.name == "nt" and Path("build-desktop.bat").exists():
                 print("Running build-desktop.bat...")
                 subprocess.run(["cmd", "/c", "build-desktop.bat"], check=True)
-            elif Path("build-desktop.sh").exists():
-                print("Running build-desktop.sh...")
-                subprocess.run(["sh", "build-desktop.sh"], check=True)
             else:
-                print("No build script found (build-desktop.bat/build-desktop.sh). Skipping build.")
+                print("No Windows build script found (build-desktop.bat). Skipping build.")
         except subprocess.CalledProcessError as e:
             print(f"Build script failed: {e}", file=sys.stderr)
             return 2
 
     if args.interactive or not (args.exe_path and args.backend_url and args.customer):
         print("Interactive packaging mode — provide details below.")
-        # If build was requested and no exe path provided, try to auto-detect exe in dist/
         exe_initial = args.exe_path
         if args.build and not exe_initial:
             candidates = []
@@ -279,7 +246,6 @@ def main(argv: list[str] | None = None) -> int:
                 for p in sorted(d.iterdir()):
                     if p.is_file() and p.name.startswith("MyRhythmNexus"):
                         candidates.append(p)
-                # Fallback: include any file in dist if none matched the naming
                 if not candidates:
                     candidates = [p for p in sorted(d.iterdir()) if p.is_file()]
             if candidates:
@@ -306,15 +272,13 @@ def main(argv: list[str] | None = None) -> int:
             print("Aborted by user.")
             return 2
         try:
-            zip_path = package(exe, backend, customer, out, ls or None)
+            zip_path = package_windows(exe, backend, customer, out, ls or None)
             print(f"Created: {zip_path}")
             return 0
         except Exception as e:
             print(f"Error: {e}", file=sys.stderr)
             return 2
     else:
-        # Non-interactive path with flags
-        # If build requested and no exe path given, try to find built exe in dist/
         exe_path_arg = args.exe_path
         if args.build and not exe_path_arg:
             candidates = []
@@ -332,7 +296,7 @@ def main(argv: list[str] | None = None) -> int:
         exe = Path(exe_path_arg)
         out = Path(args.output_dir)
         try:
-            zip_path = package(exe, args.backend_url, args.customer, out, license_server)
+            zip_path = package_windows(exe, args.backend_url, args.customer, out, license_server)
             print(f"Created: {zip_path}")
             return 0
         except Exception as e:

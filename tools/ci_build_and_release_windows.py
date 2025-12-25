@@ -10,138 +10,40 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
-import shutil
-import subprocess
 import sys
+import shutil
 from pathlib import Path
 from typing import Optional
 
+import importlib.util
+
+
+base = Path(__file__).resolve().parent / 'WindowsBuilder'
+
+# Dynamic loaders for WindowsBuilder modules; if loading fails we fall back
+# to the inline implementation still present in this file.
+def _load_module_from_path(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, str(path))
+    if spec is None or spec.loader is None:
+        raise ImportError(f'Cannot load module {name} from {path}')
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
 try:
-    import requests
+    build_runner = _load_module_from_path('windowsbuilder.build_runner', base / 'build_runner.py')
 except Exception:
-    requests = None
+    build_runner = None
 
+try:
+    artifact = _load_module_from_path('windowsbuilder.artifact', base / 'artifact.py')
+except Exception:
+    artifact = None
 
-def read_version_from_config() -> Optional[str]:
-    cfg = Path('desktop') / 'core' / 'config.py'
-    if not cfg.exists():
-        return None
-    text = cfg.read_text(encoding='utf-8')
-    m = re.search(r"DesktopConfig\.VERSION\s*=\s*['\"]([^'\"]+)['\"]", text)
-    if m:
-        return m.group(1).strip()
-    try:
-        repo_root = Path.cwd()
-        if str(repo_root) not in sys.path:
-            sys.path.insert(0, str(repo_root))
-        from desktop.core.config import DesktopConfig  # type: ignore
-
-        v = getattr(DesktopConfig, 'VERSION', None)
-        if v:
-            return str(v)
-    except Exception:
-        pass
-    ver_file = Path('desktop') / 'version.txt'
-    if ver_file.exists():
-        try:
-            return ver_file.read_text(encoding='utf-8').strip()
-        except Exception:
-            pass
-    return None
-
-
-def run_build_script() -> bool:
-    """Run the appropriate build script for the current platform.
-
-    On Windows this runs `build-desktop.bat`. If running on Unix and a
-    `build-desktop.sh` exists, it will run that instead.
-    """
-    if os.name == 'nt':
-        script = Path('build-desktop.bat')
-        if not script.exists():
-            print('build-desktop.bat not found', file=sys.stderr)
-            return False
-        cmd = ['cmd', '/c', str(script)]
-    else:
-        script = Path('build-desktop.sh')
-        if not script.exists():
-            print('build-desktop.sh not found', file=sys.stderr)
-            return False
-        cmd = ['sh', str(script)]
-    print('Running build script:', ' '.join(cmd))
-    try:
-        subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError as e:
-        print('Build failed:', e, file=sys.stderr)
-        return False
-    return True
-
-
-def find_built_exe(version: Optional[str] = None, prefer_linux: bool = False) -> Optional[Path]:
-    d = Path('dist')
-    if d.exists():
-        files = [f for f in d.iterdir() if f.is_file()]
-        if not files:
-            return None
-        if version:
-            ver_name = f'MyRhythmNexus_v{version}'
-            for candidate in files:
-                if candidate.name == ver_name or candidate.stem == ver_name:
-                    return candidate
-        for candidate in files:
-            if candidate.name == 'MyRhythmNexus-Desktop' or candidate.name.startswith('MyRhythmNexus'):
-                return candidate
-        return files[0]
-    r = Path('release')
-    if r.exists():
-        exes = list(r.glob('*.exe'))
-        if exes:
-            for e in exes:
-                if 'MyRhythmNexus' in e.name:
-                    return e
-            return exes[0]
-    return None
-
-
-def create_release_and_upload(repo: str, token: str, version: str, asset_path: Path, dry_run: bool = False) -> bool:
-    if requests is None:
-        print('requests module not available; install with: pip install requests', file=sys.stderr)
-        return False
-    api_base = 'https://api.github.com'
-    headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}
-    tag = f'v{version}'
-    print(f'Creating release {tag} in {repo}...')
-    if dry_run:
-        print('DRY-RUN: would create release and upload asset', asset_path)
-        return True
-    payload = {'tag_name': tag, 'name': tag, 'body': f'Release {tag} (automated)', 'prerelease': False}
-    resp = requests.post(f'{api_base}/repos/{repo}/releases', headers=headers, json=payload, timeout=30)
-    if resp.status_code == 201:
-        release = resp.json()
-    elif resp.status_code == 422:
-        print('Release already exists, finding existing release...')
-        r = requests.get(f'{api_base}/repos/{repo}/releases/tags/{tag}', headers=headers, timeout=30)
-        if r.status_code != 200:
-            print('Failed to fetch existing release:', r.status_code, r.text, file=sys.stderr)
-            return False
-        release = r.json()
-    else:
-        print('Failed to create release:', resp.status_code, resp.text, file=sys.stderr)
-        return False
-    upload_url = release.get('upload_url', '')
-    if '{' in upload_url:
-        upload_url = upload_url.split('{')[0]
-    headers_upload = {'Authorization': f'token {token}', 'Content-Type': 'application/octet-stream'}
-    params = {'name': asset_path.name}
-    with open(asset_path, 'rb') as f:
-        up = requests.post(upload_url, headers=headers_upload, params=params, data=f, timeout=60)
-    if up.status_code in (201, 200):
-        print('Asset uploaded successfully.')
-        return True
-    else:
-        print('Asset upload failed:', up.status_code, up.text, file=sys.stderr)
-        return False
+try:
+    github_release = _load_module_from_path('windowsbuilder.github_release', base / 'github_release.py')
+except Exception:
+    github_release = None
 
 
 def main(argv: Optional[list[str]] = None) -> int:
@@ -173,7 +75,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         return resp in ('y', 'yes')
     repo = args.repo
     token = args.token or os.environ.get('GITHUB_TOKEN')
-    version = args.version or read_version_from_config()
+    # Prefer WindowsBuilder's artifact reader if available
+    if artifact is not None:
+        version = args.version or artifact.read_version_from_config()
+    else:
+        version = args.version
     no_build = args.no_build
     dry_run = args.dry_run
     if args.interactive:
@@ -231,10 +137,16 @@ def main(argv: Optional[list[str]] = None) -> int:
                             shutil.rmtree(f)
                     except Exception as e:
                         print('Failed to remove', f, e)
-        ok = run_build_script()
+        if build_runner is None:
+            print('WindowsBuilder.build_runner not available; cannot run build.', file=sys.stderr)
+            return 1
+        ok = build_runner.run_build_script()
         if not ok:
             return 3
-    exe = find_built_exe(version, prefer_linux=False)
+    if artifact is None:
+        print('WindowsBuilder.artifact not available; cannot locate built exe.', file=sys.stderr)
+        return 4
+    exe = artifact.find_built_exe(version, prefer_linux=False)
     if not exe:
         print('Built exe not found in dist/ or release/.', file=sys.stderr)
         return 4
@@ -293,7 +205,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     if not token:
         print('GITHUB_TOKEN not provided via --token or GITHUB_TOKEN env var; skipping GitHub upload.', file=sys.stderr)
         return 0
-    success = create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
+    if github_release is None:
+        print('GitHub release helper not available; skipping upload. Built artifact at:', dst)
+        return 0
+    success = github_release.create_release_and_upload(repo, token, version, dst, dry_run=dry_run)
     return 0 if success else 6
 
 

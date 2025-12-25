@@ -18,7 +18,7 @@ def run_local_build(script: Path) -> bool:
     return True
 
 
-def run_docker_builder(version: Optional[str], token: Optional[str], cwd: Path, image: str = 'myrhythm-desktop-builder:latest', dockerfile: Path = Path('tools/desktop-builder/Dockerfile')) -> bool:
+def run_docker_builder(version: Optional[str], cwd: Path, image: str = 'myrhythm-desktop-builder:latest', dockerfile: Path = Path('tools/desktop-builder/Dockerfile')) -> bool:
     # Builds the docker builder image and runs it, mapping cwd/dist and cwd/release
     print('Building Docker image for builder...')
     cmd_build = ['docker', 'build', '-t', image, '-f', str(dockerfile), '.']
@@ -32,11 +32,8 @@ def run_docker_builder(version: Optional[str], token: Optional[str], cwd: Path, 
     release_host = str(cwd / 'release')
     os.makedirs(dist_host, exist_ok=True)
     os.makedirs(release_host, exist_ok=True)
-    base_mounts = ['-e', f'VERSION={version}', '-v', f'{dist_host}:/src/dist', '-v', f'{str(cwd)}:/src']
-    if token:
-        mounts = base_mounts + ['-v', f'{release_host}:/src/release']
-    else:
-        mounts = base_mounts
+    # Always mount release directory so built artifacts are available to host
+    mounts = ['-e', f'VERSION={version}', '-v', f'{dist_host}:/src/dist', '-v', f'{str(cwd)}:/src', '-v', f'{release_host}:/src/release']
     cmd_run = ['docker', 'run', '--rm'] + mounts + [image, '/bin/bash', '-lc', './build-desktop.sh']
     print('Running Docker builder...')
     try:

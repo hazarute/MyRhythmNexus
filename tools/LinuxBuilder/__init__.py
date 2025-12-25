@@ -9,5 +9,4 @@ __all__ = [
     "build_runner",
     "artifact",
     "packaging",
-    "github_release",
 ]

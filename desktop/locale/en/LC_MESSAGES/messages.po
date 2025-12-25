@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MyRhythmNexus 1.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-12-10 18:05+0300\n"
+"POT-Creation-Date: 2025-12-25 11:48+0300\n"
 "PO-Revision-Date: 2025-12-02 15:16+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -23,12 +23,21 @@ msgstr ""
 msgid "MyRhythmNexus - Admin Panel"
 msgstr "MyRhythmNexus - Admin Panel"
 
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/activity_item.py:101
+#, python-brace-format
+msgid "✓ {}"
+msgstr "✓ {}"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/activity_item.py:105
+msgid "🤖 Otomatik"
+msgstr "🤖 Automatic"
+
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/date_picker.py:27
 msgid "Tarih Seçin"
 msgstr "Select Date"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/date_picker.py:53
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:44
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:46
 msgid "📅 Tarih Seçimi"
 msgstr "📅 Date Selection"
 
@@ -49,20 +58,20 @@ msgid "✅ Seç"
 msgstr "✅ Select"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/date_picker.py:152
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:39
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:61
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:85
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:43
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:40
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:55
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:72
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:64
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:95
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:131
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:202
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:47
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:62
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:167
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:38
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:59
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:84
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:42
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:39
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:53
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:71
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:63
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:94
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:147
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:200
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:46
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:61
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:172
 msgid "❌ İptal"
 msgstr "❌ Cancel"
 
@@ -114,6 +123,35 @@ msgstr "November"
 msgid "Aralık"
 msgstr "December"
 
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:65
+#, python-brace-format
+msgid "{}  {}"
+msgstr "{}  {}"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:87
+#, python-brace-format
+msgid "📅 Ders Günleri: {}"
+msgstr "📅 Class Days: {}"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:91
+#, python-brace-format
+msgid "♾️ Zaman Bazlı ({} giriş)"
+msgstr "♾️ Time Based ({} entries)"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:102
+#, python-brace-format
+msgid "{}/{} Ders"
+msgstr "{}/{} Classes"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:106
+msgid "♾️ Sınırsız Erişim"
+msgstr "♾️ Unlimited Access"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/package_card.py:112
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:222
+msgid "🗑️"
+msgstr "🗑️"
+
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/search_bar.py:33
 msgid "🔍 Ara..."
 msgstr "🔍 Search..."
@@ -136,17 +174,14 @@ msgid "Sonraki >"
 msgstr "Next >"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/finance/pagination.py:42
-#, fuzzy
 msgid "Sayfa"
-msgstr "Close"
+msgstr "Page"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/finance/payment_card.py:37
-#, fuzzy
 msgid "Tarih belirtilmedi"
-msgstr "Package not specified"
+msgstr "Date not specified"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/finance/payment_card.py:46
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:235
 msgid "Bilinmiyor"
 msgstr "Unknown"
 
@@ -164,12 +199,11 @@ msgid "🛈 Detay"
 msgstr "🛈 Detail"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/finance/payment_card.py:102
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:126
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:124
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:54
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:221
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:181
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:68
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:54
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:77
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:114
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:92
@@ -182,7 +216,7 @@ msgstr "No payment records yet"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/finance/payment_list.py:38
 msgid "Ödeme listesi yükleme hatası"
-msgstr ""
+msgstr "Payment list loading error"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/class_event_scheduler.py:58
 msgid "📚 Özel Ders Zamanlaması"
@@ -204,24 +238,54 @@ msgstr "Repeating Weeks:"
 msgid ":"
 msgstr ":"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:49
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:51
 msgid "Başlangıç Tarihi:"
 msgstr "Start Date:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:67
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:69
 msgid "Bitiş Tarihi:"
 msgstr "End Date:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:115
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:89
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:82
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:147
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:171
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:64
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:200
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:133
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:67
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:73
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:139
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:148
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:151
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:160
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:163
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:231
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:237
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:243
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:137
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:176
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:75
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:87
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:259
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:271
+msgid "Uyarı"
+msgstr "Warning"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:90
+msgid "Geçmiş tarih seçilemez; tarih bugüne sıfırlandı."
+msgstr "Past date cannot be selected; date reset to today."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:131
 #, python-brace-format
 msgid "{} ({}) hafta"
 msgstr "{} ({}) weeks"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:134
 msgid "Bitiş Tarihi: Hata"
 msgstr "End Date: Error"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:134
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/date_selector.py:150
 #, python-brace-format
 msgid "Değiştirmek İçin Tıklayın - {}"
 msgstr "Click to Change - {}"
@@ -243,10 +307,8 @@ msgid "Sonuç bulunamadı"
 msgstr "No results found"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/member_selector.py:141
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:147
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:155
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:35
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:171
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:156
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:164
 #, python-brace-format
 msgid "{} {}"
 msgstr "{} {}"
@@ -307,9 +369,9 @@ msgid "Tutar negatif olamaz."
 msgstr "Amount cannot be negative."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/payment_details.py:139
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Geçersiz tutar: {}"
-msgstr "Invalid QR"
+msgstr "Invalid amount: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:36
 msgid "Lütfen bir üye seçiniz."
@@ -333,30 +395,31 @@ msgstr "Start date not selected."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:69
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:117
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:138
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:75
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:154
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:269
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:246
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:248
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:250
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:31
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:151
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:134
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:84
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:185
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:157
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:192
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:30
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:150
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:133
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:83
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:184
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:156
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:191
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_members_dialog.py:77
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:291
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:293
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:307
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:309
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:154
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:156
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:158
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:193
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:195
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:197
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:220
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:222
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:224
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:266
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:127
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:98
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:162
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:265
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:126
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:197
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:237
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:250
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:286
@@ -365,22 +428,24 @@ msgstr "Start date not selected."
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:196
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:206
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:224
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:159
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:72
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:44
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:87
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:89
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:326
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:198
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:335
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:44
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:96
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:98
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:53
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:220
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:192
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:138
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:127
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:43
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:111
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:113
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:214
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:172
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:186
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:165
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:298
 msgid "Hata"
@@ -389,30 +454,6 @@ msgstr "Error"
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:69
 msgid "Gerekli veriler eksik."
 msgstr "Required data is missing."
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:82
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:156
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:65
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:202
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:134
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:68
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:74
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:140
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:149
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:152
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:161
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:164
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:215
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:221
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:227
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:139
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:178
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:76
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:88
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:259
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:271
-msgid "Uyarı"
-msgstr "Warning"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:83
 #, python-brace-format
@@ -424,175 +465,234 @@ msgstr "Payment amount cannot exceed package price ({:.2f} TL)."
 msgid "Payload oluşturma hatası: {}"
 msgstr "Payload creation error: {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:132
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:71
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:238
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:147
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:80
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:181
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:284
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:145
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:184
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:212
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:95
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:159
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:136
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:266
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:70
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:236
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:146
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:79
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:180
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:300
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:143
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:182
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:210
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:94
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:194
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:234
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:247
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:282
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:304
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:220
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:153
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:66
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:80
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:323
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:195
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:332
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:89
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:216
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:188
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:134
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:124
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:104
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:146
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:210
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:180
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:151
 msgid "Başarılı"
 msgstr "Successful"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:133
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:137
 msgid ""
 "Satış tamamlandı!\n"
 "Abonelik oluşturuldu."
 msgstr ""
+"Sale completed!\n"
+"Subscription created."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:138
-#, fuzzy, python-brace-format
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:149
+msgid ""
+"İstek zaman aşımına uğradı, ancak sunucu isteği işleyip kaydetmiş "
+"olabilir.\n"
+"Lütfen üyeyi ve abonelikleri kontrol edin veya tekrar deneyin."
+msgstr ""
+"Request timed out, but the server might have processed and saved the request.\n"
+"Please check the member and subscriptions or try again."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/components/salespostab/submission_handler.py:154
+#, python-brace-format
 msgid "Satış başarısız: {}"
-msgstr "❌ Check-In Failed"
+msgstr "Sale failed: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:36
 msgid "Giriş Kontrol"
 msgstr "Check-In Control"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:65
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:71
 msgid "Kontrol Ediliyor..."
 msgstr "Checking..."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:87
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:93
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/login_window.py:42
 msgid "Giriş Yapılıyor..."
 msgstr "Logging in..."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:98
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:104
 msgid "Geçersiz QR"
 msgstr "Invalid QR"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:100
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:106
 msgid "Bağlantı Hatası"
 msgstr "Connection Error"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:136
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:142
 msgid "❌ Giriş Başarısız"
 msgstr "❌ Check-In Failed"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:141
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:50
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:148
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:147
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:66
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:147
 msgid "Kapat"
 msgstr "Close"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:195
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:196
 msgid "🎉 Giriş Başarılı!"
-msgstr "❌ Check-In Failed"
+msgstr "🎉 Check-In Successful!"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:197
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:198
 #, python-brace-format
 msgid "Hoşgeldin, {}"
 msgstr "Welcome, {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:200
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:201
 #, python-brace-format
 msgid "Kalan Hak: {}"
 msgstr "Remaining Rights: {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:212
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:275
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:296
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/checkin_dialog.py:213
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:274
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:295
 msgid "Tamam"
 msgstr "OK"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:21
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:24
 msgid "Genel Bakış"
 msgstr "Overview"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:28
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:31
 msgid "+ Üye Ekle"
 msgstr "+ Add Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:31
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:34
 msgid "+ Satış Yap"
 msgstr "+ Make Sale"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:34
-msgid "📷 QR Giriş"
-msgstr "📷 QR Check-In"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:37
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:39
 msgid "🔄"
 msgstr "🔄"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:45
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:47
 msgid "Aktif Üyeler"
 msgstr "Active Members"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:46
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:48
 msgid "Bugünkü Dersler"
 msgstr "Today's Classes"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:47
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:49
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_members_dialog.py:54
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:59
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:75
 msgid "Toplam Borç"
 msgstr "Total Debt"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:48
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:50
 msgid "Aylık Ciro"
 msgstr "Monthly Revenue"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:55
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:57
 msgid "Bugünün Programı"
 msgstr "Today's Schedule"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:63
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:65
+msgid "Yeni Üye Onayları"
+msgstr "New Member Approvals"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:73
 msgid "Son Hareketler"
 msgstr "Recent Activities"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:87
-msgid "QR Kodu Giriniz:"
-msgstr "Enter QR Code:"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:87
-msgid "Manuel Giriş"
-msgstr "Manual Entry"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:110
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:114
 msgid "..."
 msgstr "..."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:135
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:139
 msgid "Bugün ders yok."
 msgstr "No classes today."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:148
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:151
+msgid "Onay bekleyen üye yok."
+msgstr "No members pending approval."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:157
+msgid "Onay listesi yüklenemedi."
+msgstr "Approval list could not be loaded."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:167
 msgid "Henüz hareket yok."
 msgstr "No activities yet."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:155
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:174
 msgid "Err"
 msgstr "Err"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:186
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:205
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:124
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:201
-#, fuzzy
 msgid "Ders"
-msgstr "Other"
+msgstr "Class"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:261
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:211
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:58
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:205
+msgid "Silme Onayı"
+msgstr "Deletion Confirmation"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:261
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:58
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:205
+msgid ""
+"Bu katılım kaydını silmek istediğinizden emin misiniz?\n"
+"Bu işlem geri alınamaz."
+msgstr ""
+"Are you sure you want to delete this attendance record?\n"
+"This action cannot be undone."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:266
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:66
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:210
+msgid "Katılım kaydı başarıyla silindi."
+msgstr "Attendance record successfully deleted."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:269
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:72
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:89
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:335
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:98
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:138
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:113
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:214
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:186
+#, python-brace-format
+msgid "Silme işlemi başarısız: {}"
+msgstr "Deletion failed: {}"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:294
+msgid "⏳ Onay Bekliyor"
+msgstr "⏳ Pending Approval"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:325
+msgid "✅ Onayla"
+msgstr "✅ Approve"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dashboard.py:334
+msgid "❌ Reddet"
+msgstr "❌ Reject"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/definitions.py:17
 msgid "Hizmet Tanımları (Sözlükler)"
@@ -600,7 +700,7 @@ msgstr "Service Definitions (Dictionaries)"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/definitions.py:31
 msgid "📁  Kategoriler"
-msgstr ""
+msgstr "📁  Categories"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/definitions.py:32
 msgid "🏋️ Hizmetler (Dersler)"
@@ -608,92 +708,80 @@ msgstr "🏋️ Services (Classes)"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/definitions.py:33
 msgid "📋  Planlar"
-msgstr ""
+msgstr "📋  Plans"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:28
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:28
 msgid "< Geri"
 msgstr "< Back"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:48
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:48
 msgid "✏️ Bilgileri Güncelle"
 msgstr "✏️ Update Information"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:50
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:50
 msgid "🔑 Şifre Değiştir"
 msgstr "🔑 Change Password"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:52
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:52
 msgid "💰 Borç Öde"
 msgstr "💰 Pay Debt"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:67
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:68
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:96
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:115
-msgid "👤  Profil"
-msgstr ""
-
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:68
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:69
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:96
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:117
-#, fuzzy
-msgid "📦  Paketler"
-msgstr "Recent Activities"
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:146
+msgid "👤  Profil"
+msgstr "👤  Profile"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:69
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:70
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:96
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:119
-msgid "💳  Ödemeler"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:148
+msgid "📦  Paketler"
+msgstr "📦  Packages"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:70
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:71
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:96
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:121
-msgid "✅  Katılım"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:150
+msgid "💳  Ödemeler"
+msgstr "💳  Payments"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:71
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:72
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:96
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:123
-msgid "📏  Vücut Ölçümleri"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:152
+msgid "✅  Katılım"
+msgstr "✅  Attendance"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:207
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:156
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:72
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:154
+msgid "📏  Vücut Ölçümleri"
+msgstr "📏  Body Measurements"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:205
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:191
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:231
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:289
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:299
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:77
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:320
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:192
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:329
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:86
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:185
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:131
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:121
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:101
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:175
 msgid "Onay"
 msgstr "Confirm"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:156
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:191
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:231
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:192
 msgid "Bu üyeyi silmek istediğinize emin misiniz?"
 msgstr "Are you sure you want to delete this member?"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:159
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:194
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:234
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:195
 msgid "Üye silindi."
 msgstr "Member deleted."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:162
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/member_detail.py:197
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:237
 #, python-brace-format
 msgid "Silme işlemi başarısız: {err}"
@@ -716,9 +804,8 @@ msgid "➕ Yeni Üye"
 msgstr "➕ New Member"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:112
-#, fuzzy
 msgid " (pasif üyeler)"
-msgstr "Active Members"
+msgstr " (passive members)"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:114
 #, python-brace-format
@@ -740,9 +827,8 @@ msgid "📋 Detay"
 msgstr "📋 Detail"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:212
-#, fuzzy
 msgid "✅ Aktif Et"
-msgstr "Active Members"
+msgstr "✅ Activate"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/members.py:247
 msgid "Üye aktif edildi."
@@ -753,14 +839,18 @@ msgstr "Member activated."
 msgid "Aktif etme işlemi başarısız: {err}"
 msgstr "Activation failed: {err}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/sales.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/sales.py:33
 msgid "Satış Ekranı (POS)"
 msgstr "Sales Screen (POS)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/sales.py:33
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/sales.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:20
+msgid "Son Satın Almalar"
+msgstr "Recent Purchases"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/sales.py:35
 msgid "Paket Yönetimi"
-msgstr "👥 Member Management"
+msgstr "Package Management"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:22
 msgid "< Önceki Hafta"
@@ -858,7 +948,7 @@ msgstr "No participants yet."
 msgid "Sil"
 msgstr "Delete"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:95
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:249
 #, python-brace-format
 msgid "Hata: {err}"
@@ -874,9 +964,8 @@ msgid "{first} {last} için aktif abonelik bulunamadı."
 msgstr "No active subscription found for {first} {last}."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:282
-#, fuzzy
 msgid "Üye eklendi."
-msgstr "+ Add Member"
+msgstr "Member added."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:286
 #, python-brace-format
@@ -887,7 +976,7 @@ msgstr "Operation error: {err}"
 msgid "Bu rezervasyonu silmek istediğinize emin misiniz?"
 msgstr "Are you sure you want to delete this reservation?"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:224
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:222
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/scheduler.py:296
 #, python-brace-format
 msgid "Silme başarısız: {err}"
@@ -926,19 +1015,18 @@ msgstr "📋 No staff records found yet"
 msgid "🔍 Arama sonucu bulunamadı"
 msgstr "🔍 No search results found"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:49
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:126
-#, fuzzy
-msgid "Yönetici"
-msgstr "👥 Member Management"
-
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:48
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:57
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:126
+msgid "Yönetici"
+msgstr "Manager"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:47
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:56
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:128
 msgid "Antrenör"
 msgstr "Trainer"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:115
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:113
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:172
 msgid "✏️ Düzenle"
 msgstr "✏️ Edit"
@@ -948,11 +1036,6 @@ msgstr "✏️ Edit"
 msgid "Personel ID bulunamadı"
 msgstr "Staff ID not found"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:211
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:145
-msgid "Silme Onayı"
-msgstr "Deletion Confirmation"
-
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:212
 #, python-brace-format
 msgid ""
@@ -960,6 +1043,9 @@ msgid ""
 "\n"
 "Bu işlem geri alınamaz!"
 msgstr ""
+"Are you sure you want to delete staff member '{name}'?\n"
+"\n"
+"This action cannot be undone!"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/staff.py:220
 #, python-brace-format
@@ -975,306 +1061,299 @@ msgstr "Error deleting staff member: {err}"
 msgid "Yeni Kategori Ekle"
 msgstr "Add New Category"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:28
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:27
 msgid "📁 Yeni Kategori Ekle"
 msgstr "📁 Add New Category"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:31
 msgid "📝 Kategori Adı"
 msgstr "📝 Category Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:33
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:34
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:66
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:65
 msgid "💬 Açıklama"
 msgstr "💬 Description"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:42
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:69
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:88
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:46
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:43
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:63
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:75
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:67
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:98
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:203
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:50
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:65
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:41
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:67
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:87
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:45
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:42
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:61
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:66
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:201
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:49
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:64
 msgid "💾 Kaydet"
 msgstr "💾 Save"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:65
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:64
 msgid "Kategori adı boş olamaz."
 msgstr "Category name cannot be empty."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:71
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:70
 msgid "Kategori eklendi."
 msgstr "Category added."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:75
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:84
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:185
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_category_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:83
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:184
 #, python-brace-format
 msgid "Ekleme başarısız: {err}"
 msgstr "Addition failed: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:20
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:34
 msgid "Yeni Seans Ekle"
 msgstr "Add New Session"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:38
 msgid "Seans Şablonu"
 msgstr "Session Template"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:41
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:39
 msgid "Eğitmen"
 msgstr "Instructor"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:50
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:48
 msgid "Süre (dk)"
 msgstr "Duration (min)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:51
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:49
 msgid "Kapasite"
-msgstr "Close"
+msgstr "Capacity"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:96
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:94
 msgid "Tarih"
 msgstr "Date"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:114
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:112
 msgid "Saat"
-msgstr "Close"
+msgstr "Time"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:146
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:144
 msgid "Seans Tarihi"
 msgstr "Session Date"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:159
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:157
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:70
 msgid "Yükleniyor..."
 msgstr "Loading..."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:182
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:180
 msgid "Şablon Yok"
 msgstr "No Template"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:187
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:185
 msgid "Eğitmen Yok"
 msgstr "No Instructor"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:202
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:200
 msgid "Lütfen tüm alanları doldurunuz."
 msgstr "Please fill in all fields."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:211
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:209
 msgid "Geçersiz Format"
-msgstr "Invalid QR"
+msgstr "Invalid Format"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:211
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:209
 msgid "Saat formatı: HH:MM"
 msgstr "Time format: HH:MM"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:219
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:223
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:124
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:129
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:217
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:221
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:123
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:128
 msgid "Geçersiz Değer"
-msgstr "Invalid QR"
+msgstr "Invalid Value"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:219
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:217
 msgid "Süre ve Kapasite sayısal değer olmalıdır."
 msgstr "Duration and Capacity must be numeric values."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:223
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:221
 msgid "Süre ve Kapasite 0'dan büyük olmalıdır."
 msgstr "Duration and Capacity must be greater than 0."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:238
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:236
 msgid "Seans eklendi."
 msgstr "Session added."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:243
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:151
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:190
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:217
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:241
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:149
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:188
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:215
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:93
 msgid "Bilinmeyen hata"
 msgstr "Unknown error"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:246
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:154
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:193
+#, python-brace-format
+msgid "İşlem başarısız: {detail}"
+msgstr "Operation failed: {detail}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:248
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:156
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:195
 #, python-brace-format
-msgid "İşlem başarısız: {detail}"
-msgstr "Operation failed: {detail}"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_event_dialog.py:250
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:158
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:197
-#, fuzzy, python-brace-format
 msgid "İşlem başarısız: {err}"
-msgstr "❌ Check-In Failed"
+msgstr "Operation failed: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:17
 msgid "Yeni Vücut Ölçümü"
 msgstr "New Body Measurement"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:31
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:30
 #, python-brace-format
 msgid "Ölçüm tipleri yüklenemedi: {err}"
 msgstr "Measurement types could not be loaded: {err}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:43
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:42
 msgid "📏 Yeni Vücut Ölçümü"
 msgstr "📏 New Body Measurement"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:55
 msgid "🏋️ Genel Vücut Ölçüleri"
 msgstr "🏋️ General Body Measurements"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:57
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:89
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:265
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:98
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:274
 msgid "💪 Üst Vücut"
 msgstr "💪 Upper Body"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:58
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:90
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:266
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:57
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:99
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:275
 msgid "🫀 Gövde"
 msgstr "🫀 Torso"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:59
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:91
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:267
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:58
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:100
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:276
 msgid "🦵 Alt Vücut"
 msgstr "🦵 Lower Body"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:73
 msgid "📝 Notlar"
 msgstr "📝 Notes"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:104
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:103
 msgid "0.0"
 msgstr "0.0"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:125
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:124
 msgid "Ölçüm değerleri pozitif olmalıdır."
 msgstr "Measurement values must be positive."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:130
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:129
 msgid "Lütfen sayısal değer giriniz."
 msgstr "Please enter a numeric value."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:134
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:133
 msgid "En az bir ölçüm değeri giriniz."
 msgstr "Enter at least one measurement value."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:147
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:146
 msgid "Ölçümler kaydedildi."
 msgstr "Measurements saved."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:151
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_measurement_dialog.py:150
 #, python-brace-format
 msgid "Kayıt hatası: {err}"
 msgstr "Save error: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:17
-#, fuzzy
 msgid "Yeni Üye Kaydı"
-msgstr "➕ New Member"
+msgstr "New Member Registration"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:29
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:28
 msgid "✨ Yeni Üye Ekle"
 msgstr "✨ Add New Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:33
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:33
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:34
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:33
 msgid "👤 Ad"
 msgstr "👤 First Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:34
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:34
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:36
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:35
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:35
 msgid "👤 Soyad"
 msgstr "👤 Last Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:35
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:35
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:38
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:38
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:37
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:37
 msgid "📧 Email"
 msgstr "📧 Email"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:36
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:36
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:40
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:35
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:35
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:39
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:39
 msgid "📞 Telefon"
 msgstr "📞 Phone"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:37
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:37
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:47
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:46
 msgid "🔑 Şifre"
 msgstr "🔑 Password"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:75
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:97
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:129
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:76
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:96
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:128
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:75
 msgid "Eksik Bilgi"
 msgstr "Missing Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:76
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:75
 msgid "Lütfen Ad, Soyad, Email ve Şifre alanlarını doldurunuz."
-msgstr "Please fill in all fields."
+msgstr "Please fill in First Name, Last Name, Email and Password fields."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:81
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:103
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:135
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:82
+msgid "Geçersiz Email"
+msgstr "Invalid Email"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:82
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:104
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:136
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:83
-#, fuzzy
-msgid "Geçersiz Email"
-msgstr "Invalid QR"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:83
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:105
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:137
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:84
 msgid ""
 "Lütfen geçerli bir email adresi giriniz.\n"
 "Örnek: ornek@domain.com"
 msgstr ""
+"Please enter a valid email address.\n"
+"Example: example@domain.com"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:107
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:119
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:129
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:151
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:161
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:98
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:108
+msgid "Geçersiz Telefon"
+msgstr "Invalid Phone"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:98
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:108
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:120
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:130
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:152
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:162
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:99
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:109
-#, fuzzy
-msgid "Geçersiz Telefon"
-msgstr "Invalid QR"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:99
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:121
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:153
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:100
 msgid ""
 "Telefon numarası 10 haneli olmalıdır.\n"
 "Kabul edilen formatlar:\n"
@@ -1283,71 +1362,76 @@ msgid ""
 "• +905xxxxxxxxx\n"
 "• 0 5xx xxx xx xx"
 msgstr ""
+"Phone number must be 10 digits.\n"
+"Accepted formats:\n"
+"• 5xxxxxxxxx\n"
+"• 05xxxxxxxxx\n"
+"• +905xxxxxxxxx\n"
+"• 0 5xx xxx xx xx"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:109
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:131
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:163
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:110
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:108
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:130
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:162
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:109
 msgid "Telefon numarası 5 ile başlamalıdır (cep telefonu)."
 msgstr "Phone number must start with 5 (mobile phone)."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:116
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:138
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:170
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:82
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:115
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:137
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:169
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:81
 msgid "Zayıf Şifre"
-msgstr "Password"
+msgstr "Weak Password"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:116
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:138
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:170
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:82
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:115
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:137
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:169
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:81
 msgid "Şifre en az 6 karakter olmalıdır."
 msgstr "Password must be at least 6 characters long."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:134
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_member_dialog.py:133
 #, python-brace-format
 msgid "Üye oluşturulamadı: {err}"
 msgstr "Could not create member: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:16
 msgid "Yeni Hizmet Ekle"
-msgstr ""
+msgstr "Add New Service"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:28
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:27
 msgid "🏋️ Yeni Hizmet Ekle"
-msgstr ""
+msgstr "🏋️ Add New Service"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:31
 msgid "📝 Hizmet Adı"
-msgstr ""
+msgstr "📝 Service Name"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:31
+msgid "Örn: Reformer"
+msgstr "e.g. Reformer"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:32
-msgid "Örn: Reformer"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:33
 msgid "⏱️ Varsayılan Süre (dk)"
-msgstr ""
+msgstr "⏱️ Default Duration (min)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:68
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:67
 msgid "Ad ve süre zorunludur."
-msgstr ""
+msgstr "Name and duration are required."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:74
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:73
 msgid "Süre sayı olmalıdır."
-msgstr ""
+msgstr "Duration must be a number."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:80
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_offering_dialog.py:79
 msgid "Hizmet eklendi."
-msgstr ""
+msgstr "Service added."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:31
 msgid "Paket Düzenle"
 msgstr "Edit Package"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_package_dialog.py:31
 msgid "Yeni Paket Oluştur"
 msgstr "Create New Package"
 
@@ -1355,206 +1439,196 @@ msgstr "Create New Package"
 msgid "Yeni Plan Ekle"
 msgstr "Add New Plan"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:30
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:29
 msgid "📋 Yeni Plan Ekle"
-msgstr "+ Add Member"
+msgstr "📋 Add New Plan"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:34
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:33
 msgid "📝 Plan Adı"
-msgstr "Username"
+msgstr "📝 Plan Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:33
 msgid "Örn: 3 Aylık 24 Seans"
-msgstr "Ex: 3 Months 24 Sessions"
+msgstr "e.g. 3 Months, 24 Sessions"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:38
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:50
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:37
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:49
 msgid "📅 Aylık (28 gün)"
 msgstr "📅 Monthly (28 days)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:39
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:38
 msgid "📆 3 Aylık (84 gün)"
 msgstr "📆 3 Months (84 days)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:39
 msgid "📊 6 Aylık (168 gün)"
 msgstr "📊 6 Months (168 days)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:41
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:40
 msgid "🎯 Yıllık (365 gün)"
 msgstr "🎯 Yearly (365 days)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:42
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:122
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:41
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:121
 msgid "📆 Haftalık (7 gün)"
 msgstr "📆 Weekly (7 days)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:43
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:42
 msgid "🔒 Özel Tarih (Manuel)"
 msgstr "🔒 Custom Date (Manual)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:48
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:47
 msgid "📆 Geçerlilik Süresi"
 msgstr "📆 Validity Period"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:54
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:53
 msgid "🎯 Seans Sayısı"
 msgstr "🎯 Session Count"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:55
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:54
 msgid "Boş bırakırsan sınırsız (0 veya boş)"
 msgstr "Leave empty for unlimited (0 or empty)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:59
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:58
 msgid "♻️ Tekrarlayan Haftalar"
 msgstr "♻️ Repeating Weeks"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:60
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:59
 msgid "Girdiğin seans haftada tekrar eder (örnek: 4)"
-msgstr "The entered session repeats weekly (e.g.: 4)"
+msgstr "The entered session count repeats weekly (e.g. 4)."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:140
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:139
 msgid "Plan adı zorunludur."
 msgstr "Plan name is required."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:149
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:148
 msgid "Seans sayısı negatif olamaz."
 msgstr "Session count cannot be negative."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:152
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:151
 msgid "Seans sayısı geçerli bir sayı olmalıdır."
 msgstr "Session count must be a valid number."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:161
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:160
 msgid "Tekrarlayan hafta en az 1 olabilir."
 msgstr "Repeating week must be at least 1."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:164
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:163
 msgid "Tekrarlayan hafta geçerli bir sayı olmalıdır."
 msgstr "Repeating week must be a valid number."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:181
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_plan_dialog.py:180
 msgid "Plan eklendi."
 msgstr "Plan added."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:17
-#, fuzzy
 msgid "Yeni Personel Ekle"
-msgstr "Staff"
+msgstr "Add New Staff Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:29
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:28
 msgid "👔 Yeni Personel Ekle"
 msgstr "👔 Add New Staff Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:43
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:62
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:42
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:61
 msgid "💼 Rol"
 msgstr "💼 Role"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:98
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:97
 msgid "Lütfen Ad, Soyad, Email, Şifre ve Rol alanlarını doldurunuz."
-msgstr "Please fill in all fields."
+msgstr "Please fill in First Name, Last Name, Email, Password and Role fields."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:157
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/add_staff_dialog.py:156
 #, python-brace-format
 msgid "Personel oluşturulamadı: {err}"
 msgstr "Could not create staff member: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:18
-#, fuzzy
 msgid "Personel Düzenle"
-msgstr "Staff"
+msgstr "Edit Staff Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:30
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:29
 msgid "✏️ Personel Düzenle"
 msgstr "✏️ Edit Staff Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:54
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:53
 msgid "(boş bırakılırsa değişmez)"
 msgstr "(leave empty to keep unchanged)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:86
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:56
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:85
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:127
 msgid "Aktif"
-msgstr "Cash"
+msgstr "Active"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:130
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:129
 msgid "Lütfen Ad, Soyad, Email ve Rol alanlarını doldurunuz."
-msgstr "Please fill in all fields."
+msgstr "Please fill in First Name, Last Name, Email and Role fields."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:192
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/edit_staff_dialog.py:191
 #, python-brace-format
 msgid "Personel güncellenemedi: {err}"
 msgstr "Could not update staff member: {err}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:17
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:32
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:30
 msgid "Seans Şablonları Yönetimi"
 msgstr "Session Templates Management"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:38
 msgid "Şablon Adı"
 msgstr "Template Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:46
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:44
 msgid "➕ Ekle"
-msgstr "+ Add Member"
+msgstr "➕ Add"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:57
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:55
 msgid "Mevcut Şablonlar"
 msgstr "Existing Templates"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:68
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:66
 msgid "❌ Kapat"
-msgstr "Close"
+msgstr "❌ Close"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:88
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:86
 msgid "Henüz şablon yok. Yukarıdan yeni şablon ekleyebilirsiniz."
 msgstr "No templates yet. You can add new templates from above."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:139
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:137
 msgid "Lütfen şablon adı giriniz."
 msgstr "Please enter a template name."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:145
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:143
 #, python-brace-format
 msgid "'{name}' şablonu oluşturuldu."
 msgstr "'{name}' template created."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:164
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:162
 msgid "Şablonu Düzenle"
-msgstr "✏️ Edit"
+msgstr "Edit Template"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:169
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:167
 msgid "Yeni Ad"
 msgstr "New Name"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:178
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:176
 msgid "Şablon adı boş olamaz."
 msgstr "Template name cannot be empty."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:184
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:182
 msgid "Şablon güncellendi."
 msgstr "Template updated."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:207
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:205
 #, python-brace-format
 msgid "'{name}' şablonunu silmek istediğinize emin misiniz?"
 msgstr "Are you sure you want to delete '{name}' template?"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:212
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:210
 msgid "Şablon silindi."
 msgstr "Template deleted."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:222
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/manage_templates_dialog.py:220
 #, python-brace-format
 msgid "Silme başarısız: {detail}"
 msgstr "Deletion failed: {detail}"
@@ -1563,159 +1637,156 @@ msgstr "Deletion failed: {detail}"
 msgid "Paket Detayları"
 msgstr "Package Details"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:53
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:32
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:52
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:31
 msgid "Paket"
-msgstr "Cash"
+msgstr "Package"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:46
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:45
 msgid "🟢 Aktif"
 msgstr "🟢 Active"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:47
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:46
 msgid "🔴 Süresi Dolmuş"
 msgstr "🔴 Expired"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:48
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:47
 msgid "⚫ İptal Edildi"
-msgstr "❌ Cancel"
+msgstr "⚫ Cancelled"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:50
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:49
 msgid "⚪ Bilinmiyor"
 msgstr "⚪ Unknown"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:59
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:58
 msgid "📅 Tarih Bilgileri"
 msgstr "📅 Date Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:64
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:63
 msgid "Başlangıç"
 msgstr "Start"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:65
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:64
 msgid "Bitiş"
 msgstr "End"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:68
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:67
 msgid "🎯 Ders Kullanımı"
 msgstr "🎯 Class Usage"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:79
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:78
 msgid "♾️ Zaman Bazlı Erişim"
 msgstr "♾️ Time-Based Access"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:82
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:81
 #, python-brace-format
 msgid "Paket süresi boyunca sınırsız ders ({used} giriş yapıldı)"
-msgstr "Unlimited classes during package duration ({used} entries made)"
+msgstr "Unlimited classes during package validity ({used} check-ins made)"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:101
+msgid "Kullanılan"
+msgstr "Used"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:102
-#, fuzzy
-msgid "Kullanılan"
-msgstr "Username"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:103
-#, fuzzy
 msgid "Kalan"
-msgstr "Close"
+msgstr "Remaining"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:105
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:104
 msgid "Toplam"
-msgstr "Total Debt"
+msgstr "Total"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:110
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:109
 msgid "♾️ Sınırsız"
 msgstr "♾️ Unlimited"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:115
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:114
 msgid "💰 Ödeme Bilgileri"
 msgstr "💰 Payment Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:126
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:125
 msgid "Toplam Fiyat"
-msgstr "Total Debt"
+msgstr "Total Price"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:126
 msgid "Ödenen"
 msgstr "Paid"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:129
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:128
 msgid "Kalan Borç"
-msgstr "Total Debt"
+msgstr "Remaining Debt"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:134
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:133
 #, python-brace-format
 msgid "📝 Ödeme Geçmişi ({count})"
 msgstr "📝 Payment History ({count})"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:143
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:142
 msgid "QR Kod OKUT"
 msgstr "Scan QR Code"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:233
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:232
 msgid "Abonelik ID'si bulunamadı"
 msgstr "Subscription ID not found"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:249
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:248
 msgid "✅ Giriş Başarılı"
-msgstr "❌ Check-In Failed"
+msgstr "✅ Check-in Successful"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:250
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:249
 #, python-brace-format
 msgid ""
 "Katılım kaydedildi.\n"
 "{member_name}\n"
 "Kalan Hak: {remaining}"
 msgstr ""
+"Attendance recorded.\n"
+"{member_name}\n"
+"Remaining Rights: {remaining}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_members_dialog.py:48
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:52
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:251
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:51
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:250
 msgid "Üye"
 msgstr "Member"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:256
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:255
 #, python-brace-format
 msgid "Check-in hatası: {error}"
 msgstr "Check-in error: {error}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:258
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:257
 msgid "QR token bulunamadı"
 msgstr "QR token not found"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:261
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:260
 #, python-brace-format
 msgid "Hata: {error}"
 msgstr "Error: {error}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:270
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/package_detail_dialog.py:269
 #, python-brace-format
 msgid ""
 "❌ Hata\n"
 "\n"
 "{message}"
 msgstr ""
+"❌ Error\n"
+"\n"
+"{message}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:18
 msgid "Üye Bilgilerini Güncelle"
 msgstr "Update Member Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:30
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:29
 msgid "✏️ Bilgileri Düzenle"
 msgstr "✏️ Edit Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:77
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:76
 msgid "Lütfen Ad, Soyad ve Email alanlarını doldurunuz."
-msgstr "Please fill in all fields."
+msgstr "Please fill in First Name, Last Name and Email fields."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_member_dialog.py:126
 #, python-brace-format
 msgid "Güncelleme hatası: {error}"
 msgstr "Update error: {error}"
@@ -1724,35 +1795,35 @@ msgstr "Update error: {error}"
 msgid "Şifre Güncelle"
 msgstr "Update Password"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:28
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:27
 msgid "🔑 Şifre Güncelle"
-msgstr ""
+msgstr "🔑 Update Password"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:39
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:38
 msgid "Yeni Şifre:"
 msgstr "New Password:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:45
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:44
 msgid "Şifre Tekrar:"
 msgstr "Repeat Password:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:53
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:52
 msgid "ℹ️ Şifre en az 6 karakter olmalıdır"
 msgstr "ℹ️ Password must be at least 6 characters long"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:76
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:75
 msgid "Şifre boş olamaz."
 msgstr "Password cannot be empty."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:88
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:87
 msgid "Şifreler eşleşmiyor. Lütfen kontrol ediniz."
 msgstr "Passwords do not match. Please check."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:95
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:94
 msgid "Şifre başarıyla güncellendi."
 msgstr "Password updated successfully."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:98
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/update_password_dialog.py:97
 #, python-brace-format
 msgid "Şifre güncelleme hatası: {error}"
 msgstr "Password update error: {error}"
@@ -1766,7 +1837,7 @@ msgstr "Debtor Members"
 msgid ""
 "Her üye sadece bir kere listelenir; detay için ödeme işlemini "
 "başlatabilirsiniz."
-msgstr ""
+msgstr "Each member is listed only once; you can start the payment process for details."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_members_dialog.py:60
 msgid "İşlem"
@@ -1788,136 +1859,134 @@ msgstr "Unknown Member"
 msgid "Ödeme"
 msgstr "Payment"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:21
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:29
 msgid "Borç Ödeme"
-msgstr "💰 Pay Debt"
+msgstr "Debt Payment"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:36
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:52
 msgid "💰 Borç Ödeme"
-msgstr ""
+msgstr "💰 Debt Payment"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:47
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:63
 msgid "✅ Bu üyenin borcu bulunmamaktadır"
 msgstr "✅ This member has no debt"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:65
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:81
 msgid "📋 Borçlu Paketler (Eskiden Yeniye)"
 msgstr "📋 Debtor Packages (Oldest to Newest)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:83
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:99
 msgid "💵 Ödeme Tutarı:"
 msgstr "💵 Payment Amount:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:87
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:103
 msgid "0.00"
 msgstr "0.00"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:90
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:106
 msgid "TL"
 msgstr "TL"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:113
 msgid "💳 Ödeme Şekli:"
 msgstr "💳 Payment Method:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:102
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:106
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:247
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:122
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:263
 msgid "Nakit"
 msgstr "Cash"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:102
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:248
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:264
 msgid "Kredi Kartı"
 msgstr "Credit Card"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:102
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:249
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:265
 msgid "Havale/EFT"
 msgstr "Transfer"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:102
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:250
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:266
 msgid "Diğer"
 msgstr "Other"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:113
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:129
 msgid "Hızlı Tutar:"
 msgstr "Quick Amount:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:123
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:139
 msgid "Tümü"
 msgstr "All"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:137
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:153
 msgid "✅ Ödemeyi Kaydet"
 msgstr "✅ Save Payment"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:158
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:174
 msgid "Unknown"
 msgstr "Unknown"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:195
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:211
 #, python-brace-format
 msgid "Tarih: {date} | Toplam: {total:.2f} TL | Ödenen: {paid:.2f} TL"
 msgstr "Date: {date} | Total: {total:.2f} TL | Paid: {paid:.2f} TL"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:215
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:231
 msgid "Lütfen ödeme tutarı giriniz"
 msgstr "Please enter payment amount"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:221
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:237
 msgid "Ödeme tutarı 0'dan büyük olmalıdır"
 msgstr "Payment amount must be greater than 0"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:228
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:244
 #, python-brace-format
 msgid ""
 "Ödeme tutarı ({amount:.2f} TL) toplam borcu ({total:.2f} TL) aşıyor.\n"
 "\n"
 "Yine de devam etmek istiyor musunuz?\n"
 "(Fazla tutar ilk pakete eklenecektir)"
-msgstr ""
+msgstr "Payment amount ({amount:.2f} TL) exceeds total debt ({total:.2f} TL).\n\nDo you still want to continue?\n(The excess amount will be added to the first package)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:271
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:287
 #, python-brace-format
 msgid ""
 "✅ Toplam {amount:.2f} TL ödeme başarıyla kaydedildi!\n"
 "\n"
-msgstr ""
+msgstr "✅ A total payment of {amount:.2f} TL has been saved successfully!\n\n"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:272
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:288
 msgid "📊 Dağılım:\n"
-msgstr ""
+msgstr "📊 Breakdown:\n"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:274
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:290
 #, python-brace-format
 msgid "• {service}: {amount:.2f} TL"
 msgstr "• {service}: {amount:.2f} TL"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:276
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:292
 #, python-brace-format
 msgid " (Kalan: {remaining:.2f} TL)"
 msgstr " (Remaining: {remaining:.2f} TL)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:278
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:294
 msgid " (Tamamlandı ✓)"
 msgstr " (Completed ✓)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:282
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:298
 #, python-brace-format
 msgid ""
 "\n"
 "⚠️ Fazla ödeme: {remaining:.2f} TL (İlk pakete eklendi)"
-msgstr ""
+msgstr "\n⚠️ Excess payment: {remaining:.2f} TL (Added to the first package)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:291
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:307
 msgid "Geçersiz ödeme tutarı"
-msgstr "Invalid QR"
+msgstr "Invalid payment amount"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:293
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/debt_payment_dialog.py:309
 #, python-brace-format
 msgid "Ödeme işlemi başarısız: {error}"
 msgstr "Payment failed: {error}"
@@ -1926,318 +1995,271 @@ msgstr "Payment failed: {error}"
 msgid "Ödeme Detayı"
 msgstr "Payment Detail"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:54
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:53
 msgid "Yöntem"
 msgstr "Method"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:55
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:54
 msgid "Durum"
 msgstr "Status"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:55
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:54
 msgid "Tamamlandı"
-msgstr "OK"
+msgstr "Completed"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:55
 msgid "Çekilen Tutar"
-msgstr ""
+msgstr "Charged Amount"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:59
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:58
 msgid "İşlem Notu"
-msgstr ""
+msgstr "Transaction Note"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:69
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:312
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/dialogs/finance/payment_detail_dialog.py:68
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:321
 msgid "✓ Kapat"
-msgstr ""
+msgstr "✓ Close"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:22
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:25
 msgid "📊 Katılım Geçmişi"
-msgstr ""
+msgstr "📊 Attendance History"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:29
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:43
 msgid "Katılım kaydı bulunamadı."
-msgstr ""
+msgstr "No attendance records found."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:37
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:50
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:55
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:86
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:349
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:150
 #, python-brace-format
 msgid "Hata: {}"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:115
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:213
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:137
-msgid "🗑️"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:128
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:241
-#, python-brace-format
-msgid "✓ {}"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:131
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:243
-msgid "🤖 Otomatik"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:145
-msgid ""
-"Bu katılım kaydını silmek istediğinizden emin misiniz?\n"
-"Bu işlem geri alınamaz."
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:153
-msgid "Katılım kaydı başarıyla silindi."
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/attendance_tab.py:159
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:89
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:326
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:198
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:98
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:192
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:113
-#, fuzzy, python-brace-format
-msgid "Silme işlemi başarısız: {}"
-msgstr "❌ Check-In Failed"
+msgstr "Error: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:19
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:19
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:19
 msgid "🔄 Yenile"
-msgstr ""
+msgstr "🔄 Refresh"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:23
 msgid "➕ Yeni Kategori"
-msgstr ""
+msgstr "➕ New Category"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:44
 #, python-brace-format
 msgid "Kategoriler yüklenemedi: {}"
-msgstr ""
+msgstr "Could not load categories: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:57
 #, python-brace-format
 msgid "📁 {}"
-msgstr ""
+msgstr "📁 {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:61
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:61
 msgid "Açıklama yok"
-msgstr ""
+msgstr "No description"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:77
 msgid "Bu kategoriyi silmek istediğinizden emin misiniz?"
-msgstr ""
+msgstr "Are you sure you want to delete this category?"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/categories_tab.py:80
 msgid "Kategori silindi."
-msgstr ""
+msgstr "Category deleted."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:40
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:111
 msgid "Finansal Geçmiş"
-msgstr ""
+msgstr "Financial History"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:48
 msgid "Filtreyi Temizle"
-msgstr ""
+msgstr "Clear Filter"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:106
 msgid "Üyeye özel kayıtlar"
-msgstr ""
+msgstr "Member-specific records"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:106
 msgid "Tüm ödemeler"
-msgstr ""
+msgstr "All payments"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:138
 #, python-brace-format
 msgid "Toplam {} kayıt"
-msgstr ""
+msgstr "Total {} records"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:140
 msgid " (Üyeye özel)"
-msgstr ""
+msgstr " (Member-specific)"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:147
-#, fuzzy
 msgid "Hata oluştu"
-msgstr "Create New Package"
+msgstr "An error occurred"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:181
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:196
 msgid "Silme Hatası"
-msgstr ""
+msgstr "Deletion Error"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:181
 msgid "Ödeme kimliği mevcut değil."
-msgstr ""
+msgstr "Payment ID is not available."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:185
 msgid "Ödemeyi Sil"
-msgstr ""
+msgstr "Delete Payment"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:185
 #, python-brace-format
 msgid "{} kaydını silmek istediğinize emin misiniz?"
-msgstr ""
+msgstr "Are you sure you want to delete the {} record?"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:193
-#, fuzzy, python-brace-format
 msgid "Silme Başarılı"
-msgstr "❌ Check-In Failed"
+msgstr "Deletion Successful"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:193
 msgid "Ödeme kaydı başarıyla silindi."
-msgstr ""
+msgstr "Payment record successfully deleted."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/finance_tab.py:196
 msgid "İşlem başarısız oldu. Lütfen tekrar deneyin."
-msgstr ""
+msgstr "Operation failed. Please try again."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:20
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:26
 msgid "📏 Vücut Ölçümleri"
 msgstr "📏 Body Measurements"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:22
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:28
 msgid "➕ Yeni Ölçüm Ekle"
-msgstr ""
+msgstr "➕ Add New Measurement"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:33
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:45
 msgid "Ölçüm kaydı bulunamadı."
-msgstr ""
+msgstr "No measurement records found."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:42
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:54
 msgid "📋 Tüm Ölçüm Kayıtları"
-msgstr ""
+msgstr "📋 All Measurement Records"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:70
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:79
 msgid "📊 Son Ölçüm Karşılaştırması"
-msgstr ""
+msgstr "📊 Latest Measurement Comparison"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:76
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:85
 #, python-brace-format
 msgid "  •  {} ➔ {}"
-msgstr ""
+msgstr "  •  {} ➔ {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:88
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:264
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:97
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:273
 msgid "🏋️ Genel"
-msgstr ""
+msgstr "🏋️ General"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:151
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:160
 #, python-brace-format
 msgid "  {}  "
-msgstr ""
+msgstr "  {}  "
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:185
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:194
 #, python-brace-format
 msgid "📅 {}"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:192
-#, python-brace-format
-msgid "  •  {} ölçüm"
-msgstr ""
+msgstr "📅 {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:201
 #, python-brace-format
+msgid "  •  {} ölçüm"
+msgstr "  •  {} measurements"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:210
+#, python-brace-format
 msgid "  •  {}"
-msgstr ""
+msgstr "  •  {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:222
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:231
 msgid "Vücut Ölçümü Detayları"
-msgstr ""
+msgstr "Body Measurement Details"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:237
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:246
 #, python-brace-format
 msgid "📅  {}"
-msgstr ""
+msgstr "📅  {}"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:247
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:256
 msgid "📝 Notlar:"
-msgstr ""
+msgstr "📝 Notes:"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:320
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:329
 msgid "Bu ölçüm kaydını silmek istediğinize emin misiniz?"
-msgstr ""
+msgstr "Are you sure you want to delete this measurement record?"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:323
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/measurements_tab.py:332
 msgid "Ölçüm kaydı silindi."
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:39
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/member_detail_tab.py:174
-#, python-brace-format
-msgid "📧 {}   📞 {}"
-msgstr ""
+msgstr "Measurement record deleted."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:23
 msgid "➕ Yeni Hizmet"
-msgstr ""
+msgstr "➕ New Service"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:44
 #, python-brace-format
 msgid "Hizmetler yüklenemedi: {}"
-msgstr ""
+msgstr "Could not load services: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:57
 #, python-brace-format
 msgid "🏋️ {}"
-msgstr ""
+msgstr "🏋️ {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:72
 #, python-brace-format
 msgid "⏱️ {} dk"
-msgstr ""
+msgstr "⏱️ {} min"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:86
 msgid "Bu hizmeti silmek istediğinizden emin misiniz?"
-msgstr ""
+msgstr "Are you sure you want to delete this service?"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/offerings_tab.py:89
 msgid "Hizmet silindi."
-msgstr ""
+msgstr "Service deleted."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:30
 msgid "+ Yeni Paket"
-msgstr ""
+msgstr "+ New Package"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:53
 #, python-brace-format
 msgid "Paketler yüklenemedi: {}"
-msgstr ""
+msgstr "Could not load packages: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:59
 msgid "Henüz paket bulunmuyor."
-msgstr ""
+msgstr "No packages yet."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:68
 msgid "Tanımlı Paketler"
-msgstr ""
+msgstr "Defined Packages"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:101
 msgid "Bilinmeyen Paket"
-msgstr ""
+msgstr "Unknown Package"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:111
 #, python-brace-format
 msgid "{}"
-msgstr ""
+msgstr "{}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:148
 #, python-brace-format
 msgid "₺{:.2f}"
-msgstr ""
+msgstr "₺{:.2f}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:209
 msgid "Paket Sil"
-msgstr ""
+msgstr "Delete Package"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:210
 #, python-brace-format
@@ -2247,96 +2269,76 @@ msgid ""
 "DİKKAT: Eğer bu pakete bağlı aktif abonelikler varsa silme işlemi "
 "engellenecektir."
 msgstr ""
+"Are you sure you want to delete the '{}' package?\n"
+"\n"
+"WARNING: If there are active subscriptions linked to this package, deletion will be prevented."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:216
 msgid "Paket silindi."
-msgstr ""
+msgstr "Package deleted."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_management_tab.py:220
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Silme başarısız:\n"
 "{}"
-msgstr "❌ Check-In Failed"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:23
-msgid "Kayıtlı paket bulunamadı."
 msgstr ""
+"Deletion failed:\n"
+"{}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:34
-#, fuzzy, python-brace-format
-msgid "📦 Aktif Paketler ({})"
-msgstr "Active Members"
+#, python-brace-format
+msgid "📦 Aktif Paketler (0)"
+msgstr "📦 Active Packages (0)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:38
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:74
-msgid "Aktif paket yok."
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:44
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:42
 msgid "🗄️ Geçmiş Paketler (Son 5)"
-msgstr ""
+msgstr "🗄️ Past Packages (Last 5)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:49
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:95
+#, python-brace-format
+msgid "📦 Aktif Paketler ({})"
+msgstr "📦 Active Packages ({})"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:102
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:143
+msgid "Aktif paket yok."
+msgstr "No active packages."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:119
 msgid "Geçmiş paket yok."
-msgstr ""
+msgstr "No past packages."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:89
-#, python-brace-format
-msgid "{}  {}"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:114
-#, python-brace-format
-msgid "📅 Ders Günleri: {}"
-msgstr "📅 Class Days: {}"
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:118
-#, python-brace-format
-msgid "♾️ Zaman Bazlı ({} giriş)"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:129
-#, python-brace-format
-msgid "{}/{} Ders"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:133
-msgid "♾️ Sınırsız Erişim"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:185
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:131
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:175
 msgid ""
 "Bu aboneliği silmek istediğinize emin misiniz?\n"
 "(Bağlı ödemeler de silinecektir)"
 msgstr ""
+"Are you sure you want to delete this subscription?\n"
+"(Associated payments will also be deleted)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:188
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/packages_tab.py:134
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:180
 msgid "Abonelik silindi."
-msgstr ""
+msgstr "Subscription deleted."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:18
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:23
 msgid "💳 Ödeme Geçmişi"
-msgstr ""
+msgstr "💳 Payment History"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:47
 msgid "📭 Henüz ödeme kaydı bulunmuyor"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:51
-#, python-brace-format
-msgid "❌ Hata: {}"
-msgstr ""
+msgstr "📭 No payment records yet"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:77
 msgid "📅"
-msgstr ""
+msgstr "📅"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:83
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:127
 #, python-brace-format
 msgid "📦 {}"
-msgstr ""
+msgstr "📦 {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:121
 msgid ""
@@ -2344,153 +2346,152 @@ msgid ""
 "\n"
 "⚠️ Bu işlem geri alınamaz!"
 msgstr ""
+"Are you sure you want to delete this payment?\n"
+"\n"
+"⚠️ This action cannot be undone!"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:124
 msgid "Ödeme başarıyla silindi."
-msgstr ""
+msgstr "Payment deleted successfully."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:127
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Silme işlemi başarısız:\n"
 "{}"
-msgstr "❌ Check-In Failed"
+msgstr ""
+"Deletion failed:\n"
+"{}"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/payments_tab.py:159
+#, python-brace-format
+msgid "❌ Hata: {}"
+msgstr "❌ Error: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:23
-#, fuzzy
 msgid "➕ Yeni Plan"
-msgstr "➕ New Member"
+msgstr "➕ New Plan"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:43
 #, python-brace-format
 msgid "Planlar yüklenemedi: {}"
-msgstr ""
+msgstr "Could not load plans: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:78
 #, python-brace-format
 msgid "📋 {}  {}"
-msgstr ""
+msgstr "📋 {}  {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:101
 msgid "Bu planı silmek istediğinizden emin misiniz?"
-msgstr ""
+msgstr "Are you sure you want to delete this plan?"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/plans_tab.py:104
 msgid "Plan silindi."
-msgstr ""
+msgstr "Plan deleted."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:46
 msgid "Üyelik Durumu"
-msgstr ""
+msgstr "Membership Status"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:56
-msgid "✅"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:46
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:129
 msgid "❌"
-msgstr ""
+msgstr "❌"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:60
-msgid "İstatistikler yüklenemedi"
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:67
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:53
 msgid "📦 Aktif Paketler"
-msgstr "Active Members"
+msgstr "📦 Active Packages"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:79
-msgid "Paket bulunamadı."
-msgstr ""
-
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:85
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:61
 msgid "🕒 Son Hareketler (QR)"
-msgstr "Recent Activities"
+msgstr "🕒 Recent Activities (QR)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:93
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:129
+msgid "✅"
+msgstr "✅"
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:148
+msgid "Paket bulunamadı."
+msgstr "Package not found."
+
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:159
 msgid "Hareket yok."
-msgstr "No activities yet."
+msgstr "No activities."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:140
-#, python-brace-format
-msgid "Bitiş: {}"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:38
+msgid "Satın alma bulunamadı."
+msgstr "No purchases found."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:145
-#, python-brace-format
-msgid "  •  ♾️ Sınırsız ({} giriş)"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:138
+msgid "Veri yüklenemedi."
+msgstr "Could not load data."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:150
-#, python-brace-format
-msgid "  •  {} ders kaldı"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:161
+msgid "Paket Detayı"
+msgstr "Package Details"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/profile_tab.py:156
-msgid "  •  ♾️ Sınırsız"
-msgstr ""
+#: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/recent_purchases_tab.py:172
+msgid "Abonelik kimliği bulunamadı."
+msgstr "Subscription ID not found."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:59
 msgid "💳 Paket ve Ödeme"
-msgstr ""
+msgstr "💳 Package and Payment"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:82
 msgid "📚 Özel Ders Zamanlaması Ekle"
-msgstr ""
+msgstr "📚 Add Private Class Schedule"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:97
 msgid "💰 Mevcut Abonelik Ücretini Değiştir"
-msgstr ""
+msgstr "💰 Change Current Subscription Price"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:108
 msgid "Yeni fiyat giriniz (TL)"
-msgstr ""
+msgstr "Enter new price (TL)"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:132
 msgid "✅ Satışı Tamamla"
-msgstr ""
+msgstr "✅ Complete Sale"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:165
 #, python-brace-format
 msgid "Arama hatası: {}"
-msgstr ""
+msgstr "Search error: {}"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/views/tabs/sales_pos_tab.py:298
 msgid "Geçersiz fiyat formatı. Lütfen sayı giriniz."
-msgstr ""
+msgstr "Invalid price format. Please enter a number."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:24
 msgid "Lisans Aktivasyonu"
-msgstr ""
+msgstr "License Activation"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:32
 msgid ""
 "Lütfen ürün lisans anahtarınızı giriniz.\n"
 "Format: MRN-XXXX-XXXX-XXXX"
 msgstr ""
+"Please enter your product license key.\n"
+"Format: MRN-XXXX-XXXX-XXXX"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:68
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:95
-#, fuzzy
 msgid "Aktive Et"
-msgstr "Active Members"
+msgstr "Activate"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:78
-#, fuzzy
 msgid "Lütfen bir anahtar giriniz."
-msgstr "Please select a package."
+msgstr "Please enter a key."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:81
-#, fuzzy
 msgid "Kontrol ediliyor..."
 msgstr "Checking..."
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/license_window.py:90
 msgid "Lisans başarıyla aktif edildi!"
-msgstr ""
+msgstr "License activated successfully!"
 
 #: E:/NewWork/MyRhythmNexus/desktop/ui/windows/login_window.py:17
 msgid "MyRhythmNexus Admin"
@@ -2517,74 +2518,73 @@ msgstr "Please fill in all fields."
 msgid "Giriş başarısız. Bilgileri kontrol edin."
 msgstr "Login failed. Please check your credentials."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:25
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:26
 msgid "MyRhythmNexus"
-msgstr ""
+msgstr "MyRhythmNexus"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:28
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:29
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:31
-msgid "Ders Programı"
-msgstr "Class Schedule"
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:32
+msgid "Seans Programı"
+msgstr "Session Schedule"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:34
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:35
 msgid "Üyeler"
 msgstr "Members"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:37
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:38
 msgid "Satış & Paketler"
-msgstr ""
+msgstr "Sales & Packages"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:40
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:41
 msgid "Finans Geçmişi"
 msgstr "Finance History"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:43
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:44
 msgid "Tanımlar"
 msgstr "Definitions"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:46
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:47
 msgid "Personel"
 msgstr "Staff"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:49
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:50
 msgid "⚙️ Dil Seçimi"
-msgstr ""
+msgstr "⚙️ Language Selection"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:53
-#, fuzzy
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:54
 msgid "Lisans Bilgileri"
-msgstr "📅 Date Information"
+msgstr "License Information"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:56
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:57
 msgid "Çıkış Yap"
-msgstr ""
+msgstr "Log Out"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:110
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:115
 msgid "Dil Seçimi"
-msgstr ""
+msgstr "Language Selection"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:118
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:123
 msgid "Dil Seçimi / Language Selection"
-msgstr ""
+msgstr "Language Selection / Dil Seçimi"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:127
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:132
 msgid "Seçili Dil"
-msgstr ""
+msgstr "Selected Language"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:147
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:152
 msgid "Dil değiştirildi. Lütfen uygulamayı yeniden başlatınız."
-msgstr ""
+msgstr "Language changed. Please restart the application."
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:153
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:158
 msgid "Türkçe (Turkish)"
-msgstr ""
+msgstr "Turkish (Türkçe)"
 
-#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:160
+#: E:/NewWork/MyRhythmNexus/desktop/ui/windows/main_window.py:165
 msgid "English (İngilizce)"
-msgstr ""
+msgstr "English"
 
 #~ msgid "Sayfa {current_page} / {total_pages}"
 #~ msgstr ""
@@ -2632,5 +2632,35 @@ msgstr ""
 #~ msgstr "{} - {} ({})"
 
 #~ msgid "Bir hata oluştu. Lütfen tekrar dene."
-#~ msgstr ""
+#~ msgstr "An error occurred. Please try again."
+
+#~ msgid "📷 QR Giriş"
+#~ msgstr "📷 QR Check-In"
+
+#~ msgid "QR Kodu Giriniz:"
+#~ msgstr "Enter QR Code:"
+
+#~ msgid "Manuel Giriş"
+#~ msgstr "Manual Entry"
+
+#~ msgid "📧 {}   📞 {}"
+#~ msgstr "📧 {}   📞 {}"
+
+#~ msgid "Kayıtlı paket bulunamadı."
+#~ msgstr "No registered package found."
+
+#~ msgid "İstatistikler yüklenemedi"
+#~ msgstr "Could not load statistics"
+
+#~ msgid "Bitiş: {}"
+#~ msgstr "End: {}"
+
+#~ msgid "  •  ♾️ Sınırsız ({} giriş)"
+#~ msgstr "  •  ♾️ Unlimited ({} check-ins)"
+
+#~ msgid "  •  {} ders kaldı"
+#~ msgstr "  •  {} classes remaining"
+
+#~ msgid "  •  ♾️ Sınırsız"
+#~ msgstr "  •  ♾️ Unlimited"
 

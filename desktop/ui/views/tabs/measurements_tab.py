@@ -11,9 +11,14 @@ class MeasurementsTab:
         self.api_client = api_client
         self.member = member
         self.on_add_measurement = on_add_measurement
+        self.scroll_frame = None
+        self.is_setup = False
         
     def setup(self):
         """Setup measurements tab content"""
+        if self.is_setup:
+            return
+
         # Top bar with Add Button
         top_bar = ctk.CTkFrame(self.parent, fg_color="transparent")
         top_bar.pack(fill="x", padx=10, pady=(10, 5))
@@ -25,30 +30,33 @@ class MeasurementsTab:
                      command=self.on_add_measurement).pack(side="right", padx=5)
         
         # Scrollable Frame
-        frame = ctk.CTkScrollableFrame(self.parent)
-        frame.pack(fill="both", expand=True, padx=10, pady=10)
+        self.scroll_frame = ctk.CTkScrollableFrame(self.parent)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
         
-        try:
-            sessions = self.api_client.get(f"/api/v1/measurements/sessions?member_id={self.member['id']}")
-            if not sessions:
-                ctk.CTkLabel(frame, text=_("Ölçüm kaydı bulunamadı."), text_color="gray").pack(pady=20)
-                return
+        self.is_setup = True
+        self.refresh()
 
-            # Comparison card if 2+ sessions
-            if len(sessions) >= 2:
-                self.create_comparison_card(frame, sessions[0], sessions[1])
-                ctk.CTkLabel(frame, text="━" * 100, text_color="gray30", font=("Roboto", 8)).pack(pady=15)
-            
-            # All measurements list
-            ctk.CTkLabel(frame, text=_("📋 Tüm Ölçüm Kayıtları"), 
-                        font=("Roboto", 14, "bold"), 
-                        text_color="gray60").pack(anchor="w", padx=10, pady=(0, 10))
-            
-            for sess in sessions:
-                self.create_measurement_card(frame, sess)
-                
-        except Exception as e:
-            ctk.CTkLabel(frame, text=_("Hata: {}").format(e)).pack()
+    def update_ui(self, sessions):
+        # Clear existing content
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+
+        if not sessions:
+            ctk.CTkLabel(self.scroll_frame, text=_("Ölçüm kaydı bulunamadı."), text_color="gray").pack(pady=20)
+            return
+
+        # Comparison card if 2+ sessions
+        if len(sessions) >= 2:
+            self.create_comparison_card(self.scroll_frame, sessions[0], sessions[1])
+            ctk.CTkLabel(self.scroll_frame, text="━" * 100, text_color="gray30", font=("Roboto", 8)).pack(pady=15)
+        
+        # All measurements list
+        ctk.CTkLabel(self.scroll_frame, text=_("📋 Tüm Ölçüm Kayıtları"), 
+                    font=("Roboto", 14, "bold"), 
+                    text_color="gray60").pack(anchor="w", padx=10, pady=(0, 10))
+        
+        for sess in sessions:
+            self.create_measurement_card(self.scroll_frame, sess)
     
     def create_comparison_card(self, parent, latest_session, previous_session):
         """Comparison card for last two measurements"""
@@ -328,6 +336,14 @@ class MeasurementsTab:
     
     def refresh(self):
         """Refresh the tab"""
-        for widget in self.parent.winfo_children():
-            widget.destroy()
-        self.setup()
+        if not self.is_setup:
+            self.setup()
+            return
+
+        try:
+            sessions = self.api_client.get(f"/api/v1/measurements/sessions?member_id={self.member['id']}")
+            self.update_ui(sessions)
+        except Exception as e:
+            for widget in self.scroll_frame.winfo_children():
+                widget.destroy()
+            ctk.CTkLabel(self.scroll_frame, text=_("Hata: {}").format(e)).pack(pady=20)

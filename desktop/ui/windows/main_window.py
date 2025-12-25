@@ -5,9 +5,10 @@ from desktop.ui.views import DashboardView, MembersView, StaffView, SalesView, D
 from desktop.services.qr_reader import QrReaderService
 from desktop.ui.views.checkin_dialog import CheckInDialog
 from desktop.core.ui_utils import safe_grab
+from typing import Callable
 
 class MainWindow(ctk.CTkFrame):
-    def __init__(self, master, api_client: ApiClient, on_logout: callable):
+    def __init__(self, master, api_client: ApiClient, on_logout: Callable[[], None]):
         super().__init__(master)
         self.api_client = api_client
         self.on_logout = on_logout
@@ -28,7 +29,7 @@ class MainWindow(ctk.CTkFrame):
         self.btn_dashboard = ctk.CTkButton(self.sidebar, text=_("Dashboard"), command=lambda: self.show_view("dashboard"))
         self.btn_dashboard.pack(pady=10, padx=10)
 
-        self.btn_scheduler = ctk.CTkButton(self.sidebar, text=_("Ders Programı"), command=lambda: self.show_view("scheduler"))
+        self.btn_scheduler = ctk.CTkButton(self.sidebar, text=_("Seans Programı"), command=lambda: self.show_view("scheduler"))
         self.btn_scheduler.pack(pady=10, padx=10)
 
         self.btn_members = ctk.CTkButton(self.sidebar, text=_("Üyeler"), command=lambda: self.show_view("members"))
@@ -69,9 +70,13 @@ class MainWindow(ctk.CTkFrame):
         # Define a safe refresh that updates the current view if it provides `load_data`
         def _refresh_current_view():
             try:
-                if getattr(self, 'current_view', None) and hasattr(self.current_view, 'load_data'):
+                view = getattr(self, 'current_view', None)
+                if view is None:
+                    return
+                load_fn = getattr(view, 'load_data', None)
+                if callable(load_fn):
                     try:
-                        self.current_view.load_data()
+                        load_fn()
                     except Exception as e:
                         print(f"Error refreshing current view after checkin: {e}")
             except Exception as e:

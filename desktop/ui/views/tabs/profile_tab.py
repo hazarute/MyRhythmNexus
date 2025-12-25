@@ -1,8 +1,10 @@
 import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
+import tkinter.messagebox as messagebox
 from datetime import datetime
-from desktop.ui.components.date_utils import format_ddmmyyyy
+from desktop.ui.components.package_card import PackageCard
+from desktop.ui.components.activity_item import ActivityItem
 
 class ProfileTab:
     def __init__(self, parent_frame, api_client: ApiClient, member: dict, on_update_callback):
@@ -10,9 +12,23 @@ class ProfileTab:
         self.api_client = api_client
         self.member = member
         self.on_update_callback = on_update_callback
+
+        # State Management (UI References)
+        self.lbl_total_debt = None
+        self.lbl_active_packages = None
+        self.lbl_last_visit = None
+        self.lbl_status = None
+
+        self.packages_scroll = None
+        self.activity_scroll = None
+
+        self.is_setup = False
         
     def setup(self):
-        """Setup profile tab content"""
+        """Setup profile tab content skeleton (runs once)"""
+        if self.is_setup:
+            return
+
         # Grid Configuration
         self.parent.grid_columnconfigure(0, weight=1)
         self.parent.grid_columnconfigure(1, weight=1)
@@ -23,7 +39,40 @@ class ProfileTab:
         stats_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
         stats_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
-        # Fetch Data for Stats
+        # Create Cards (initial placeholder state, will be updated in refresh)
+        self.lbl_total_debt = self.create_stat_card(stats_frame, "Toplam Borç", "-", "💰", "#C92C2C", 0)
+        self.lbl_active_packages = self.create_stat_card(stats_frame, "Aktif Paketler", "-", "📦", "#3B8ED0", 1)
+        self.lbl_last_visit = self.create_stat_card(stats_frame, "Son Ziyaret", "-", "🏃", "#E5B00D", 2)
+        self.lbl_status = self.create_stat_card(stats_frame, _("Üyelik Durumu"), "-", _("❌"), "#808080", 3)
+
+        # 2. Middle Section (Split)
+        # Left: Active Packages
+        left_frame = ctk.CTkFrame(self.parent, fg_color="transparent")
+        left_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        
+        ctk.CTkLabel(left_frame, text=_("📦 Aktif Paketler"), font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
+        self.packages_scroll = ctk.CTkScrollableFrame(left_frame, fg_color="transparent")
+        self.packages_scroll.pack(fill="both", expand=True)
+
+        # Right: Recent Activity
+        right_frame = ctk.CTkFrame(self.parent, fg_color="transparent")
+        right_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
+        
+        ctk.CTkLabel(right_frame, text=_("🕒 Son Hareketler (QR)"), font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
+        self.activity_scroll = ctk.CTkScrollableFrame(right_frame, fg_color=("gray90", "gray20"))
+        self.activity_scroll.pack(fill="both", expand=True)
+
+        self.is_setup = True
+
+        # Trigger initial data load
+        self.refresh()
+    
+    def refresh(self):
+        """Refresh data and update UI without destroying the layout"""
+        if not self.is_setup:
+            self.setup()
+            return
+
         subs = []
         checkins = []
         try:
@@ -33,212 +82,133 @@ class ProfileTab:
             except Exception as e:
                 print(f"Error loading checkin history: {e}")
                 checkins = []
-            
-            # Calculate Total Debt
+
+            # Calculate Total Debt (unchanged logic)
             total_debt = 0.0
             for s in subs:
-                if s.get('status') == 'cancelled': 
+                if s.get('status') == 'cancelled':
                     continue
-                
+
                 price = float(s.get('purchase_price', 0))
                 paid = sum(float(p.get('amount_paid', 0)) for p in s.get('payments', []))
                 remaining = price - paid
                 if remaining > 0:
                     total_debt += remaining
-            
+
             active_packages_count = sum(1 for s in subs if s.get('status') == 'active')
             last_visit = checkins[0].get('check_in_time', '')[:10] if checkins else "Yok"
             status_text = "Aktif" if self.member.get('is_active') else "Pasif"
 
-            # Create Cards
-            self.create_stat_card(stats_frame, "Toplam Borç", f"{total_debt:,.2f} TL", "💰", "#E04F5F" if total_debt > 0 else "#2CC985", 0)
-            self.create_stat_card(stats_frame, "Aktif Paketler", str(active_packages_count), "📦", "#3B8ED0", 1)
-            self.create_stat_card(stats_frame, "Son Ziyaret", last_visit, "🏃", "#E5B00D", 2)
-            self.create_stat_card(stats_frame, _("Üyelik Durumu"), status_text, _("✅") if status_text==_("Aktif") else _("❌"), "#26813A" if status_text==_("Aktif") else "#808080", 3)
+            self.update_ui(total_debt, active_packages_count, last_visit, status_text, subs, checkins)
 
         except Exception as e:
             print(f"Error loading dashboard stats: {e}")
-            ctk.CTkLabel(stats_frame, text=_("İstatistikler yüklenemedi")).pack()
+            # Keep skeleton; optionally show error in stats area
+            if self.lbl_total_debt is not None:
+                self.lbl_total_debt.configure(text="-")
+    def update_ui(self, total_debt, active_packages_count, last_visit, status_text, subs, checkins):
+        """Update existing widgets with new data (no full redraw)."""
 
-        # 2. Middle Section (Split)
-        # Left: Active Packages
-        left_frame = ctk.CTkFrame(self.parent, fg_color="transparent")
-        left_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
-        
-        ctk.CTkLabel(left_frame, text=_("📦 Aktif Paketler"), font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
-        packages_scroll = ctk.CTkScrollableFrame(left_frame, fg_color="transparent")
-        packages_scroll.pack(fill="both", expand=True)
+        # 1) Stats
+        if self.lbl_total_debt is not None:
+            self.lbl_total_debt.configure(text=f"{total_debt:,.2f} TL")
+            debt_color = "#E04F5F" if total_debt > 0 else "#2CC985"
+            if hasattr(self.lbl_total_debt, 'card_frame'):
+                self.lbl_total_debt.card_frame.configure(fg_color=debt_color)
 
-        if subs:
-            active_subs = [s for s in subs if s.get('status') == 'active']
-            if not active_subs:
-                ctk.CTkLabel(packages_scroll, text=_("Aktif paket yok."), text_color="gray").pack(pady=10)
+        if self.lbl_active_packages is not None:
+            self.lbl_active_packages.configure(text=str(active_packages_count))
+
+        if self.lbl_last_visit is not None:
+            self.lbl_last_visit.configure(text=last_visit)
+
+        if self.lbl_status is not None:
+            self.lbl_status.configure(text=status_text)
+            is_active = (status_text == _("Aktif")) or (status_text == "Aktif")
+            status_color = "#26813A" if is_active else "#808080"
+            status_icon = _("✅") if is_active else _("❌")
+            if hasattr(self.lbl_status, 'card_frame'):
+                self.lbl_status.card_frame.configure(fg_color=status_color)
+            if hasattr(self.lbl_status, 'icon_label'):
+                self.lbl_status.icon_label.configure(text=status_icon)
+
+        # 2) Packages list (destroy children only)
+        if self.packages_scroll is not None:
+            for widget in self.packages_scroll.winfo_children():
+                widget.destroy()
+
+            if subs:
+                active_subs = [s for s in subs if s.get('status') == 'active']
+                if not active_subs:
+                    ctk.CTkLabel(self.packages_scroll, text=_("Aktif paket yok."), text_color="gray").pack(pady=10)
+                else:
+                    for sub in active_subs:
+                        self.create_profile_package_card(self.packages_scroll, sub)
             else:
-                for sub in active_subs:
-                    self.create_profile_package_card(packages_scroll, sub)
-        else:
-            ctk.CTkLabel(packages_scroll, text=_("Paket bulunamadı."), text_color="gray").pack(pady=10)
+                ctk.CTkLabel(self.packages_scroll, text=_("Paket bulunamadı."), text_color="gray").pack(pady=10)
 
-        # Right: Recent Activity
-        right_frame = ctk.CTkFrame(self.parent, fg_color="transparent")
-        right_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
-        
-        ctk.CTkLabel(right_frame, text=_("🕒 Son Hareketler (QR)"), font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
-        activity_scroll = ctk.CTkScrollableFrame(right_frame, fg_color=("gray90", "gray20"))
-        activity_scroll.pack(fill="both", expand=True)
+        # 3) Activity list (destroy children only)
+        if self.activity_scroll is not None:
+            for widget in self.activity_scroll.winfo_children():
+                widget.destroy()
 
-        if checkins:
-            for chk in checkins[:10]:
-                self.create_activity_item(activity_scroll, chk)
-        else:
-            ctk.CTkLabel(activity_scroll, text=_("Hareket yok."), text_color="gray").pack(pady=10)
-    
-    def refresh(self):
-        """Refresh the tab"""
-        for widget in self.parent.winfo_children():
-            widget.destroy()
-        self.setup()
+            if checkins:
+                for chk in checkins[:10]:
+                    self.create_activity_item(self.activity_scroll, chk)
+            else:
+                ctk.CTkLabel(self.activity_scroll, text=_("Hareket yok."), text_color="gray").pack(pady=10)
 
     def create_stat_card(self, parent, title, value, icon, color, col_idx):
         card = ctk.CTkFrame(parent, fg_color=color, corner_radius=8)
         card.grid(row=0, column=col_idx, sticky="ew", padx=5)
-        
-        ctk.CTkLabel(card, text=icon, font=("Segoe UI Emoji", 24)).pack(side="left", padx=10, pady=10)
+
+        icon_lbl = ctk.CTkLabel(card, text=icon, font=("Segoe UI Emoji", 24))
+        icon_lbl.pack(side="left", padx=10, pady=10)
         
         text_frame = ctk.CTkFrame(card, fg_color="transparent")
         text_frame.pack(side="left", fill="y", pady=5)
         
         ctk.CTkLabel(text_frame, text=title, font=("Roboto", 11), text_color="white").pack(anchor="w")
-        ctk.CTkLabel(text_frame, text=value, font=("Roboto", 14, "bold"), text_color="white").pack(anchor="w")
+        value_lbl = ctk.CTkLabel(text_frame, text=value, font=("Roboto", 14, "bold"), text_color="white")
+        value_lbl.pack(anchor="w")
+
+        # Return a small wrapper that exposes card_frame and icon_label for type-checkers
+        class StatWidget:
+            def __init__(self, label, card_frame, icon_label):
+                self._label = label
+                self.card_frame = card_frame
+                self.icon_label = icon_label
+
+            def configure(self, *args, **kwargs):
+                return self._label.configure(*args, **kwargs)
+
+            def __getattr__(self, name):
+                # Delegate other attribute access to the underlying label
+                return getattr(self._label, name)
+
+        return StatWidget(value_lbl, card, icon_lbl)
 
     def create_profile_package_card(self, parent, sub):
-        bg_color = "#333333"
-        accent_color = "#3B8ED0"
-        
-        card = ctk.CTkFrame(parent, fg_color=bg_color, corner_radius=6)
-        card.pack(fill="x", pady=2, padx=2)
-        
-        stripe = ctk.CTkFrame(card, fg_color=accent_color, width=3, corner_radius=0)
-        stripe.pack(side="left", fill="y")
-        
-        content = ctk.CTkFrame(card, fg_color="transparent")
-        content.pack(side="left", fill="both", expand=True, padx=8, pady=4)
-        
-        pkg_name = sub.get('package', {}).get('name', 'Paket')
-        ctk.CTkLabel(content, text=_("📦 {}").format(pkg_name), 
-                    font=("Roboto", 18, "bold"), 
-                    text_color="white").pack(anchor="w")
-        
-        end_date = format_ddmmyyyy(sub.get('end_date'))
-        plan = sub.get('package', {}).get('plan', {})
-        access_type = plan.get('access_type', 'SESSION_BASED')
-        used = sub.get('used_sessions', 0)
-        limit = plan.get('sessions_granted', 0)
-        
-        info_frame = ctk.CTkFrame(content, fg_color="transparent")
-        info_frame.pack(fill="x", pady=(1, 0))
-        
-        ctk.CTkLabel(info_frame, text=_("Bitiş: {}").format(end_date), 
-                    font=("Roboto", 15), 
-                    text_color="gray70").pack(side="left")
-        
-        if access_type == 'TIME_BASED':
-            ctk.CTkLabel(info_frame, text=_("  •  ♾️ Sınırsız ({} giriş)").format(used), 
-                        font=("Roboto", 15, "bold"), 
-                        text_color="#3B8ED0").pack(side="left")
-        elif limit and limit > 0:
-            remaining = limit - used
-            progress_text = _("  •  {} ders kaldı").format(remaining)
-            color = "#2CC985" if remaining > 3 else "#E5B00D" if remaining > 0 else "#E04F5F"
-            ctk.CTkLabel(info_frame, text=progress_text, 
-                        font=("Roboto", 15, "bold"), 
-                        text_color=color).pack(side="left")
-        else:
-            ctk.CTkLabel(info_frame, text=_("  •  ♾️ Sınırsız"), 
-                        font=("Roboto", 15, "bold"), 
-                        text_color="#3B8ED0").pack(side="left")
+        # Deprecated: moved to desktop.ui.components.package_card.PackageCard
+        # Kept for compatibility but should not be used anymore.
+        # Use the full-style PackageCard so profile list matches packages tab visuals
+        pc = PackageCard(parent, sub, is_active=True)
+        pc.pack(fill="x", pady=6, padx=5)
 
     def create_activity_item(self, parent, chk):
-        # Modern card design for each activity
-        card = ctk.CTkFrame(parent, fg_color="#2B2B2B", corner_radius=8, border_width=1, border_color="#404040")
-        card.pack(fill="x", pady=3, padx=5)
-        
-        # Main content frame
-        content = ctk.CTkFrame(card, fg_color="transparent")
-        content.pack(fill="both", expand=True, padx=12, pady=10)
-        
-        # Header with icon and time
-        header_frame = ctk.CTkFrame(content, fg_color="transparent")
-        header_frame.pack(fill="x", pady=(0, 4))
-        
-        # Determine icon and color based on event type
-        event_name = chk.get('event_name', 'Giriş')
-        subscription_name = chk.get('subscription_name', 'Bilinmeyen Paket')
-        
-        if "Seans Bazlı" in event_name:
-            icon = "🎯"
-            accent_color = "#E5B00D"  # Gold for session-based
-            display_name = subscription_name  # Show subscription name for session-based
-        elif "Zaman Bazlı" in event_name:
-            icon = "⏰"
-            accent_color = "#3B8ED0"  # Blue for time-based
-            display_name = subscription_name  # Show subscription name for time-based
-        else:
-            icon = "📅"
-            accent_color = "#2CC985"  # Green for class events
-            display_name = event_name  # Show event name for class events
-        
-        # Icon with colored background
-        icon_frame = ctk.CTkFrame(header_frame, fg_color=accent_color, width=32, height=32, corner_radius=6)
-        icon_frame.pack(side="left")
-        icon_frame.pack_propagate(False)
-        ctk.CTkLabel(icon_frame, text=icon, font=("Segoe UI Emoji", 14)).pack(expand=True)
-        
-        # Time info - Now automatically converted to local time by ApiClient
-        check_in_time_str = chk.get('check_in_time', '')
-        if check_in_time_str:
-            try:
-                # Parse local time (already converted by ApiClient)
-                if 'T' in check_in_time_str:
-                    local_time = datetime.fromisoformat(check_in_time_str)
-                else:
-                    local_time = datetime.strptime(check_in_time_str, '%Y-%m-%d %H:%M:%S')
-                
-                date_part = local_time.strftime('%Y-%m-%d')
-                time_part = local_time.strftime('%H:%M')
-            except Exception as e:
-                print(f"Error parsing datetime {check_in_time_str}: {e}")
-                # Fallback
-                time_info = check_in_time_str.replace('T', ' ')[:16]
-                time_parts = time_info.split(' ')
-                date_part = time_parts[0] if len(time_parts) > 0 else ""
-                time_part = time_parts[1][:5] if len(time_parts) > 1 else ""
-        else:
-            date_part = ""
-            time_part = ""
-        
-        # Subscription Name
-        name_label = ctk.CTkLabel(
-            header_frame, 
-            text=display_name, 
-            font=("Roboto", 16, "bold"), 
-            text_color="white"
-        )
-        name_label.pack(side="left", padx=(12, 0))
-        
-        # Time and Date
-        time_display = f"{time_part} • {date_part}" if time_part and date_part else ""
-        time_label = ctk.CTkLabel(
-            header_frame, 
-            text=time_display, 
-            font=("Roboto", 14), 
-            text_color="gray70"
-        )
-        time_label.pack(side="left", padx=(15, 0))
-        
-        # Additional info (verified by)
-        verified_by = chk.get('verified_by_name', 'Sistem')
-        if verified_by != 'Sistem':
-            ctk.CTkLabel(content, text=_("✓ {}").format(verified_by), font=("Roboto", 10), text_color="gray60", anchor="w").pack(fill="x")
-        else:
-            ctk.CTkLabel(content, text=_("🤖 Otomatik"), font=("Roboto", 10), text_color="gray60", anchor="w").pack(fill="x")
+        # Create ActivityItem with delete callback so profile tab can remove checkins
+        ai = ActivityItem(parent, chk, on_delete=self.delete_checkin)
+        ai.pack(fill="x", pady=3, padx=5)
+
+    def delete_checkin(self, checkin_id):
+        """Delete a check-in record after user confirmation (used by activity items)."""
+        if not messagebox.askyesno(_("Silme Onayı"), _("Bu katılım kaydını silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz.")):
+            return
+
+        try:
+            self.api_client.delete(f"/api/v1/checkin/history/{checkin_id}")
+            messagebox.showinfo(_("Başarılı"), _("Katılım kaydı başarıyla silindi."))
+            # Refresh the tab content
+            self.refresh()
+        except Exception as e:
+            messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(str(e)))

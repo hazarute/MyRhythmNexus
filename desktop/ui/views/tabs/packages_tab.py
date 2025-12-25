@@ -5,6 +5,7 @@ from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
 from desktop.ui.components.date_picker import get_weekday_name
 from tkinter import messagebox
+from desktop.ui.components.package_card import PackageCard
 
 class PackagesTab:
     def __init__(self, parent_frame, api_client: ApiClient, member: dict, on_refresh_payments):
@@ -12,133 +13,45 @@ class PackagesTab:
         self.api_client = api_client
         self.member = member
         self.on_refresh_payments = on_refresh_payments
+        # State for optimized UI updates
+        self.lbl_active_header = None
+        self.frame_active_list = None
+        self.lbl_past_header = None
+        self.frame_past_list = None
+        self.main_scroll = None
+        self.is_setup = False
         
     def setup(self):
-        """Setup packages tab content"""
-        main_scroll = ctk.CTkScrollableFrame(self.parent, fg_color="transparent")
-        main_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+        """Setup static UI skeleton (runs once)."""
+        if self.is_setup:
+            return
 
-        try:
-            subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
-            if not subs:
-                ctk.CTkLabel(main_scroll, text=_("Kayıtlı paket bulunamadı."), text_color="gray").pack(pady=20)
-                return
+        # Main scroll container (created once)
+        self.main_scroll = ctk.CTkScrollableFrame(self.parent, fg_color="transparent")
+        self.main_scroll.pack(fill="both", expand=True, padx=10, pady=10)
 
-            active_subs = [s for s in subs if s.get('status') == 'active']
-            # Show only explicitly expired subscriptions in the past list
-            inactive_subs = [s for s in subs if s.get('status') == 'expired']
-            
-            inactive_subs.sort(key=lambda x: x.get('end_date', ''), reverse=True)
-            inactive_subs = inactive_subs[:5]
+        # Active Packages header + container
+        self.lbl_active_header = ctk.CTkLabel(self.main_scroll, text=_("📦 Aktif Paketler (0)"),
+                                              font=("Roboto", 16, "bold"))
+        self.lbl_active_header.pack(anchor="w", pady=(0, 10))
 
-            # Active Packages
-            ctk.CTkLabel(main_scroll, text=_("📦 Aktif Paketler ({})").format(len(active_subs)), 
-                        font=("Roboto", 16, "bold")).pack(anchor="w", pady=(0, 10))
-            
-            if not active_subs:
-                ctk.CTkLabel(main_scroll, text=_("Aktif paket yok."), text_color="gray").pack(anchor="w", padx=10)
-            else:
-                for sub in active_subs:
-                    self.create_package_card(main_scroll, sub, is_active=True)
+        self.frame_active_list = ctk.CTkFrame(self.main_scroll, fg_color="transparent")
+        self.frame_active_list.pack(fill="both", expand=False)
 
-            # Past Packages
-            ctk.CTkLabel(main_scroll, text=_("🗄️ Geçmiş Paketler (Son 5)"), 
-                        font=("Roboto", 16, "bold"), 
-                        text_color="gray").pack(anchor="w", pady=(30, 10))
-            
-            if not inactive_subs:
-                ctk.CTkLabel(main_scroll, text=_("Geçmiş paket yok."), text_color="gray").pack(anchor="w", padx=10)
-            else:
-                for sub in inactive_subs:
-                    self.create_package_card(main_scroll, sub, is_active=False)
+        # Past Packages header + container
+        self.lbl_past_header = ctk.CTkLabel(self.main_scroll, text=_("🗄️ Geçmiş Paketler (Son 5)"),
+                                            font=("Roboto", 16, "bold"), text_color="gray")
+        self.lbl_past_header.pack(anchor="w", pady=(30, 10))
 
-        except Exception as e:
-            ctk.CTkLabel(main_scroll, text=_("Hata: {}").format(e)).pack()
+        self.frame_past_list = ctk.CTkFrame(self.main_scroll, fg_color="transparent")
+        self.frame_past_list.pack(fill="both", expand=False)
+
+        self.is_setup = True
+
+        # Initial data load
+        self.refresh()
     
-    def create_package_card(self, parent, sub, is_active):
-        if is_active:
-            bg_color = "#333333"
-            accent_color = "#3B8ED0"
-            text_color = "white"
-            icon = "📦"
-        else:
-            bg_color = "#222222"
-            accent_color = "#444444"
-            text_color = "gray50"
-            icon = "🗄️"
-        
-        card = ctk.CTkFrame(parent, fg_color=bg_color, corner_radius=10)
-        card.pack(fill="x", pady=6, padx=5)
-        
-        # Make card clickable for active packages
-        if is_active:
-            card.bind("<Button-1>", lambda e, s=sub: self.show_package_detail(s))
-            card.configure(cursor="hand2")
-        
-        stripe = ctk.CTkFrame(card, fg_color=accent_color, width=5, height=70, corner_radius=0)
-        stripe.pack(side="left", fill="y")
-        
-        content = ctk.CTkFrame(card, fg_color="transparent")
-        content.pack(side="left", fill="both", expand=True, padx=15, pady=10)
-        
-        # Bind click event to content frame too
-        if is_active:
-            content.bind("<Button-1>", lambda e, s=sub: self.show_package_detail(s))
-            content.configure(cursor="hand2")
-        
-        pkg_name = sub.get('package', {}).get('name', 'Bilinmeyen Paket')
-        pkg_label = ctk.CTkLabel(content, text=_("{}  {}").format(icon, pkg_name), 
-                                font=("Roboto", 16, "bold"), 
-                                text_color=text_color)
-        pkg_label.pack(anchor="w")
-        
-        if is_active:
-            pkg_label.bind("<Button-1>", lambda e, s=sub: self.show_package_detail(s))
-            pkg_label.configure(cursor="hand2")
-        
-        dates = f"{format_ddmmyyyy(sub.get('start_date'))}  ➔  {format_ddmmyyyy(sub.get('end_date'))}"
-        ctk.CTkLabel(content, text=dates, font=("Roboto", 12), text_color="gray70").pack(anchor="w", pady=(2, 5))
-        
-        bottom_row = ctk.CTkFrame(content, fg_color="transparent")
-        bottom_row.pack(fill="x", pady=(5, 0))
-        
-        plan = sub.get('package', {}).get('plan', {})
-        access_type = plan.get('access_type', 'SESSION_BASED')
-        used = sub.get('used_sessions', 0)
-        limit = plan.get('sessions_granted', 0)
-
-        schedule_summary = None
-        if is_active and access_type == 'SESSION_BASED':
-            schedule_summary = self._format_schedule_summary(sub.get('class_events', []))
-        if schedule_summary:
-            ctk.CTkLabel(content, text=_("📅 Ders Günleri: {}").format(schedule_summary),
-                        font=("Roboto", 14, "bold"), text_color="#E6D1CF").pack(anchor="w", pady=(0, 5))
-        
-        if access_type == 'TIME_BASED':
-            ctk.CTkLabel(bottom_row, text=_("♾️ Zaman Bazlı ({} giriş)").format(used), 
-                        font=("Roboto", 12, "bold"), 
-                        text_color=accent_color).pack(side="left")
-        elif limit and limit > 0:
-            ratio = min(used / limit, 1.0) if limit > 0 else 0
-            progress_color = "#2CC985" if is_active else "gray"
-            
-            progress = ctk.CTkProgressBar(bottom_row, height=8, progress_color=progress_color)
-            progress.set(ratio)
-            progress.pack(side="left", fill="x", expand=True, padx=(0, 15))
-            
-            ctk.CTkLabel(bottom_row, text=_("{}/{} Ders").format(used, limit), 
-                        font=("Roboto", 11, "bold"), 
-                        text_color="gray").pack(side="left")
-        else:
-            ctk.CTkLabel(bottom_row, text=_("♾️ Sınırsız Erişim"), 
-                        font=("Roboto", 12, "bold"), 
-                        text_color=accent_color).pack(side="left")
-
-        btn_del = ctk.CTkButton(card, text=_("🗑️"), width=40, height=40, 
-                              fg_color="#E74C3C", hover_color="#C0392B",
-                              font=("Segoe UI Emoji", 16),
-                              command=lambda s=sub: self.delete_subscription(s['id']))
-        btn_del.pack(side="right", padx=15)
+    
 
     def _format_schedule_summary(self, class_events):
         if not class_events:
@@ -176,6 +89,39 @@ class PackagesTab:
 
         return ", ".join(schedule_parts)
 
+    def update_ui(self, active_subs, inactive_subs):
+        """Update only the parts of the UI that display subscription lists."""
+        # Update header count
+        self.lbl_active_header.configure(text=_("📦 Aktif Paketler ({})").format(len(active_subs)))
+
+        # Active list
+        for w in self.frame_active_list.winfo_children():
+            w.destroy()
+
+        if not active_subs:
+            ctk.CTkLabel(self.frame_active_list, text=_("Aktif paket yok."), text_color="gray").pack(anchor="w", padx=10)
+        else:
+            for sub in active_subs:
+                schedule_summary = None
+                if sub and sub.get('package', {}).get('plan', {}).get('access_type') == 'SESSION_BASED':
+                    schedule_summary = self._format_schedule_summary(sub.get('class_events', []))
+                pc = PackageCard(self.frame_active_list, sub, is_active=True,
+                                 on_click=lambda s=sub: self.show_package_detail(s),
+                                 on_delete=lambda s=sub: self.delete_subscription(s['id']),
+                                 schedule_summary=schedule_summary)
+                pc.pack(fill="x", pady=6, padx=5)
+
+        # Past list
+        for w in self.frame_past_list.winfo_children():
+            w.destroy()
+
+        if not inactive_subs:
+            ctk.CTkLabel(self.frame_past_list, text=_("Geçmiş paket yok."), text_color="gray").pack(anchor="w", padx=10)
+        else:
+            for sub in inactive_subs:
+                pc = PackageCard(self.frame_past_list, sub, is_active=False)
+                pc.pack(fill="x", pady=6, padx=5)
+
     def show_package_detail(self, subscription: dict):
         """Show detailed package information dialog"""
         from desktop.ui.views.dialogs import PackageDetailDialog
@@ -192,7 +138,26 @@ class PackagesTab:
                 messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(e))
     
     def refresh(self):
-        """Refresh the tab"""
-        for widget in self.parent.winfo_children():
-            widget.destroy()
-        self.setup()
+        """Refresh data and update UI without rebuilding the whole layout."""
+        try:
+            subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
+        except Exception as e:
+            # Show error in the main scroll if available
+            if self.main_scroll is not None:
+                for w in self.main_scroll.winfo_children():
+                    if isinstance(w, ctk.CTkLabel) and "Hata" in w.cget('text'):
+                        return
+                ctk.CTkLabel(self.main_scroll, text=_("Hata: {}").format(e)).pack()
+            return
+
+        active_subs = [s for s in subs if s.get('status') == 'active']
+        inactive_subs = [s for s in subs if s.get('status') == 'expired']
+        inactive_subs.sort(key=lambda x: x.get('end_date', ''), reverse=True)
+        inactive_subs = inactive_subs[:5]
+
+        # Ensure skeleton is present
+        if not self.is_setup:
+            self.setup()
+
+        # Update lists
+        self.update_ui(active_subs, inactive_subs)

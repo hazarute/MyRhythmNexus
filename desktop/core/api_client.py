@@ -120,10 +120,17 @@ class ApiClient:
             print(f"Request failed: {e}")
             raise
 
-    def post(self, path: str, json: Optional[Dict[str, Any]] = None, data: Optional[Dict[str, Any]] = None) -> Any:
+    def post(self, path: str, json: Optional[Dict[str, Any]] = None, data: Optional[Dict[str, Any]] = None, timeout: Optional[float] = None) -> Any:
+        """
+        POST request with optional per-request timeout (seconds).
+        If `timeout` is None the client's default timeout is used.
+        """
         self._ensure_token_fresh()
         try:
-            response = self.client.post(path, json=json, data=data)
+            if timeout is None:
+                response = self.client.post(path, json=json, data=data)
+            else:
+                response = self.client.post(path, json=json, data=data, timeout=timeout)
             response.raise_for_status()
             data = response.json()
             return self._convert_datetime_strings(data)

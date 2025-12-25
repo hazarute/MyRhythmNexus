@@ -124,19 +124,34 @@ class SubmissionHandler:
         Returns: True if successful
         """
         try:
+            # This endpoint can perform multiple DB operations and may take
+            # longer on high-latency environments (eg. Railway). Use a longer
+            # per-request timeout to avoid client-side false timeouts.
             self.api_client.post(
                 "/api/v1/sales/subscriptions-with-events",
-                json=payload
+                json=payload,
+                timeout=30.0,
             )
             messagebox.showinfo(
                 _("Başarılı"),
                 _("Satış tamamlandı!\nAbonelik oluşturuldu.")
             )
             return True
-                
+
         except Exception as e:
+            # Distinguish timeout-like errors and inform the user that the
+            # server may still have processed the request.
+            err_str = str(e)
+            if "timeout" in err_str.lower() or "readtimedout" in err_str.lower():
+                messagebox.showwarning(
+                    _("Uyarı"),
+                    _(
+                        "İstek zaman aşımına uğradı, ancak sunucu isteği işleyip kaydetmiş olabilir.\n"
+                        "Lütfen üyeyi ve abonelikleri kontrol edin veya tekrar deneyin."
+                    )
+                )
+                return True
             messagebox.showerror(_("Hata"), _("Satış başarısız: {}").format(e))
-            return False
             return False
     
     def submit_sale(self, member: Optional[Dict], package: Optional[Dict],

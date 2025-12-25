@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from desktop.core.locale import _
 from desktop.core.api_client import ApiClient
-from desktop.ui.views.tabs.member_detail_tab import MemberDetailTab
+from desktop.ui.views.member_detail import MemberDetailView as MemberDetailTab
 from desktop.ui.views.dialogs import AddMemberDialog
 from desktop.ui.components.search_bar import SearchBar
 from tkinter import messagebox

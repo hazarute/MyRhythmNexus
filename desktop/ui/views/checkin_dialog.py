@@ -34,29 +34,35 @@ class CheckInDialog(ctk.CTkToplevel):
         self._refresh_called = False
         
         self.title(_("Giriş Kontrol"))
-        self.geometry("500x600")
-        
-        # Center the window
-        self.update_idletasks()
-        width = self.winfo_width()
-        height = self.winfo_height()
+        # Use fixed dialog size and center based on those values so
+        # earlier dynamic measurements don't override our requested size.
+        width = 400
+        height = 300
+        self.geometry(f"{width}x{height}")
+
+        # Center the window using the requested size
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
         
         self.grid_columnconfigure(0, weight=1)
-        # Make dialog modal: keep on top and prevent interaction with parent
+        # Bring dialog to front and make it modal using helper in ui_utils
         try:
-            self.transient(parent)
-            safe_grab(self)
+            from desktop.core.ui_utils import bring_to_front_and_modal
+            bring_to_front_and_modal(self, parent)
         except Exception:
-            pass
-        try:
-            self.focus_force()
-            self.lift()
-            self.attributes("-topmost", True)
-        except Exception:
-            pass
+            # Fallback to previous best-effort behavior
+            try:
+                self.transient(parent)
+                safe_grab(self)
+            except Exception:
+                pass
+            try:
+                self.focus_force()
+                self.lift()
+                self.attributes("-topmost", True)
+            except Exception:
+                pass
         self.protocol("WM_DELETE_WINDOW", self._on_close)
         try:
             _active_checkin_dialog = self
@@ -141,17 +147,12 @@ class CheckInDialog(ctk.CTkToplevel):
         btn = ctk.CTkButton(self.content_frame, text=_("Kapat"), command=self._on_close, fg_color="gray")
         btn.pack(pady=20)
         
-        # Play error sound (placeholder)
+        # Play error sound (cross-platform)
         try:
-            import winsound
-            # Lower-pitched single beep for error (400 Hz, 400 ms). If Beep fails, fall back to MessageBeep with error icon.
-            try:
-                winsound.Beep(400, 400)
-            except Exception:
-                try:
-                    winsound.MessageBeep(winsound.MB_ICONHAND)
-                except Exception:
-                    self.bell()
+            from desktop.core.sound import play_error_fallback
+            played = play_error_fallback(self)
+            if not played:
+                self.bell()
         except Exception:
             self.bell()
         # Auto-close after 3 seconds for errors as well
@@ -215,19 +216,36 @@ class CheckInDialog(ctk.CTkToplevel):
             self.after(3000, _on_success_close)
         except Exception:
             pass
-        
-        # Play success sound (placeholder)
-        # In Windows, print('\a') might work or winsound
+        # Call refresh immediately after successful check-in (if provided)
         try:
-            import winsound
-            # Stronger success beep: higher pitch and longer duration (3000 Hz for 700 ms).
-            # Beep amplitude can't be changed via winsound; increasing frequency and duration makes it more noticeable.
-            try:
-                winsound.Beep(3000, 900)
-            except Exception:
+            if self.on_refresh and not getattr(self, "_refresh_called", False):
                 try:
-                    winsound.MessageBeep(winsound.MB_OK)
-                except Exception:
-                    self.bell()
+                    self._refresh_called = True
+                    self.on_refresh()
+                except Exception as e:
+                    print(f"Error calling on_refresh after success: {e}")
+        except Exception:
+            pass
+
+        # Play success sound (cross-platform)
+        try:
+            from desktop.core.sound import play_success_fallback
+            played = play_success_fallback(self)
+            if not played:
+                self.bell()
         except Exception:
             self.bell()
+
+        # publish checkin event if possible
+        try:
+            member_id = None
+            if isinstance(res, dict):
+                member_id = res.get('member_id') or (res.get('member') or {}).get('id') or res.get('user_id')
+            if member_id:
+                try:
+                    event_bus.publish('member.checkin', member_id=member_id, payload=res)
+                    event_bus.publish('member.updated', member=res.get('member') or {})
+                except Exception:
+                    pass
+        except Exception:
+            pass

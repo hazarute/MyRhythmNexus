@@ -8,48 +8,48 @@ class PaymentsTab:
         self.parent = parent_frame
         self.api_client = api_client
         self.member = member
+        # State for optimized UI updates
+        self.scroll_frame = None
+        self.is_setup = False
         
     def setup(self):
-        """Setup payments tab content"""
+        """Setup payments tab UI skeleton (run once)."""
+        if self.is_setup:
+            return
+
         # Header
         header = ctk.CTkFrame(self.parent, fg_color="transparent")
         header.pack(fill="x", padx=20, pady=(10, 5))
-        
-        ctk.CTkLabel(header, text=_("💳 Ödeme Geçmişi"), 
-                    font=("Roboto", 20, "bold")).pack(side="left")
+        ctk.CTkLabel(header, text=_("💳 Ödeme Geçmişi"), font=("Roboto", 20, "bold")).pack(side="left")
 
-        # Scrollable content
-        scroll_frame = ctk.CTkScrollableFrame(self.parent, fg_color="transparent")
-        scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
+        # Scrollable content (created once)
+        self.scroll_frame = ctk.CTkScrollableFrame(self.parent, fg_color="transparent")
+        self.scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        try:
-            subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
-            payments = []
-            for sub in subs:
-                for p in sub.get('payments', []):
-                    p['package_name'] = sub.get('package', {}).get('name', '-')
-                    p['subscription_id'] = sub.get('id')
-                    payments.append(p)
-            
-            # Sort by date (newest first)
-            payments.sort(key=lambda x: x.get('payment_date', ''), reverse=True)
-            
-            if not payments:
-                empty_frame = ctk.CTkFrame(scroll_frame, fg_color=("#E0E0E0", "#2B2B2B"), corner_radius=10)
-                empty_frame.pack(fill="x", pady=20)
-                ctk.CTkLabel(empty_frame, text=_("📭 Henüz ödeme kaydı bulunmuyor"), 
-                            font=("Roboto", 16), text_color="gray").pack(pady=40)
-                return
+        self.is_setup = True
 
-            # Payment cards
-            for pay in payments:
-                self.create_payment_card(scroll_frame, pay)
-                
-        except Exception as e:
-            error_frame = ctk.CTkFrame(scroll_frame, fg_color="#E04F5F", corner_radius=10)
-            error_frame.pack(fill="x", pady=20)
-            ctk.CTkLabel(error_frame, text=_("❌ Hata: {}").format(e), 
-                        font=("Roboto", 14), text_color="white").pack(pady=20)
+        # Initial data load
+        self.refresh()
+
+    def update_ui(self, payments):
+        """Update payment list UI inside the existing scroll_frame."""
+        # Guard: ensure scroll_frame exists before calling widget methods
+        if self.scroll_frame is None:
+            return
+
+        # Clear existing children
+        for w in self.scroll_frame.winfo_children():
+            w.destroy()
+
+        if not payments:
+            empty_frame = ctk.CTkFrame(self.scroll_frame, fg_color=("#E0E0E0", "#2B2B2B"), corner_radius=10)
+            empty_frame.pack(fill="x", pady=20)
+            ctk.CTkLabel(empty_frame, text=_("📭 Henüz ödeme kaydı bulunmuyor"),
+                        font=("Roboto", 16), text_color="gray").pack(pady=40)
+            return
+
+        for pay in payments:
+            self.create_payment_card(self.scroll_frame, pay)
 
     def create_payment_card(self, parent, payment: dict):
         """Create a payment record card"""
@@ -127,7 +127,33 @@ class PaymentsTab:
                 messagebox.showerror(_("Hata"), _("Silme işlemi başarısız:\n{}").format(e))
     
     def refresh(self):
-        """Refresh the tab"""
-        for widget in self.parent.winfo_children():
-            widget.destroy()
-        self.setup()
+        """Refresh data and update the payment list without rebuilding the UI."""
+        # Ensure UI skeleton exists
+        if not self.is_setup:
+            self.setup()
+
+        try:
+            subs = self.api_client.get(f"/api/v1/sales/subscriptions?member_id={self.member['id']}")
+            payments = []
+            for sub in subs:
+                for p in sub.get('payments', []):
+                    p['package_name'] = sub.get('package', {}).get('name', '-')
+                    p['subscription_id'] = sub.get('id')
+                    payments.append(p)
+
+            # Sort by date (newest first)
+            payments.sort(key=lambda x: x.get('payment_date', ''), reverse=True)
+
+            # Update UI with prepared payments
+            self.update_ui(payments)
+
+        except Exception as e:
+            # Show error banner in scroll_frame
+            for w in (self.scroll_frame.winfo_children() if self.scroll_frame is not None else []):
+                try:
+                    w.destroy()
+                except Exception:
+                    pass
+            error_frame = ctk.CTkFrame(self.scroll_frame, fg_color="#E04F5F", corner_radius=10)
+            error_frame.pack(fill="x", pady=20)
+            ctk.CTkLabel(error_frame, text=_("❌ Hata: {}").format(e), font=("Roboto", 14), text_color="white").pack(pady=20)

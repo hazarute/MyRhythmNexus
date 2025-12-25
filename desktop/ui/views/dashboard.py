@@ -2,6 +2,8 @@ import customtkinter as ctk
 from desktop.core.api_client import ApiClient
 from desktop.core.locale import _
 from datetime import datetime
+import tkinter.messagebox as messagebox
+from desktop.ui.components.activity_item import ActivityItem
 
 class DashboardView(ctk.CTkFrame):
     def __init__(self, master, api_client: ApiClient, navigate_callback=None):
@@ -32,8 +34,7 @@ class DashboardView(ctk.CTkFrame):
         self.btn_quick_sale = ctk.CTkButton(self.actions_frame, text=_("+ Satış Yap"), width=100, fg_color="#2CC985", hover_color="#25A86F", command=lambda: self.navigate("sales")) # Green
         self.btn_quick_sale.pack(side="left", padx=5)
 
-        self.btn_qr_checkin = ctk.CTkButton(self.actions_frame, text=_("📷 QR Giriş"), width=100, fg_color="#E5B00D", hover_color="#C4960B", text_color="black", command=self.manual_qr_checkin) # Yellow
-        self.btn_qr_checkin.pack(side="left", padx=5)
+        # QR check-in button removed
         
         self.btn_refresh = ctk.CTkButton(self.actions_frame, text=_("🔄"), width=40, command=self.load_data)
         self.btn_refresh.pack(side="left", padx=5)
@@ -92,13 +93,7 @@ class DashboardView(ctk.CTkFrame):
         from desktop.ui.views.dialogs import AddMemberDialog
         AddMemberDialog(self.winfo_toplevel(), self.api_client, on_success=self.load_data)
     
-    def manual_qr_checkin(self):
-        dialog = ctk.CTkInputDialog(text=_("QR Kodu Giriniz:"), title=_("Manuel Giriş"))
-        qr_token = dialog.get_input()
-        if qr_token:
-            from desktop.ui.views.checkin_dialog import CheckInDialog
-            # Provide `on_refresh` so the dashboard reloads when the dialog closes
-            CheckInDialog(self.winfo_toplevel(), self.api_client, qr_token, on_refresh=self.load_data)
+        # manual QR checkin UI removed
 
 
     def create_stat_card(self, parent, title, icon, color, col_idx):
@@ -233,53 +228,45 @@ class DashboardView(ctk.CTkFrame):
         occ_label.pack(padx=8, pady=6)
 
     def create_activity_item(self, item):
-        # Improved activity card design with consistent colors
-        card_bg = ("#2B2B2B", "#1E1E1E")
-        card = ctk.CTkFrame(self.activity_list, fg_color=card_bg, corner_radius=8, border_width=1, border_color="#404040")
-        card.pack(fill="x", pady=6, padx=6)
+        # Use reusable ActivityItem; map activity item fields to checkin-like structure
+        # Normalize fields so ActivityItem can pick correct icon based on event type
+        desc = (item.get('description') or item.get('title') or '').strip()
+        access_type = (item.get('access_type') or item.get('subscription_type') or '').strip()
 
-        # Main content using grid: icon | details | time
-        content = ctk.CTkFrame(card, fg_color="transparent")
-        content.pack(fill="both", expand=True, padx=10, pady=10)
-        content.grid_columnconfigure(1, weight=1)
-
-        # Icon badge
-        icon_bg = "#3B8ED0"
-        icon_frame = ctk.CTkFrame(content, fg_color=icon_bg, width=38, height=38, corner_radius=8)
-        icon_frame.grid(row=0, column=0, sticky="w")
-        icon_frame.pack_propagate(False)
-        ctk.CTkLabel(icon_frame, text="📲", font=("Segoe UI Emoji", 14), text_color="white").pack(expand=True)
-
-        # Details (name + description)
-        details = ctk.CTkFrame(content, fg_color="transparent")
-        details.grid(row=0, column=1, sticky="w", padx=(10,8))
-
-        name_label = ctk.CTkLabel(
-            details,
-            text=item.get('user_name', _('Bilinmiyor')),
-            font=("Roboto", 13, "bold"),
-            text_color="#3B8ED0"
-        )
-        name_label.pack(anchor="w")
-
-        desc_text = item.get('description', '')
-        if desc_text:
-            ctk.CTkLabel(details, text=desc_text, font=("Roboto", 12), text_color="#CFCFCF").pack(anchor="w", pady=(2,0))
-
-        # Time info (right aligned, muted)
-        time_frame = ctk.CTkFrame(content, fg_color="transparent")
-        time_frame.grid(row=0, column=2, sticky="e")
-        if item.get('timestamp'):
-            try:
-                dt = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
-                date_part = dt.strftime('%Y-%m-%d')
-                time_part = dt.strftime('%H:%M')
-                time_display = f"{time_part}\n{date_part}"
-            except Exception:
-                time_display = item['timestamp']
+        # Heuristics to decide if this is session-based or time-based
+        if access_type.upper() == 'SESSION_BASED' or 'seans' in desc.lower() or 'session' in desc.lower():
+            normalized_event = 'Seans Bazlı'
+        elif access_type.upper() == 'TIME_BASED' or 'zaman' in desc.lower() or 'time' in desc.lower():
+            normalized_event = 'Zaman Bazlı'
         else:
-            time_display = ""
-        ctk.CTkLabel(time_frame, text=time_display, font=("Roboto", 11, "bold"), text_color="#8F8F8F", justify="right").pack()
+            normalized_event = desc or 'Giriş'
+
+        # Prefer description/subscription name for display; keep member name in verified_by when relevant
+        subscription_name = desc or item.get('subscription_name') or ''
+
+        chk = {
+            'id': item.get('id') or item.get('activity_id'),
+            'event_name': normalized_event,
+            'subscription_name': subscription_name,
+            'user_name': item.get('user_name') or '',
+            'check_in_time': item.get('timestamp') or item.get('time') or None,
+            # Use only explicit verifier fields here; don't fall back to user_name (we show user_name separately)
+            'verified_by_name': item.get('verified_by') or item.get('verified_by_name') or None
+        }
+        ai = ActivityItem(self.activity_list, chk, on_delete=self.delete_checkin)
+        ai.pack(fill="x", pady=6, padx=6)
+
+    def delete_checkin(self, checkin_id):
+        """Delete a check-in record after user confirmation (used by activity items on dashboard)."""
+        if not messagebox.askyesno(_("Silme Onayı"), _("Bu katılım kaydını silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz.")):
+            return
+
+        try:
+            self.api_client.delete(f"/api/v1/checkin/history/{checkin_id}")
+            messagebox.showinfo(_("Başarılı"), _("Katılım kaydı başarıyla silindi."))
+            self.load_data()
+        except Exception as e:
+            messagebox.showerror(_("Hata"), _("Silme işlemi başarısız: {}").format(str(e)))
 
     def create_pending_member_card(self, member):
         """Create a pending member approval card"""

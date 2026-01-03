@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 import logging
 import warnings
 from sqlalchemy.exc import SAWarning
@@ -87,4 +88,4 @@ app.include_router(web_router)
 
 @app.get("/")
 async def root():
-    return {"message": f"{settings.PROJECT_NAME} backend is healthy", "environment": settings.ENVIRONMENT}
+    return RedirectResponse(url="/web/auth/login", status_code=307)

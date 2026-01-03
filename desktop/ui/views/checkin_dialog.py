@@ -235,17 +235,3 @@ class CheckInDialog(ctk.CTkToplevel):
                 self.bell()
         except Exception:
             self.bell()
-
-        # publish checkin event if possible
-        try:
-            member_id = None
-            if isinstance(res, dict):
-                member_id = res.get('member_id') or (res.get('member') or {}).get('id') or res.get('user_id')
-            if member_id:
-                try:
-                    event_bus.publish('member.checkin', member_id=member_id, payload=res)
-                    event_bus.publish('member.updated', member=res.get('member') or {})
-                except Exception:
-                    pass
-        except Exception:
-            pass

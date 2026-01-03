@@ -77,7 +77,7 @@ async def test_finance_and_scan(client: AsyncClient, db_session):
             "payment_method": "KREDI_KARTI"
         }
     }
-    sub_resp = await client.post("/api/v1/sales/subscriptions", json=sub_data, headers=admin_headers)
+    sub_resp = await client.post("/api/v1/sales/subscriptions-with-events", json=sub_data, headers=admin_headers)
     subscription_id = sub_resp.json()["id"]
 
     # --- TEST 1: Finance History ---

@@ -8,12 +8,19 @@ from backend.models.service import ServicePackage, ServiceOffering, PlanDefiniti
 from backend.core.security import hash_password
 
 @pytest.mark.asyncio
-async def test_qr_scan_and_checkin_session_based_real_data(client: AsyncClient):
+async def test_qr_scan_and_checkin_session_based_real_data(client: AsyncClient, db_session):
     """Test QR scan and check-in for SESSION_BASED subscription using real database data."""
     # Real data from database
     qr_token = "PB3PKk_x-QZeXdXbdzhU5A6JhhduBBZXZNCHNphVdaQ"
     subscription_id = "9bf6e14b-46f5-4b00-814b-015ef72c3ea1"
     user_id = "591efe22-4f67-4490-bd94-7c726cdb2666"
+
+    # If the test DB/schema doesn't contain real data, skip
+    from sqlalchemy import select
+    try:
+        await db_session.execute(select(SubscriptionQrCode).limit(1))
+    except Exception:
+        pytest.skip("subscription_qr_codes table or real data not available in test DB")
 
     # Test QR scan
     response = await client.get(f"/api/v1/checkin/scan?qr_token={qr_token}")

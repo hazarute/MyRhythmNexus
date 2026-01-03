@@ -107,7 +107,7 @@ async def test_full_flow(client: AsyncClient, db_session):
             "payment_method": "KREDI_KARTI"
         }
     }
-    sub_resp = await client.post("/api/v1/sales/subscriptions", json=sub_data, headers=admin_headers)
+    sub_resp = await client.post("/api/v1/sales/subscriptions-with-events", json=sub_data, headers=admin_headers)
     assert sub_resp.status_code == 200
     subscription_id = sub_resp.json()["id"]
     

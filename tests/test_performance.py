@@ -186,7 +186,7 @@ async def test_subscription_operations_performance(client: AsyncClient, db_sessi
             "payment_method": "KREDI_KARTI"
         }
     }
-    sub_resp = await client.post("/api/v1/sales/subscriptions", json=sub_data, headers=headers)
+    sub_resp = await client.post("/api/v1/sales/subscriptions-with-events", json=sub_data, headers=headers)
     end_time = time.time()
 
     assert sub_resp.status_code == 200

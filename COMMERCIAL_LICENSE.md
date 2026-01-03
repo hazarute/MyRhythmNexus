@@ -12,7 +12,7 @@ licensing: hazarute@gmail.com
 
 How to request a commercial license
 ----------------------------------
-1. Send an email to `licensing@hazarute@gmail.com` with the subject line:
+1. Send an email to `hazarute@gmail.com` with the subject line:
    "Commercial License Request — MyRhythmNexus"
 
 2. In the email, please include:

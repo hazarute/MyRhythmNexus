@@ -98,17 +98,23 @@
             var isRealChromeAndroid = /Chrome/i.test(ua) && !isSamsung && !isEdge && !isOpera && !isMiui && !isUC && !isYandex && !isInApp;
 
             var finalUrl = targetUrl;
-            
+
+            // URLs for store fallbacks
+            var playStoreUrl = "https://play.google.com/store/apps/details?id=com.android.chrome";
+            var appStoreUrl = "https://apps.apple.com/app/google-chrome/id535886823";
+
             if (isAndroid) {
                 if (isRealChromeAndroid) {
                     // Already in Real Chrome, just go to target
                     finalUrl = targetUrl;
+                    // Direct navigation
+                    document.getElementById("redirect-btn").href = finalUrl;
+                    setTimeout(function() { window.location.href = finalUrl; }, 500);
                 } else {
                     // Not Chrome (Samsung, Edge, In-App etc), force Chrome via Intent scheme
-                    // Scheme: intent://url_no_scheme#Intent;scheme=https;package=com.android.chrome;end
                     var scheme = "https";
                     var urlNoScheme = targetUrl;
-                    
+
                     if (targetUrl.startsWith("http://")) {
                         scheme = "http";
                         urlNoScheme = targetUrl.replace("http://", "");
@@ -116,34 +122,44 @@
                         scheme = "https";
                         urlNoScheme = targetUrl.replace("https://", "");
                     }
-                    
-                    // remove leading slashes if any (though usually replace handles the protocol part)
-                    // The URL in intent should be like: intent://example.com/path#Intent...
-                    
-                    finalUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;end";
+
+                    // Include Play Store fallback via S.browser_fallback_url
+                    var intentUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(playStoreUrl) + ";end";
+
+                    // Set button to intent URL and also try to open it
+                    document.getElementById("redirect-btn").href = intentUrl;
+                    setTimeout(function() { window.location.href = intentUrl; }, 500);
                 }
             } else if (isIOS) {
                 if (isChromeIOS) {
                     // Already in Chrome on iOS
                     finalUrl = targetUrl;
+                    document.getElementById("redirect-btn").href = finalUrl;
+                    setTimeout(function() { window.location.href = finalUrl; }, 500);
                 } else {
-                    // Safari or in-app on iOS, force Google Chrome scheme
+                    // Safari or in-app on iOS, try Chrome scheme first then fallback
+                    var chromeScheme = targetUrl;
                     if (targetUrl.startsWith("https://")) {
-                        finalUrl = targetUrl.replace("https://", "googlechromes://");
+                        chromeScheme = targetUrl.replace("https://", "googlechromes://");
                     } else if (targetUrl.startsWith("http://")) {
-                        finalUrl = targetUrl.replace("http://", "googlechrome://");
+                        chromeScheme = targetUrl.replace("http://", "googlechrome://");
                     }
+
+                    // Attempt to open Chrome app via scheme
+                    document.getElementById("redirect-btn").href = chromeScheme;
+                    // First try: navigate to Chrome scheme
+                    setTimeout(function() { window.location.href = chromeScheme; }, 300);
+                    // If Chrome not installed, fallback after short timeout to App Store (or target)
+                    setTimeout(function() {
+                        // Prefer App Store to prompt install; if you prefer targetUrl, replace with targetUrl
+                        window.location.href = appStoreUrl;
+                    }, 1400);
                 }
+            } else {
+                // Desktop or unknown: direct
+                document.getElementById("redirect-btn").href = finalUrl;
+                setTimeout(function() { window.location.href = finalUrl; }, 500);
             }
-            
-            // Update button
-            document.getElementById("redirect-btn").href = finalUrl;
-            
-            // Attempt auto-redirect
-            // Small delay to let the UI render
-            setTimeout(function() {
-                window.location.href = finalUrl;
-            }, 500);
         })();
     </script>
 </body>

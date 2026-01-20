@@ -103,17 +103,26 @@ async def root(request: Request):
     # Sadece mobilde bu zorlamayı yapıyoruz
     if is_mobile:
         # Chrome kontrolü (Android'de 'chrome', iOS'ta 'crios')
-        is_chrome = "chrome" in user_agent or "crios" in user_agent
+        # DİKKAT: Samsung, Edge, Opera vb. Android tarayıcıları da "Chrome" stringini içerir.
+        # Bu yüzden "Gerçek Chrome" olduğunu anlamak için diğerlerini dışlamalıyız.
+        has_chrome_token = "chrome" in user_agent or "crios" in user_agent
+        
+        excluded_browsers = ["samsungbrowser", "edga", "opr", "miuibrowser", "ucbrowser", "yabrowser"]
+        is_generic_browser = any(browser in user_agent for browser in excluded_browsers)
+        
+        is_real_chrome = has_chrome_token and not is_generic_browser
         
         # Safari kontrolü (Chrome olmayan Safari)
-        is_safari = "safari" in user_agent and not is_chrome
+        # Not: Chrome on iOS (CriOS) da 'Safari' stringini içerir, bu yüzden 'is_real_chrome' false olmalı.
+        is_safari = "safari" in user_agent and not is_real_chrome and not "android" in user_agent
         
         # In-App Browser tespiti (Instagram, Facebook, WhatsApp vb.)
         in_app_keywords = ["instagram", "fbav", "fban", "line", "twitter", "linkedin", "discord", "wv", "whatsapp"]
         is_in_app = any(keyword in user_agent for keyword in in_app_keywords)
         
-        # Eğer uygulama içi tarayıcıdaysa veya Safari ise -> Chrome'a zorla (Bridge'e git)
-        if is_in_app or is_safari:
+        # Eğer uygulama içi tarayıcıdaysa VEYA Safari/Samsung/Edge vb. ise -> Chrome'a zorla
+        # Yani: Gerçek Chrome DEĞİLSE yönlendir.
+        if not is_real_chrome:
             # Hedef URL'yi encode edip bridge'e gönderiyoruz
             encoded_target = quote(target_url)
             return RedirectResponse(url=f"/web/qr-bridge?target={encoded_target}", status_code=307)

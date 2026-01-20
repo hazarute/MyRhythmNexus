@@ -81,21 +81,30 @@
             // version/ = Safari notation usually
             
             var isChromeIOS = /CriOS/i.test(ua);
-            // On Android, 'Chrome' is present in almost all WebViews. 
-            // We want to detect if we are strictly in the Chrome generic browser or an in-app browser.
-            // In-app browsers usually have 'wv' (WebView) or specific tokens like 'Instagram', 'FBAN'.
-            // However, the safest bet to FORCE Chrome app is using the intent scheme.
             
-            var isChromeAndroid = /Chrome/.test(ua) && !/wv/.test(ua) && !/Instagram/.test(ua) && !/FB/.test(ua) && !/WhatsApp/.test(ua);
+            // On Android, 'Chrome' is present in almost all WebViews (Samsung, Edge, WebView etc).
+            // We need to exclude them to identify "Real Chrome".
+            var isSamsung = /SamsungBrowser/i.test(ua);
+            var isEdge = /EdgA/i.test(ua);
+            var isOpera = /OPR/i.test(ua) || /Opera/i.test(ua);
+            var isMiui = /MiuiBrowser/i.test(ua);
+            var isUC = /UCBrowser/i.test(ua);
+            var isYandex = /YaBrowser/i.test(ua);
+            
+            // In-app check (WebView, Instagram, FB, WhatsApp)
+            var isInApp = /wv/i.test(ua) || /Instagram/i.test(ua) || /FB/i.test(ua) || /WhatsApp/i.test(ua) || /Line/i.test(ua);
+
+            // True if it matches Chrome but is NOT one of the others
+            var isRealChromeAndroid = /Chrome/i.test(ua) && !isSamsung && !isEdge && !isOpera && !isMiui && !isUC && !isYandex && !isInApp;
 
             var finalUrl = targetUrl;
             
             if (isAndroid) {
-                if (isChromeAndroid) {
-                    // Already in Chrome (native), just go to target
+                if (isRealChromeAndroid) {
+                    // Already in Real Chrome, just go to target
                     finalUrl = targetUrl;
                 } else {
-                    // Not Chrome (or in-app browser), try to force Chrome via Intent
+                    // Not Chrome (Samsung, Edge, In-App etc), force Chrome via Intent scheme
                     // Scheme: intent://url_no_scheme#Intent;scheme=https;package=com.android.chrome;end
                     var scheme = "https";
                     var urlNoScheme = targetUrl;
@@ -107,6 +116,9 @@
                         scheme = "https";
                         urlNoScheme = targetUrl.replace("https://", "");
                     }
+                    
+                    // remove leading slashes if any (though usually replace handles the protocol part)
+                    // The URL in intent should be like: intent://example.com/path#Intent...
                     
                     finalUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;end";
                 }

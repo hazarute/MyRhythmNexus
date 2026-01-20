@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönlendiriliyor...</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h2 { margin-top: 0; color: #333; }
+        p { color: #666; margin-bottom: 20px; }
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn:hover { background-color: #0056b3; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <h2>Yönlendiriliyorsunuz...</h2>
+        <p>En iyi deneyim için sayfanın <strong>Google Chrome</strong> uygulamasında açılması gerekiyor.</p>
+        <p>Otomatik açılmazsa lütfen butona tıklayın:</p>
+        <a id="redirect-btn" href="#" class="btn">Chrome'da Aç</a>
+    </div>
+
+    <script>
+        (function() {
+            // Target URL is passed from backend
+            var targetUrl = "{{ target_url }}"; // e.g. https://myrhythmnexus.com/web/dashboard
+            
+            // Fallback if empty
+            if (!targetUrl) {
+                targetUrl = window.location.origin + "/web/dashboard";
+            }
+
+            // User Agent parsing
+            var ua = navigator.userAgent || navigator.vendor || window.opera;
+            
+            var isAndroid = /android/i.test(ua);
+            var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+            
+            // Check for specific browsers
+            // CriOS = Chrome on iOS
+            // Chrome = Chrome on Android (but also others)
+            // version/ = Safari notation usually
+            
+            var isChromeIOS = /CriOS/i.test(ua);
+            // On Android, 'Chrome' is present in almost all WebViews. 
+            // We want to detect if we are strictly in the Chrome generic browser or an in-app browser.
+            // In-app browsers usually have 'wv' (WebView) or specific tokens like 'Instagram', 'FBAN'.
+            // However, the safest bet to FORCE Chrome app is using the intent scheme.
+            
+            var isChromeAndroid = /Chrome/.test(ua) && !/wv/.test(ua) && !/Instagram/.test(ua) && !/FB/.test(ua) && !/WhatsApp/.test(ua);
+
+            var finalUrl = targetUrl;
+            
+            if (isAndroid) {
+                if (isChromeAndroid) {
+                    // Already in Chrome (native), just go to target
+                    finalUrl = targetUrl;
+                } else {
+                    // Not Chrome (or in-app browser), try to force Chrome via Intent
+                    // Scheme: intent://url_no_scheme#Intent;scheme=https;package=com.android.chrome;end
+                    var scheme = "https";
+                    var urlNoScheme = targetUrl;
+                    
+                    if (targetUrl.startsWith("http://")) {
+                        scheme = "http";
+                        urlNoScheme = targetUrl.replace("http://", "");
+                    } else if (targetUrl.startsWith("https://")) {
+                        scheme = "https";
+                        urlNoScheme = targetUrl.replace("https://", "");
+                    }
+                    
+                    finalUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;end";
+                }
+            } else if (isIOS) {
+                if (isChromeIOS) {
+                    // Already in Chrome on iOS
+                    finalUrl = targetUrl;
+                } else {
+                    // Safari or in-app on iOS, force Google Chrome scheme
+                    if (targetUrl.startsWith("https://")) {
+                        finalUrl = targetUrl.replace("https://", "googlechromes://");
+                    } else if (targetUrl.startsWith("http://")) {
+                        finalUrl = targetUrl.replace("http://", "googlechrome://");
+                    }
+                }
+            }
+            
+            // Update button
+            document.getElementById("redirect-btn").href = finalUrl;
+            
+            // Attempt auto-redirect
+            // Small delay to let the UI render
+            setTimeout(function() {
+                window.location.href = finalUrl;
+            }, 500);
+        })();
+    </script>
+</body>
+</html>

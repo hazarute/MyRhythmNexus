@@ -15,6 +15,7 @@
 ## Yapılacaklar (Kısa Checklist)
  - [in-progress] Frontend sayfa revizyonları ve route bağlantılarının doğrulanması
  - [in-progress] Entegrasyon testlerinin genişletilmesi (template rendering, auth flows)
+ - [completed] QR Bridge sayfasının implementasyonu (Bridge page for Chrome redirection) ✅
  - [not-started] Gerçek QR üretiminin backend'e entegre edilmesi (`cryptography` veya uygun kütüphane)
  - [not-started] Eksik sayfaların tamamlanması ve son regresyon testi
 

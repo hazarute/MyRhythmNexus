@@ -1,9 +1,10 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 import logging
 import warnings
+from urllib.parse import quote
 from sqlalchemy.exc import SAWarning
 
 from backend.api.api import api_router
@@ -87,5 +88,36 @@ app.include_router(web_router)
 
 
 @app.get("/")
-async def root():
-    return RedirectResponse(url="/web/auth/login", status_code=307)
+async def root(request: Request):
+    """
+    Kök dizin yönlendirmesi.
+    Eğer mobil cihazdan ve In-App (Instagram vb.) veya Safari tarayıcıdan geliniyorsa 
+    QR Bridge sayfasına yönlendirerek Chrome'u zorlar.
+    """
+    user_agent = request.headers.get("user-agent", "").lower()
+    target_url = "/web/auth/login"
+    
+    # Mobil cihaz kontrolü (Genel)
+    is_mobile = "mobile" in user_agent or "android" in user_agent or "iphone" in user_agent
+    
+    # Sadece mobilde bu zorlamayı yapıyoruz
+    if is_mobile:
+        # Chrome kontrolü (Android'de 'chrome', iOS'ta 'crios')
+        is_chrome = "chrome" in user_agent or "crios" in user_agent
+        
+        # Safari kontrolü (Chrome olmayan Safari)
+        is_safari = "safari" in user_agent and not is_chrome
+        
+        # In-App Browser tespiti (Instagram, Facebook, WhatsApp vb.)
+        in_app_keywords = ["instagram", "fbav", "fban", "line", "twitter", "linkedin", "discord", "wv", "whatsapp"]
+        is_in_app = any(keyword in user_agent for keyword in in_app_keywords)
+        
+        # Eğer uygulama içi tarayıcıdaysa veya Safari ise -> Chrome'a zorla (Bridge'e git)
+        if is_in_app or is_safari:
+            # Hedef URL'yi encode edip bridge'e gönderiyoruz
+            encoded_target = quote(target_url)
+            return RedirectResponse(url=f"/web/qr-bridge?target={encoded_target}", status_code=307)
+            
+    # Diğer tüm durumlarda (Desktop, Mobile Chrome vb.) direkt login'e git
+    return RedirectResponse(url=target_url, status_code=307)
+

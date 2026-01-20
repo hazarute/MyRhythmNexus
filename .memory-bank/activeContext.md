@@ -22,6 +22,7 @@ FastAPI backend, SQLAlchemy async queries, JWT authentication ve responsive tasa
 - Jinja2 porting ve `base.html` ile 9 template oluşturuldu
 - Modüler `backend/web/routes/` yapısı kuruldu ve route'lar FastAPI'ye bağlandı
 - Auth flow (JWT cookie) ve temel route testleri tamamlandı
+- **QR Bridge Sayfası:** `/web/qr-bridge` rotası ve `qr_bridge.html` şablonu eklendi. (Android/iOS deep-link redirection ile Chrome zorlama)
 
 ## Güncel Durum ve Öncelikler
 - **Frontend genişletmesi:** Lite sürümün ötesine geçen, daha kapsamlı kullanıcı deneyimi (daha fazla sayfa ve detay) üzerine revizyonlar devam ediyor. Bu revizyonlar route bağlantıları, template context'leri ve mobil/desktop uyumluluğunu kapsıyor. (in-progress)

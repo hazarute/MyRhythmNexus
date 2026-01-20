@@ -136,13 +136,30 @@
                         urlNoScheme = targetUrl.replace("https://", "");
                     }
 
-                    // Include Play Store fallback via S.browser_fallback_url
-                    var intentUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(playStoreUrl) + ";end";
+                    // Build intent URL without immediate browser_fallback (we'll handle fallback via timeout)
+                    var intentUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;end";
 
-                    // Set button to intent URL and also try to open it
+                    // Try opening the intent and use a timeout fallback to Play Store
                     document.getElementById("redirect-btn").href = intentUrl;
-                    // Try to open intent; if Chrome not installed, Play Store fallback defined inside intent
+
+                    // If the browser switches away (document becomes hidden), assume Chrome opened and cancel fallback
+                    var androidFallbackTimer = setTimeout(function() {
+                        window.location.href = playStoreUrl;
+                    }, 1200);
+
+                    var visibilityHandler = function() {
+                        if (document.hidden) {
+                            clearTimeout(androidFallbackTimer);
+                        }
+                    };
+
+                    document.addEventListener('visibilitychange', visibilityHandler);
+                    window.addEventListener('pagehide', function() { clearTimeout(androidFallbackTimer); });
+
+                    // Attempt to open intent after short delay to allow UI render, fallback will run if not opened
                     autoOpenTimeouts.push(setTimeout(function() { window.location.href = intentUrl; }, 500));
+                    // Also push a cleanup timeout so continue button clears this too
+                    autoOpenTimeouts.push(androidFallbackTimer);
                 }
             } else if (isIOS) {
                 if (isChromeIOS) {

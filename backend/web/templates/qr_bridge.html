@@ -41,6 +41,9 @@
         .btn.secondary {
             background-color: #6c757d;
         }
+        .btn.tertiary {
+            background-color: #28a745;
+        }
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #007bff;
@@ -61,6 +64,7 @@
         <p>Otomatik açılmazsa lütfen butona tıklayın:</p>
         <div style="display:flex; gap:10px; justify-content:center;">
             <a id="redirect-btn" href="#" class="btn">Chrome'da Aç</a>
+            <a id="install-btn" href="#" class="btn tertiary">Chrome'u İndir</a>
             <a id="continue-btn" href="#" class="btn secondary">Bu tarayıcıyla devam et</a>
         </div>
     </div>
@@ -136,30 +140,15 @@
                         urlNoScheme = targetUrl.replace("https://", "");
                     }
 
-                    // Build intent URL without immediate browser_fallback (we'll handle fallback via timeout)
+                    // Build intent URL (no automatic Play Store fallback). User can choose to install via the install button.
                     var intentUrl = "intent://" + urlNoScheme + "#Intent;scheme=" + scheme + ";package=com.android.chrome;end";
 
-                    // Try opening the intent and use a timeout fallback to Play Store
+                    // Set redirect button to intent and try to open it once automatically
                     document.getElementById("redirect-btn").href = intentUrl;
-
-                    // If the browser switches away (document becomes hidden), assume Chrome opened and cancel fallback
-                    var androidFallbackTimer = setTimeout(function() {
-                        window.location.href = playStoreUrl;
-                    }, 1200);
-
-                    var visibilityHandler = function() {
-                        if (document.hidden) {
-                            clearTimeout(androidFallbackTimer);
-                        }
-                    };
-
-                    document.addEventListener('visibilitychange', visibilityHandler);
-                    window.addEventListener('pagehide', function() { clearTimeout(androidFallbackTimer); });
-
-                    // Attempt to open intent after short delay to allow UI render, fallback will run if not opened
                     autoOpenTimeouts.push(setTimeout(function() { window.location.href = intentUrl; }, 500));
-                    // Also push a cleanup timeout so continue button clears this too
-                    autoOpenTimeouts.push(androidFallbackTimer);
+
+                    // Make install button point to Play Store (user triggers it explicitly)
+                    try { document.getElementById('install-btn').href = playStoreUrl; } catch (e) {}
                 }
             } else if (isIOS) {
                 if (isChromeIOS) {
@@ -178,12 +167,10 @@
 
                     // Attempt to open Chrome app via scheme
                     document.getElementById("redirect-btn").href = chromeScheme;
-                    // First try: navigate to Chrome scheme
+                    // First try: navigate to Chrome scheme once
                     autoOpenTimeouts.push(setTimeout(function() { window.location.href = chromeScheme; }, 300));
-                    // If Chrome not installed, fallback after short timeout to App Store (or target)
-                    autoOpenTimeouts.push(setTimeout(function() {
-                        window.location.href = appStoreUrl;
-                    }, 1400));
+                    // Make install button point to App Store (user chooses to install)
+                    try { document.getElementById('install-btn').href = appStoreUrl; } catch (e) {}
                 }
             } else {
                 // Desktop or unknown: direct

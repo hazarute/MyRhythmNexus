@@ -1,29 +1,25 @@
 # İlerleme Durumu
-## Durum
-✅ **Faz 23 TAM OLARAK TAMAMLANDI** — Üye Portalı Modernizasyonu (Frontend + Backend entegrasyonu)
 
-## Tamamlananlar (Kısa Özet)
- - Backend API, veritabanı entegrasyonu, JWT auth ve üyelik portalı tamamlandı.
- - Frontend porting: `base.html` üzerinden genişletilmiş bir frontend (9 template) oluşturuldu.
- - Routing: `backend/web/routes/` altında modüler APIRouter yapısı kuruldu.
+Son güncelleme: 2026-03-03
 
-## Mevcut Odak (Öncelikler)
- - **Frontend genişletme ve revizyonlar (in-progress):** Lite sürümün ötesine geçen işlevsellik ekleniyor; detaylı sayfalar, link doğrulamaları ve UI revizyonları üzerinde çalışılıyor.
- - **Testler (in-progress):** Route-level ve entegrasyon testleri devam ediyor. Özellikle template rendering, auth flow ve eager-loading kontrolleri öncelikli.
- - **Eksik/Revize Edilecek Sayfalar:** Abonelik detay + QR, ödeme detay sayfaları, ölçüm geçmişi detayları, profil güncelleme akışları — geliştirme altında.
+## Genel Durum
+✅ **Bellek Bankası yeniden hizalandı (context-recovery tamamlandı).**
 
-## Yapılacaklar (Kısa Checklist)
- - [in-progress] Frontend sayfa revizyonları ve route bağlantılarının doğrulanması
- - [in-progress] Entegrasyon testlerinin genişletilmesi (template rendering, auth flows)
- - [completed] QR Bridge sayfasının implementasyonu (Bridge page for Chrome redirection) ✅
- - [not-started] Gerçek QR üretiminin backend'e entegre edilmesi (`cryptography` veya uygun kütüphane)
- - [not-started] Eksik sayfaların tamamlanması ve son regresyon testi
+## Tamamlananlar
+- [X] `.memory-bank/` dosyaları ile gerçek kod tabanı arasındaki kopukluk analiz edildi.
+- [X] Stale “Faz 23 tek odak” anlatımı kaldırıldı.
+- [X] Projenin güncel yapısı (backend + desktop + license_server) bellek dosyalarına işlendi.
+- [X] README ile bellek arasında kalan tutarsızlık alanları tespit edildi.
 
-## Bilinen Notlar
- - `selectinload()` kullanımıyla `greenlet_spawn` problemi çözüldü
- - Tüm template context'lerine `"user": current_user` standardı eklendi
- - Masaüstü admin `desktop/` klasöründe kalmaya devam ediyor
+## Devam Eden / Planlanan İşler
+- [X] README.md’nin sürüm, mimari ve deployment gerçekliğine göre revize edilmesi
+- [ ] Test envanterinin güncel davranışa göre sınıflandırılması (aktif, legacy, flaky)
+- [ ] Dağıtım dokümantasyonunun tek akışta sadeleştirilmesi
 
-## Sonraki Adım
- 1. Frontend revizyonlarını tamamlayıp tüm route bağlantılarını doğrulamak
- 2. Eksik sayfaları tamamlayıp entegrasyon testlerini geçmek
+## Operasyonel Notlar
+- Aktif desktop sürümü: **v1.1.0** (`desktop/core/config.py`, `desktop/version.txt`)
+- Web portal, backend içinde `/web/*` rotalarıyla aktif durumda.
+- Lisans doğrulama merkezi servis olarak `license_server/` altında ayrı çalışıyor.
+
+## Sonraki Net Görev
+**Test envanteri temizliği**: stale/legacy test varsayımlarını güncel davranışla hizalama.

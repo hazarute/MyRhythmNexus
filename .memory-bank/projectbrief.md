@@ -1,25 +1,39 @@
 # Proje Özeti: MyRhythmNexus
 
 ## Vizyon
-Spor ve dans stüdyoları için geliştirilen, "Kart (ServicePackage)" mantığına dayalı, ölçeklenebilir ve modüler bir yönetim ekosistemi. Monolitik yapı yerine, sorumlulukları ayrılmış 3 ana katmandan oluşur. Şu anki odak noktamız **Proje 1: Çekirdek** katmanıdır.
+Pilates/dans/fitness stüdyoları için; üyelik, satış, ders, check-in ve operasyon yönetimini tek ekosistemde birleştiren modüler bir platform.
 
-## Temel Hedef (Proje 1: Çekirdek)
-Stüdyonun arka ofis işlemlerini, üye yönetimini, satışları, ders programlamayı ve fiziksel giriş kontrolünü (QR) yöneten merkezi sistemi kurmak.
+## Güncel Ürün Kapsamı (2026-03-03)
+MyRhythmNexus şu anda üç bağlı parçadan oluşur:
 
-## Temel Bileşenler
-1.  **Backend API:** Sisteme beyinlik yapan merkezi sunucu.
-2.  **Admin Paneli:** İşletme sahibi ve personel için masaüstü uygulaması.
-3.  **Üye Vitrini:** Üyeler için QR kod görüntüleme arayüzü.
-4.  **Otomatik Sistemler:** Background scheduler ile pasif üye yönetimi.
-5.  **Otomatik Güncelleme:** Masaüstü uygulamasının GitHub Releases ile otomatik güncellenmesi.
-6.  **Containerized Deployment:** Docker ile production-ready deployment altyapısı.
-    7.  **Uluslararasılaştırma (i18n):** Çoklu dil desteği (Türkçe/İngilizce) ile global erişim.
-    8.  **Merkezi Lisanslama (SaaS):** Ayrı bir "License Server" projesi üzerinden yönetilen, RSA imzalı JWT token tabanlı, offline-first çalışabilen güvenli lisanslama mimarisi.
+1. **Backend Platform (`backend/`)**
+   - FastAPI tabanlı REST API (`/api/v1/*`)
+   - Üye portalı için server-rendered web rotaları (`/web/*`)
+   - Scheduler ile otomatik üye pasifleştirme + abonelik expiration süreçleri
 
-## Otomatik Özellikler
-*   **Pasif Üye Yönetimi:** 60+ gün paket satın almamış üyeler otomatik olarak `is_active = false` yapılır.
-*   **Zaman Takibi:** Tüm zaman işlemleri Türkiye saati (Europe/Istanbul) kullanır.
-*   **Background Jobs:** APScheduler ile günlük otomatik görevler çalışır.
-*   **Otomatik Güncellemeler:** Masaüstü uygulaması GitHub Releases üzerinden otomatik güncellenir.
-*   **Containerized Scaling:** Docker Compose ile production deployment ve scaling.
-*   **Dil Yönetimi:** Kullanıcı tercihine göre otomatik dil yükleme ve çeviri desteği.
+2. **Desktop Admin Uygulaması (`desktop/`)**
+   - CustomTkinter tabanlı operasyon paneli
+   - Backend’e API client ile bağlanır
+   - Açılışta lisans doğrulama akışı içerir
+
+3. **Merkezi Lisans Sunucusu (`license_server/`)**
+   - Ayrı FastAPI servisidir
+   - Lisans key + hardware ID doğrular
+   - RSA imzalı JWT ile offline-first lisans modelini destekler
+
+## Temel İş Değeri
+- Personel için hızlı admin operasyonları (desktop)
+- Üyeler için erişilebilir web self-service alanı
+- Fiziksel giriş kontrolü için QR bazlı check-in
+- Kurumsal dağıtımlar için merkezi lisanslama
+
+## Çekirdek Fonksiyonlar
+- Üye CRM ve rol yönetimi
+- Kart/paket (ServicePackage) ve abonelik yaşam döngüsü
+- Satış ve ödeme kayıtları
+- Ders/etkinlik bazlı giriş doğrulama
+- Ölçüm takibi ve profil işlemleri
+- TR/EN i18n altyapısı
+
+## Sürümleme Bağlamı
+- Mevcut dağıtım artefaktları ve masaüstü konfigürasyonu **v1.1.0** hattını işaret ediyor.

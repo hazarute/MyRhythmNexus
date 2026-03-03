@@ -1,15 +1,27 @@
 # Ürün Bağlamı
 
-## Problem
-Stüdyo yönetiminde karmaşık üyelik yapıları, ders takibi ve fiziksel giriş kontrolünün entegrasyon zorlukları.
-Kurumsal müşteriler için lisanslama, modül bazlı erişim izinleri ve donanım kilidi eksikliği mevcut.
+## Çözülen Problem
+Stüdyo işletmelerinde dağınık üyelik, paket, ders ve giriş kontrol süreçlerinin tek merkezden güvenilir şekilde yönetilememesi.
 
-## Çözüm
-"ServicePackage" (Kart) mimarisi ile esnek üyelik modelleri sunan, QR tabanlı kesin giriş kontrolü sağlayan entegre bir sistem. Kurumsal lisanslama ise `licenses` tablosu, `features` bayrakları ve donanım kimliğine kilitlenen doğrulama akışıyla sağlanacak.
+## Ürün Yaklaşımı
+- Operasyon yoğun iş akışları için **desktop-first admin** deneyimi
+- Üyeler için sade **web portal** (abonelik, ölçüm, profil, QR erişimi)
+- Fiziksel girişte QR token + abonelik/plan doğrulaması
+- Kurumsal müşteriler için merkezi lisans doğrulama (hardware lock + offline token)
 
-## Kullanıcı Deneyimi Hedefleri
-*   **Personel/Admin:** CustomTkinter ile geliştirilmiş, hızlı ve güçlü bir masaüstü uygulaması. Üye kaydı, satış, finansal takip ve ders yönetimi tek merkezden.
-*   **Üyeler:** Karmaşık olmayan, sadece QR kodlarına ve abonelik durumlarına erişebildikleri "Lite" bir web arayüzü. Giriş yaptıktan sonra sahip oldukları aktif "Kartları" (ServicePackage) listeleyip, ilgili kartın QR kodunu görüntüleyebilirler.
-*   **Giriş Kontrolü:** USB QR okuyucu entegrasyonu ile hızlı ve hatasız "Check-In" süreci.
-*   **Uluslararası Erişim:** Türkçe ve İngilizce dil desteği ile global kullanıcı deneyimi.
-*   **Kurumsal Müşteriler:** Lisans anahtarı, donanım ID ve modül izinleriyle sadece yetkili makinelerde çalışan, özellik bazlı lisans yönetimi.
+## Hedef Kullanıcılar
+1. **Stüdyo sahibi / personel**
+   - Hızlı kayıt, satış, takip ve check-in yönetimi
+2. **Stüdyo üyesi**
+   - Mobil uyumlu web ekranlardan hesap/abonelik görünürlüğü
+3. **Kurumsal müşteri (B2B)**
+   - Lisans anahtarı ve özellik bayraklarıyla kontrollü kullanım
+
+## Deneyim Hedefleri
+- Kritik operasyonlarda minimum tıklama ve hızlı geri bildirim
+- Offline/bağlantı kesintisi senaryolarında kontrollü devamlılık
+- Saat dilimi ve tarih işlemlerinde tutarlılık (Europe/Istanbul)
+- Sürüm yükseltme ve dağıtım adımlarında tekrarlanabilirlik
+
+## Ürün Gerçekliği Notu
+Önceki belgelerdeki “web member portal gelecekte” ifadesi artık geçerli değildir; portal backend içinde aktif olarak çalışmaktadır.

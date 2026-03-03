@@ -8,11 +8,11 @@ production use requires a separate commercial license obtained from the copyrigh
 Contact
 -------
 Hazar Üte
-licensing: hazarute@gmail.com
+licensing: kayraspaceinc@gmail.com
 
 How to request a commercial license
 ----------------------------------
-1. Send an email to `hazarute@gmail.com` with the subject line:
+1. Send an email to `kayraspaceinc@gmail.com` with the subject line:
    "Commercial License Request — MyRhythmNexus"
 
 2. In the email, please include:

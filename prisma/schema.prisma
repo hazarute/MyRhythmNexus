@@ -154,9 +154,6 @@ Table subscriptions {
   // KATILIM SAYACI (TIME_BASED paketler için): Üyenin kaç kez katıldığını takip eder (sınırsız)
   attendance_count int [default: 0, not null]
   
-  // SESSION_BASED planlar için otomatik oluşturulan ClassEvent'ler
-  auto_created_class_events boolean [default: false] // Bu abonelik için ClassEvent'ler otomatik oluşturuldu mu?
-  
   Note: 'Bir üyenin bir "Kart"ı satın aldığını gösteren "sözleşme" kaydıdır. access_type ile SESSION_BASED (seans hakkı) ve TIME_BASED (sınırsız katılım) ayırımı yapılır. used_sessions (SESSION_BASED) ve attendance_count (TIME_BASED) ile iki tür hak takibi yapılır.'
 }
 

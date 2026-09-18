@@ -23,3 +23,10 @@ license_server.db
 
 # Do NOT commit private keys
 license_server/private.pem
+
+# CodeGraph index (local, regenerate with `codegraph init`)
+.codegraph/
+
+# Customer exports and campaign tracking
+scripts/*.csv
+scripts/*.json

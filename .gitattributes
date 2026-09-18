@@ -1,0 +1,37 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Linux scripts, source code, and container configurations (force LF)
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.prisma text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+Dockerfile* text eol=lf
+nginx.conf text eol=lf
+
+# Windows scripts (require CRLF)
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.pdf binary
+*.exe binary
+*.dll binary
+*.so binary
+*.pyc binary
+*.db binary
+*.sqlite binary
